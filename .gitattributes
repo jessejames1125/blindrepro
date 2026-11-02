@@ -1,0 +1,3 @@
+# Sealed runs are hashed byte for byte; never convert their line endings.
+evals/runs/** -text
+src/blindrepro/data/** -text
