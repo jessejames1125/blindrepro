@@ -80,6 +80,8 @@ def _run(args) -> int:
         verdict = run_case(case, judge)
     except RunStopped as stopped:
         print(stopped)
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "stopped.txt").write_text(f"{stopped}\n", encoding="utf-8", newline="\n")
         return 3
     print()
     show(verdict)

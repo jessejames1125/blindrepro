@@ -46,6 +46,17 @@ def test_run_exits_nonzero_when_it_diverges(tmp_path, capsys):
     assert "DIVERGED" in capsys.readouterr().out
 
 
+def test_a_stopped_run_says_why_in_its_folder(tmp_path, capsys):
+    repo = make_authors_repo(tmp_path / "repo")
+    recording = write_recording(tmp_path / "recording", GOOD_DERIVE, GOOD_ADAPTER, {"not_computable": "needs a dataset"})
+    paper = tmp_path / "paper.txt"
+    paper.write_text(PAPER, encoding="utf-8")
+    out = tmp_path / "r"
+    code = cli.main(["run", str(paper), "--target", "a", "--code", str(repo), "--out", str(out), "--judge", f"recorded:{recording}"])
+    assert code == 3
+    assert "needs a dataset" in (out / "stopped.txt").read_text(encoding="utf-8")
+
+
 def bundled_case(tmp_path):
     repo = make_authors_repo(tmp_path / "repo")
     recording = write_recording(tmp_path / "recording", GOOD_DERIVE, GOOD_ADAPTER)
