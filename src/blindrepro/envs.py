@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -28,19 +29,46 @@ def python_in(env: Path) -> Path:
     return env / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
 
 
+# A package name with optional extras and version limits. No options, links, paths or markers,
+# because the list can come from a model or from someone else's run folder.
+REQUIREMENT = re.compile(
+    r"[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?"
+    r"(?:\[[A-Za-z0-9._,-]+\])?"
+    r"(?:\s*(?:==|>=|<=|~=|!=|<|>)\s*[A-Za-z0-9.*+!_-]+(?:\s*,\s*(?:==|>=|<=|~=|!=|<|>)\s*[A-Za-z0-9.*+!_-]+)*)?"
+)
+SECRET_WORDS = ("KEY", "TOKEN", "SECRET", "PASSWORD", "CREDENTIAL", "AUTH", "COOKIE", "SESSION")
+
+
+class BadRequirement(ValueError):
+    pass
+
+
+def check_requirements(packages: list[str]) -> None:
+    bad = [p for p in packages if not REQUIREMENT.fullmatch(p.strip())]
+    if bad:
+        raise BadRequirement("Refused to install these lines, which are not plain package names: " + "; ".join(bad))
+
+
+def install_env() -> dict[str, str]:
+    """The installer runs package build code, so it gets no keys or tokens from your environment."""
+    return {k: v for k, v in os.environ.items() if not any(word in k.upper() for word in SECRET_WORDS)}
+
+
 def _install(env: Path, args: list[str]) -> None:
+    clean = install_env()
     uv = shutil.which("uv")
     if uv:
-        subprocess.run([uv, "venv", "--quiet", "--python", PYTHON_VERSION, str(env)], check=True)
-        command = [uv, "pip", "install", "--quiet", "--python", str(python_in(env)), *args]
+        subprocess.run([uv, "venv", "--quiet", "--python", PYTHON_VERSION, str(env)], check=True, env=clean)
+        command = [uv, "pip", "install", "--quiet", "--python", str(python_in(env)), "--", *args]
     else:
-        subprocess.run([sys.executable, "-m", "venv", str(env)], check=True)
-        command = [str(python_in(env)), "-m", "pip", "install", "--quiet", *args]
-    subprocess.run(command, check=True)
+        subprocess.run([sys.executable, "-m", "venv", str(env)], check=True, env=clean)
+        command = [str(python_in(env)), "-m", "pip", "install", "--quiet", "--", *args]
+    subprocess.run(command, check=True, env=clean)
 
 
 def ensure_env(packages: list[str]) -> Path:
     """Return the python of an environment holding exactly these packages, building it once."""
+    check_requirements(packages)
     key = hashlib.sha256("\n".join(sorted(packages)).encode()).hexdigest()[:16]
     env = cache_root() / "envs" / key
     marker = env / "ready"

@@ -28,11 +28,14 @@ def execute(config: dict) -> RunResult:
     workspace = Path(config["workspace"])
     python = config["python"]
     if config.get("requirements"):
-        from .envs import env_for_requirements
+        from .envs import BadRequirement, env_for_requirements
 
         requirements = workspace / config["requirements"]
         if requirements.exists():
-            python = str(env_for_requirements(requirements))
+            try:
+                python = str(env_for_requirements(requirements))
+            except BadRequirement as refused:
+                return RunResult(None, "", f"{refused}. List plain package names with optional versions only.", 0.0)
     return run_guarded(
         Path(python),
         workspace / config["script"],

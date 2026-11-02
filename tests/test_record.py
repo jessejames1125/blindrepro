@@ -1,6 +1,6 @@
 import json
 
-from blindrepro.record import check_freeze, freeze, shareable_transcript, tool_calls
+from blindrepro.record import check_freeze, check_seal, freeze, seal, shareable_transcript, tool_calls
 
 
 def frozen(tmp_path):
@@ -97,3 +97,21 @@ def test_paths_are_swapped_in_every_spelling():
     events = [{"type": "assistant", "message": {"content": "C:\\Users\\someone\\a C:/Users/someone/b C:\\\\Users\\\\someone\\\\c /c/Users/someone/d"}}]
     text = shareable_transcript(events, swaps)[0]["message"]["content"]
     assert "someone" not in text
+
+
+def test_a_record_file_added_in_a_subfolder_is_caught(tmp_path):
+    folder, _ = frozen(tmp_path)
+    (folder / "blind" / "freeze.json").write_text("{}", encoding="utf-8")
+    assert check_freeze(folder) == ["blind/freeze.json was added after the freeze"]
+
+
+def test_seal_covers_the_whole_run_except_private(tmp_path):
+    run = tmp_path / "run"
+    (run / "authors").mkdir(parents=True)
+    (run / "private").mkdir()
+    (run / "authors" / "code_record.json").write_text('{"values": {"a": 1}}', encoding="utf-8")
+    seal(run, "f" * 64)
+    (run / "private" / "paper_full.txt").write_text("text", encoding="utf-8")
+    assert check_seal(run) == []
+    (run / "authors" / "code_record.json").write_text('{"values": {"a": 2}}', encoding="utf-8")
+    assert check_seal(run) == ["authors/code_record.json changed after the seal"]

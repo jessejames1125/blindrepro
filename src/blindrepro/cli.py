@@ -14,6 +14,10 @@ from . import __version__
 from .judges import JudgeError, make_judge
 
 
+# The freeze hash of each bundled demo, so a demo folder changed and rehashed is refused too.
+DEMO_HASHES: dict[str, str] = {}
+
+
 def _bundled(name: str) -> Path | None:
     root = resources.files("blindrepro") / "data" / name
     return Path(str(root)) if root.is_dir() else None
@@ -33,12 +37,13 @@ def _demo(args) -> int:
             target = bundle / "frozen" / "blind" / "derive.py"
             target.write_text(target.read_text(encoding="utf-8") + "\n# one line added after the freeze\n", encoding="utf-8")
             print("Added one comment line to the frozen derivation. Checking the record:")
-            code = verify(bundle, say=print)
+            code = verify(bundle, say=print, warn=False)
             print()
-            print("That refusal is the demo: the record cannot change without the hash showing it.")
+            print("That refusal is the demo: a changed file no longer matches its hash. Anyone can rehash a")
+            print("folder, so compare the freeze hash with one published before the comparison (verify --expect).")
             return 0 if code == 2 else 1
         print("Replaying a recorded blind run: no model, no key. The hashes, the derivation and the authors' code run for real.")
-        code = verify(bundle, say=print)
+        code = verify(bundle, say=print, warn=False, expect=DEMO_HASHES.get(args.case, ""))
     print()
     print("Next: blindrepro demo lawson --tamper   |   blindrepro doctor   |   blindrepro run <paper> --target \"...\" --code <repo>")
     return code
@@ -86,7 +91,7 @@ def _run(args) -> int:
 def _verify(args) -> int:
     from .verify import verify
 
-    return verify(Path(args.folder), skip_authors=args.skip_authors)
+    return verify(Path(args.folder), skip_authors=args.skip_authors, expect=args.expect or "")
 
 
 def _doctor(_args) -> int:
@@ -134,6 +139,7 @@ def main(argv: list[str] | None = None) -> int:
     check = commands.add_parser("verify", help="check a finished run again with no model")
     check.add_argument("folder")
     check.add_argument("--skip-authors", action="store_true", help="use the recorded authors' values instead of rerunning their code")
+    check.add_argument("--expect", help="the freeze hash published before the comparison; refuse the record if it differs")
     check.set_defaults(func=_verify)
 
     doctor = commands.add_parser("doctor", help="say what is missing")

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import re
 from pathlib import Path
 
 WITHHELD_TOOLS = {"Read", "Grep", "read_file", "mcp__blindrepro__read"}
@@ -25,10 +27,12 @@ def canonical(data: dict) -> bytes:
 
 
 def _swap_paths(text: str, swaps: list[tuple[str, str]]) -> str:
+    # Windows paths ignore case, and the guard reports them lower-cased.
+    flags = re.IGNORECASE if os.name == "nt" else 0
     for old, new in swaps:
         if old:
             for form in (old, old.replace("\\", "/"), old.replace("\\", "\\\\")):
-                text = text.replace(form, new)
+                text = re.sub(re.escape(form), lambda _match: new, text, flags=flags)
     return text
 
 
@@ -93,40 +97,64 @@ def tool_calls(events: list[dict]) -> list[dict]:
     return calls
 
 
+SEAL_FILE = "seal.json"
+UNSEALED = ("private",)
+
+
+def _tree(folder: Path, record_name: str, skip: tuple[str, ...] = ()) -> dict[str, str]:
+    """Hash of every file under the folder except the record itself and skipped top folders."""
+    files = {}
+    for path in sorted(folder.rglob("*")):
+        relative = path.relative_to(folder).as_posix()
+        if not path.is_file() or relative == record_name or relative.split("/", 1)[0] in skip:
+            continue
+        files[relative] = sha256_file(path)
+    return files
+
+
+def _write_record(folder: Path, name: str, key: str, files: dict, meta: dict) -> dict:
+    record = {"files": files, **meta}
+    record[key] = sha256_bytes(canonical(record))
+    (folder / name).write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8", newline="\n")
+    return record
+
+
+def _check_record(folder: Path, name: str, key: str, when: str, skip: tuple[str, ...] = ()) -> list[str]:
+    record_path = folder / name
+    if not record_path.exists():
+        return [f"{name} is missing"]
+    record = json.loads(record_path.read_text(encoding="utf-8"))
+    stated = record.pop(key, "")
+    problems = []
+    if sha256_bytes(canonical(record)) != stated:
+        problems.append(f"{name} was edited: its hash no longer matches")
+    on_disk = _tree(folder, name, skip)
+    for name_, digest in record["files"].items():
+        if name_ not in on_disk:
+            problems.append(f"{name_} is missing")
+        elif on_disk[name_] != digest:
+            problems.append(f"{name_} changed after the {when}")
+    for name_ in on_disk:
+        if name_ not in record["files"]:
+            problems.append(f"{name_} was added after the {when}")
+    return problems
+
+
 def freeze(folder: Path, meta: dict) -> dict:
     """Hash every file in the folder, then hash that list with the run's facts. Returns the record."""
-    files = {
-        path.relative_to(folder).as_posix(): sha256_file(path)
-        for path in sorted(folder.rglob("*"))
-        if path.is_file() and path.name != FREEZE_FILE
-    }
-    record = {"files": files, **meta}
-    record["freeze_hash"] = sha256_bytes(canonical(record))
-    (folder / FREEZE_FILE).write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8", newline="\n")
-    return record
+    return _write_record(folder, FREEZE_FILE, "freeze_hash", _tree(folder, FREEZE_FILE), meta)
 
 
 def check_freeze(folder: Path) -> list[str]:
     """Empty list means every byte matches. Otherwise one line per problem."""
-    record_path = folder / FREEZE_FILE
-    if not record_path.exists():
-        return ["freeze.json is missing"]
-    record = json.loads(record_path.read_text(encoding="utf-8"))
-    stated = record.pop("freeze_hash", "")
-    problems = []
-    if sha256_bytes(canonical(record)) != stated:
-        problems.append("freeze.json was edited: its hash no longer matches")
-    on_disk = {
-        path.relative_to(folder).as_posix(): sha256_file(path)
-        for path in sorted(folder.rglob("*"))
-        if path.is_file() and path.name != FREEZE_FILE
-    }
-    for name, digest in record["files"].items():
-        if name not in on_disk:
-            problems.append(f"{name} is missing")
-        elif on_disk[name] != digest:
-            problems.append(f"{name} changed after the freeze")
-    for name in on_disk:
-        if name not in record["files"]:
-            problems.append(f"{name} was added after the freeze")
-    return problems
+    return _check_record(folder, FREEZE_FILE, "freeze_hash", "freeze")
+
+
+def seal(run: Path, freeze_hash: str) -> dict:
+    """Hash the whole finished run (the authors' side and the verdict too), tied to the freeze."""
+    return _write_record(run, SEAL_FILE, "seal_hash", _tree(run, SEAL_FILE, UNSEALED), {"freeze_hash": freeze_hash})
+
+
+def check_seal(run: Path) -> list[str]:
+    return _check_record(run, SEAL_FILE, "seal_hash", "seal", UNSEALED)
+
