@@ -13,8 +13,6 @@ import subprocess
 import sys
 import tempfile
 import time
-import urllib.error
-import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -177,39 +175,36 @@ class ApiJudge:
     """Runs the same steps through the Messages API, with the researcher's own key."""
 
     name = "anthropic-api"
-    URL = "https://api.anthropic.com/v1/messages"
 
-    def __init__(self, model: str = "claude-opus-5-5", url: str | None = None, max_tokens: int = 16000):
-        self.key = os.environ.get("ANTHROPIC_API_KEY", "")
-        if not self.key:
+    def __init__(self, model: str = "claude-opus-5-5", effort: str = "high", url: str | None = None, max_tokens: int = 64000):
+        key = os.environ.get("ANTHROPIC_API_KEY", "")
+        if not key:
             raise JudgeError("Set ANTHROPIC_API_KEY to use --judge api.")
+        try:
+            import anthropic
+        except ImportError as missing:
+            raise JudgeError('--judge api needs the Anthropic SDK. Run with: uvx --from "blindrepro[api]" blindrepro ...') from missing
+        self.sdk = anthropic
+        self.client = anthropic.Anthropic(api_key=key, base_url=url, max_retries=5)
         self.model = model
-        self.url = url or self.URL
+        self.effort = effort
         self.max_tokens = max_tokens
 
-    def _post(self, body: dict) -> dict:
-        request = urllib.request.Request(
-            self.url,
-            data=json.dumps(body).encode("utf-8"),
-            headers={
-                "content-type": "application/json",
-                "x-api-key": self.key,
-                "anthropic-version": "2023-06-01",
-            },
-        )
-        last = ""
-        for wait in (0, 5, 20, 60):
-            time.sleep(wait)
-            try:
-                with urllib.request.urlopen(request, timeout=600) as reply:
-                    return json.loads(reply.read().decode("utf-8"))
-            except urllib.error.HTTPError as error:
-                last = f"{error.code} {error.read().decode('utf-8', 'replace')[:500]}"
-                if error.code not in (429, 500, 502, 503, 529):
-                    break
-            except urllib.error.URLError as error:
-                last = str(error.reason)
-        raise JudgeError(f"The API call failed: {last}")
+    def _reply(self, messages: list[dict], specs: list[dict]) -> "object":
+        body = {
+            "model": self.model,
+            "max_tokens": self.max_tokens,
+            "system": SYSTEM_PROMPT,
+            "messages": messages,
+            "output_config": {"effort": self.effort},
+        }
+        if specs:
+            body["tools"] = specs
+        try:
+            with self.client.messages.stream(**body) as stream:
+                return stream.get_final_message()
+        except self.sdk.APIError as error:
+            raise JudgeError(f"The API call failed: {error}") from error
 
     @staticmethod
     def _tool_list(tools: list[str], run_config: dict | None) -> list[dict]:
@@ -297,27 +292,35 @@ class ApiJudge:
         messages: list[dict] = [{"role": "user", "content": prompt}]
         transcript: list[dict] = [{"type": "system", "subtype": "init", "model": self.model, "tools": [s["name"] for s in specs]}]
         text = ""
+        served_by = self.model
         while time.monotonic() - start < minutes * 60:
-            body = {"model": self.model, "max_tokens": self.max_tokens, "system": SYSTEM_PROMPT, "messages": messages}
-            if specs:
-                body["tools"] = specs
-            reply = self._post(body)
-            transcript.append({"type": "assistant", "message": {"content": reply["content"]}})
-            messages.append({"role": "assistant", "content": reply["content"]})
-            text = "".join(b.get("text", "") for b in reply["content"] if b.get("type") == "text") or text
-            calls = [b for b in reply["content"] if b.get("type") == "tool_use"]
+            reply = self._reply(messages, specs)
+            served_by = reply.model
+            # Thinking blocks go back unchanged, so the whole reply is kept as it came.
+            content = [block.to_dict() for block in reply.content]
+            transcript.append({"type": "assistant", "message": {"content": content}, "stop_reason": reply.stop_reason})
+            if reply.stop_reason == "refusal":
+                category = getattr(reply.stop_details, "category", None)
+                raise JudgeError(f"The model declined this step (category: {category}). No tools from that reply were run.")
+            if reply.stop_reason == "max_tokens":
+                raise JudgeError(f"A reply hit the limit of {self.max_tokens} tokens. No tools from that reply were run.")
+            messages.append({"role": "assistant", "content": content})
+            text = "".join(b.get("text", "") for b in content if b.get("type") == "text") or text
+            if reply.stop_reason == "pause_turn":
+                continue
+            calls = [b for b in content if b.get("type") == "tool_use"]
             if not calls:
-                break
+                return Session(text, served_by, f"anthropic-sdk {self.sdk.__version__}", time.monotonic() - start, transcript, [s["name"] for s in specs])
             results = []
             for call in calls:
                 try:
-                    content, is_error = self._call(call["name"], call["input"], workspace, run_config), False
-                except (OSError, PermissionError, KeyError, ValueError) as error:
-                    content, is_error = str(error), True
-                results.append({"type": "tool_result", "tool_use_id": call["id"], "content": content, "is_error": is_error})
+                    result, is_error = self._call(call["name"], call["input"], workspace, run_config), False
+                except (OSError, PermissionError, KeyError, ValueError, TypeError) as error:
+                    result, is_error = str(error), True
+                results.append({"type": "tool_result", "tool_use_id": call["id"], "content": result, "is_error": is_error})
             transcript.append({"type": "user", "message": {"content": results}})
             messages.append({"role": "user", "content": results})
-        return Session(text, self.model, "messages-api 2023-06-01", time.monotonic() - start, transcript, [s["name"] for s in specs])
+        raise JudgeError(f"Stopped after {minutes} minutes with the task unfinished.")
 
 
 class RecordedJudge:
@@ -367,5 +370,5 @@ def make_judge(name: str, model: str | None, effort: str = "high"):
     if name in ("claude", "claude-cli"):
         return ClaudeCli(model=model or "opus", effort=effort)
     if name == "api":
-        return ApiJudge(model=model or "claude-opus-5-5")
+        return ApiJudge(model=model or "claude-opus-5-5", effort=effort)
     raise JudgeError(f"Unknown judge {name}. Use claude or api.")

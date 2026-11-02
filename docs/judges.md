@@ -22,7 +22,11 @@ and with `CLAUDE_CODE_DISABLE_CLAUDE_MDS=1` and `CLAUDE_CODE_DISABLE_AUTO_MEMORY
 
 ## The `api` judge
 
-It reads `ANTHROPIC_API_KEY` and runs the same steps through the Messages API. It offers three file tools and `run`, all confined to the work folder. Every request and reply is in the transcript. Default model: `claude-opus-5-5`. As of 0.1.0 this judge is tested against a local fake server and has not been run against the real API.
+It reads `ANTHROPIC_API_KEY` and runs the same steps through the Messages API with the official SDK. The SDK is an optional extra, so the base install stays free of dependencies: `uvx --from "blindrepro[api]" blindrepro run ... --judge api`. It offers three file tools and `run`, all confined to the work folder. Every reply is in the transcript. Default model: `claude-opus-5-5`.
+
+If the model declines a step, or a reply is cut off at the token limit, the run stops with an error and no tool from that reply runs. Anthropic's automatic switch to another model after a refusal stays off on purpose, because a verdict has to name the one model that did the work.
+
+As of 0.1.0 this judge is tested against a local fake server that speaks the real event format. It has not been run against the real API.
 
 ## What Anthropic's terms say
 
