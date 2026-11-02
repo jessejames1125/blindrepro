@@ -151,7 +151,7 @@ def verify(bundle: Path, skip_authors: bool = False, say=print, expect: str = ""
     if skip_authors:
         code_record = read_json(bundle / "authors" / "code_record.json")
         authors = code_record.get("values")
-        say("Authors' code not rerun. Using recorded values.")
+        say("Authors' code not rerun: using the values in the sealed record.")
     else:
         authors, seconds, error = rerun_authors(bundle, record)
         if authors is None:

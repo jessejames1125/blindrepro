@@ -7,6 +7,7 @@ from conftest import GOOD_ADAPTER, GOOD_DERIVE, PAPER, make_authors_repo, write_
 from blindrepro import cli, doctor
 from blindrepro.pipeline import Case, run_case
 from blindrepro.judges import RecordedJudge
+from blindrepro.record import check_freeze, check_seal
 
 
 def test_version(capsys):
@@ -68,14 +69,48 @@ def bundled_case(tmp_path):
     return bundle
 
 
-def test_demo_replays_and_compares_for_real(tmp_path, capsys, monkeypatch):
+def use_demo(monkeypatch, bundle):
+    monkeypatch.setattr(cli, "_bundled", lambda name: bundle)
+    frozen = json.loads((bundle / "frozen" / "freeze.json").read_text(encoding="utf-8"))
+    monkeypatch.setitem(cli.DEMO_HASHES, "lawson", frozen["freeze_hash"])
+
+
+def test_the_shipped_demo_matches_its_published_hash_and_seal():
+    bundle = cli._bundled("lawson")
+    assert bundle is not None
+    frozen = json.loads((bundle / "frozen" / "freeze.json").read_text(encoding="utf-8"))
+    assert frozen["freeze_hash"] == cli.DEMO_HASHES["lawson"]
+    assert check_freeze(bundle / "frozen") == []
+    assert check_seal(bundle) == []
+    assert (bundle / "authors" / "vendor" / "LICENSE").exists()
+
+
+def test_a_demo_whose_hash_differs_from_the_published_one_is_refused(tmp_path, capsys, monkeypatch):
     bundle = bundled_case(tmp_path)
     monkeypatch.setattr(cli, "_bundled", lambda name: bundle)
+    monkeypatch.setitem(cli.DEMO_HASHES, "lawson", "0" * 64)
+    assert cli.main(["demo", "lawson"]) == 2
+
+
+def test_demo_replays_and_compares_for_real(tmp_path, capsys, monkeypatch):
+    bundle = bundled_case(tmp_path)
+    use_demo(monkeypatch, bundle)
     assert cli.main(["demo", "lawson"]) == 0
     printed = capsys.readouterr().out
     assert "Hashes match" in printed
     assert "REPRODUCED" in printed
+    assert "Derivation rerun" in printed
+    assert "sealed record" in printed
+    assert "--full" in printed
+
+
+def test_demo_full_reruns_the_authors_code(tmp_path, capsys, monkeypatch):
+    bundle = bundled_case(tmp_path)
+    use_demo(monkeypatch, bundle)
+    assert cli.main(["demo", "lawson", "--full"]) == 0
+    printed = capsys.readouterr().out
     assert "Authors' code rerun" in printed
+    assert "REPRODUCED" in printed
 
 
 def test_demo_tamper_shows_the_refusal(tmp_path, capsys, monkeypatch):

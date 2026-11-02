@@ -15,7 +15,9 @@ from .judges import JudgeError, make_judge
 
 
 # The freeze hash of each bundled demo, so a demo folder changed and rehashed is refused too.
-DEMO_HASHES: dict[str, str] = {}
+DEMO_HASHES: dict[str, str] = {
+    "lawson": "0da2b99365c949607bc6b88b1c8e692268f27f2e683bca2556da58b720f996d2",
+}
 
 
 def _bundled(name: str) -> Path | None:
@@ -42,9 +44,14 @@ def _demo(args) -> int:
             print("That refusal is the demo: a changed file no longer matches its hash. Anyone can rehash a")
             print("folder, so compare the freeze hash with one published before the comparison (verify --expect).")
             return 0 if code == 2 else 1
-        print("Replaying a recorded blind run: no model, no key. The hashes, the derivation and the authors' code run for real.")
-        code = verify(bundle, say=print, warn=False, expect=DEMO_HASHES.get(args.case, ""))
+        if args.full:
+            print("Replaying a recorded blind run: no model, no key. The hashes, the derivation and the authors' code run for real.")
+        else:
+            print("Replaying a recorded blind run: no model, no key. The hashes, the derivation and the comparison run for real.")
+        code = verify(bundle, skip_authors=not args.full, say=print, warn=False, expect=DEMO_HASHES.get(args.case, ""))
     print()
+    if not args.full:
+        print("Add --full to rerun the authors' code too (the Lawson case takes about 5 minutes).")
     print("Next: blindrepro demo lawson --tamper   |   blindrepro doctor   |   blindrepro run <paper> --target \"...\" --code <repo>")
     return code
 
@@ -107,7 +114,7 @@ def main(argv: list[str] | None = None) -> int:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(
         prog="blindrepro",
-        description="Test whether a published result can be reproduced from the paper alone, then compare it to the authors' code.",
+        description="An agent re-derives a published result from the paper alone, then code compares it with the authors' own code.",
     )
     parser.add_argument("--version", action="version", version=f"blindrepro {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -115,6 +122,7 @@ def main(argv: list[str] | None = None) -> int:
     demo = commands.add_parser("demo", help="replay a recorded blind run; needs no account or key")
     demo.add_argument("case", nargs="?", default="lawson")
     demo.add_argument("--tamper", action="store_true", help="change the frozen record and watch the check refuse it")
+    demo.add_argument("--full", action="store_true", help="also rerun the authors' code instead of using its sealed values")
     demo.set_defaults(func=_demo)
 
     run = commands.add_parser("run", help="run a new blind reproduction")

@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "blindrepro"
 version = "0.1.0"
-description = "Tests whether a published result reproduces from the paper alone: an agent derives it, then code compares the authors' code."
+description = "An agent re-derives a published result from the paper alone, then code compares it with the authors' own code."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
