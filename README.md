@@ -2,7 +2,7 @@
 
 An agent re-derives a published result from the paper alone, then code compares it with the authors' own code.
 
-![blindrepro demo lawson: the frozen record checks out, both sides rerun, and the error is computed](docs/demo.png)
+![blindrepro demo lawson: the hashes match, the frozen derivation reruns, the error is recomputed, and a tampered copy is refused](docs/demo.png)
 
 A referee asks: does this number follow from what the paper says? blindrepro gives an AI agent the paper with the target values blanked out and no way to reach the authors' code. The agent writes a script. Its files are hashed and frozen. Only then does the tool fetch the authors' code, run it, and compute the error with plain Python. The verdict is a short note you can paste into a referee report.
 
