@@ -77,7 +77,14 @@ def write_json(path: Path, data) -> None:
 
 
 def swaps_for(workspace: Path) -> list[tuple[str, str]]:
-    return [(str(workspace), "<work>"), (str(workspace.resolve()), "<work>"), (str(Path.home()), "<home>")]
+    home = Path.home()
+    return [
+        (str(workspace), "<work>"),
+        (str(workspace.resolve()), "<work>"),
+        (str(home), "<home>"),
+        # A script can spell the path without its drive, which still names the account.
+        (str(Path(home.parent.name) / home.name), "<home>"),
+    ]
 
 
 def save_session(session: Session, workspace: Path, path: Path, prompt: str) -> dict:

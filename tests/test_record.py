@@ -90,3 +90,10 @@ def test_shareable_transcript_keeps_what_the_agent_wrote():
 
 def test_tool_calls_lists_every_call():
     assert [c["tool"] for c in tool_calls(EVENTS)] == ["Read", "Write"]
+
+
+def test_paths_are_swapped_in_every_spelling():
+    swaps = [("C:\\Users\\someone", "<home>"), ("Users\\someone", "<home>")]
+    events = [{"type": "assistant", "message": {"content": "C:\\Users\\someone\\a C:/Users/someone/b C:\\\\Users\\\\someone\\\\c /c/Users/someone/d"}}]
+    text = shareable_transcript(events, swaps)[0]["message"]["content"]
+    assert "someone" not in text

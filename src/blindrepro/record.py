@@ -27,7 +27,8 @@ def canonical(data: dict) -> bytes:
 def _swap_paths(text: str, swaps: list[tuple[str, str]]) -> str:
     for old, new in swaps:
         if old:
-            text = text.replace(old, new).replace(old.replace("\\", "/"), new)
+            for form in (old, old.replace("\\", "/"), old.replace("\\", "\\\\")):
+                text = text.replace(form, new)
     return text
 
 
