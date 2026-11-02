@@ -1,0 +1,156 @@
+{
+  "tool": "blindrepro",
+  "paper": {
+    "ref": "arXiv:2105.10954",
+    "url": "https://arxiv.org/abs/2105.10954",
+    "title": "Progress toward fusion energy breakeven and gain as measured against the Lawson criterion",
+    "first_public": "2021-05-23",
+    "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "source_kind": "arxiv-latex",
+    "sha256": "a853cf1c811f95022257786f6d13b69bedb9c1c58cdc0ce31dbd2e1d2aa62fb7"
+  },
+  "target": "Table 3, the deuterium-tritium row only for magnetic confinement: the minimum triple product and the temperature where it occurs, at Q_fuel = 1 and Q_fuel = infinity, for the uniform-profile case",
+  "claim": "For an idealized, steady-state (tau >> tau_E), spatially uniform, impurity-free equimolar D-T magnetic-confinement plasma with T = T_i = T_e and n = n_i = n_e, the triple product needed for a given fuel gain is n T tau_E = 3T^2 / [ (f_c + 1/Q_fuel) <sigma v>(T) eps_F / 4 - C_B T^{1/2} ] (Eq. triple_product_steady_state). The test is the minimum over T of this required triple product, and the temperature where the minimum occurs, for Q_fuel = 1 (fuel breakeven) and Q_fuel = infinity (ignition).",
+  "quantities": [
+    {
+      "key": "dt_min_triple_product_qfuel_1",
+      "description": "Minimum over T (T in keV, T = T_i = T_e) of n T tau_E = 3 T^2 / [ (f_c + 1/Q_fuel) <sigma v>_DT(T) eps_F / 4 - C_B T^{1/2} ] with Q_fuel = 1. Take the minimum only where the denominator is positive. Here n is the total ion density (n = n_i = n_e, equimolar D-T, Z = 1, uniform profiles, no impurities). Inputs: eps_F = 17.6 MeV (3.5 MeV alpha + 14.1 MeV neutron), f_c = 3.5/17.6 (alpha fraction), 1 MeV = 1.6e-13 J, C_B = 5.34e-37 W m^3 keV^-1/2. <sigma v>_DT is the thermal Maxwellian D-T reactivity from Bosch & Hale (1992); the paper numerically integrates the Bosch-Hale cross section, and the Bosch-Hale reactivity parametrization is an acceptable equivalent. Report the full-precision minimum value.",
+      "units": "m^-3 keV s"
+    },
+    {
+      "key": "dt_temperature_at_min_triple_product_qfuel_1",
+      "description": "The temperature T (= T_i = T_e) at which the Q_fuel = 1 triple product n T tau_E in dt_min_triple_product_qfuel_1 reaches its minimum, with the same equation, assumptions and inputs. Report at full precision.",
+      "units": "keV"
+    },
+    {
+      "key": "dt_min_triple_product_qfuel_inf",
+      "description": "Minimum over T (T in keV, T = T_i = T_e) of n T tau_E = 3 T^2 / [ f_c <sigma v>_DT(T) eps_F / 4 - C_B T^{1/2} ], i.e. the same expression with Q_fuel -> infinity (ignition, 1/Q_fuel = 0). Take the minimum only where the denominator is positive. Assumptions and inputs are the same as for dt_min_triple_product_qfuel_1: total ion density n = n_i = n_e, equimolar D-T, uniform profiles, eps_F = 17.6 MeV, f_c = 3.5/17.6, 1 MeV = 1.6e-13 J, C_B = 5.34e-37 W m^3 keV^-1/2, Bosch-Hale D-T reactivity. Report the full-precision minimum value.",
+      "units": "m^-3 keV s"
+    },
+    {
+      "key": "dt_temperature_at_min_triple_product_qfuel_inf",
+      "description": "The temperature T (= T_i = T_e) at which the Q_fuel = infinity (ignition) triple product n T tau_E in dt_min_triple_product_qfuel_inf reaches its minimum, with the same equation, assumptions and inputs. Report at full precision.",
+      "units": "keV"
+    }
+  ],
+  "code": {
+    "url": "https://github.com/swurzel/lawson-criterion-paper",
+    "commit": "4ae563bfc409db5fb4afb2f9930a3a4fafba4f0d",
+    "fetched_at": "2026-11-02T10:10:54Z",
+    "modified": false,
+    "could_not_run": "",
+    "fetch_error": null
+  },
+  "comparison": {
+    "status": "REPRODUCED",
+    "tolerance": 0.05,
+    "max_error": 0.006083094844246734,
+    "reason": "",
+    "rows": [
+      {
+        "key": "dt_min_triple_product_qfuel_1",
+        "derived": 4.6491236202129346e+20,
+        "authors": 4.648207793350803e+20,
+        "paper": 4.6e+20,
+        "error": 0.00019702795202956527,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "dt_temperature_at_min_triple_product_qfuel_1",
+        "derived": 13.689464651033298,
+        "authors": 13.606693841876535,
+        "paper": 14.0,
+        "error": 0.006083094844246734,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "dt_min_triple_product_qfuel_inf",
+        "derived": 2.9494628793337947e+21,
+        "authors": 2.9450416590278843e+21,
+        "paper": 2.9e+21,
+        "error": 0.0015012420256797817,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "dt_temperature_at_min_triple_product_qfuel_inf",
+        "derived": 14.275287015637346,
+        "authors": 14.250152192590539,
+        "paper": 14.0,
+        "error": 0.0017638283933469959,
+        "within": true,
+        "note": ""
+      }
+    ]
+  },
+  "explanation": "",
+  "blinding": {
+    "freeze_hash": "0da2b99365c949607bc6b88b1c8e692268f27f2e683bca2556da58b720f996d2",
+    "frozen_at": "2026-11-02T10:10:47Z",
+    "code_fetched_at": "2026-11-02T10:10:54Z",
+    "tools_offered": [
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read",
+      "Write",
+      "mcp__blindrepro__run"
+    ],
+    "refused_calls": 0,
+    "guard_blocked": 0,
+    "redaction": {
+      "strings_removed": 2,
+      "strings_not_found": [],
+      "code_links_removed": 0
+    },
+    "values_shown": false,
+    "leaks": [
+      {
+        "key": "dt_temperature_at_min_triple_product_qfuel_1 (paper)",
+        "value": 14.0,
+        "printed": "14.0",
+        "context": "\\num{28.0} & \\num{14.0} & \\num{3.3e+19"
+      },
+      {
+        "key": "dt_temperature_at_min_triple_product_qfuel_inf (paper)",
+        "value": 14.0,
+        "printed": "14.0",
+        "context": "\\num{28.0} & \\num{14.0} & \\num{3.3e+19"
+      }
+    ],
+    "literals": [],
+    "forbidden_imports": [],
+    "tampering": [],
+    "values_searched": 8,
+    "recall": {
+      "stated": 0,
+      "total": 4,
+      "matched": 0,
+      "values": {}
+    },
+    "cutoff": {
+      "cutoff": "2026-06",
+      "after_cutoff": false,
+      "statement": "2026-06 per the vendor. Paper first posted 2021-05-23, before that, so it may be in training data."
+    }
+  },
+  "run": {
+    "model": "claude-opus-5-5",
+    "judge": "claude-cli",
+    "judge_version": "2.1.316",
+    "tool_version": "0.1.0",
+    "date": "2026-11-02",
+    "python": "3.12.13",
+    "packages": [
+      "mpmath==1.3.0",
+      "numpy==2.5.4",
+      "scipy==1.18.1",
+      "sympy==1.14.0"
+    ],
+    "agent_seconds": 190.9
+  },
+  "blind_notes": "# Assumptions and constants from memory\n\n- Bosch & Hale (1992) D-T cross-section S-factor coefficients (B_G=34.3827 keV^1/2, A1..A5=6.927e4, 7.454e8, 2.050e6, 5.2002e4, 0; B1..B4=63.8, -0.995, 6.981e-5, 1.728e-4; sigma in mb, E = CM energy in keV) are from memory of Bosch & Hale, Nucl. Fusion 32, 611 (1992), Table IV (fit range 0.5-550 keV).\n- Reduced-mass energy mu c^2 = 1124656 keV for D-T is from memory (Bosch & Hale 1992, Table VII); speed of light 2.99792458e8 m/s is the SI exact value.\n- The paper says reactivities come from numerically integrating the Bosch-Hale cross section, so the reported values use Maxwellian integration: <sigma v> = c*sqrt(8/(pi mu c^2)) T^-3/2 * integral sigma(E) E exp(-E/T) dE.\n- Above 550 keV the low-energy fit is simply extended; at T of about 14 keV this tail is negligible (exp(-550/14) ~ 1e-17 relative).\n- For a cross-check, the script also computes the Bosch-Hale reactivity parametrization (C1..C7 = 1.17302e-9, 1.51361e-2, 7.51886e-2, 4.60643e-3, 1.35e-2, -1.0675e-4, 1.366e-5; Table VII, from memory). It gives minima about 0.6% higher and T_min about 0.03 keV lower. This difference is within the stated fit accuracy of the S-factor fit. These values are printed but are not the reported values.\n- Units: in 3T^2, one factor of T is converted keV->J using 1 keV = 1.6e-16 J (from the paper's 1 MeV = 1.6e-13 J) so that 3nT is an energy density. The other T stays in keV, so the result is in m^-3 keV s.\n- The minimum over T is found with a grid from 1 to 100 keV (0.01 keV step), then refined with Brent's method. Only points with a positive denominator are used.\n",
+  "adapter_notes": "# Notes\n\n- Source of the result: the Table 3 (`tab:minimum_triple_product_table`) cells in `code/lawson-criterion-paper.py` (\"Calculate requirements for D-T, Catalyzed D-D, D-3He, and p-11B\" plus the \"Numerically find minimum ...\" cell). adapter.py pulls the text of those two cells out of the file and runs it with exec, unchanged. Only the D-T rows are reported.\n- I did not run the whole notebook: it needs LaTeX (`text.usetex`) and builds every figure. The cells I ran only need math, numpy, pandas and `lib.fusionlib`.\n- No files under code/ were edited.\n- Settings are the authors' as written in the cell: `relativistic_mode='putvinski'`, `density='ion'`, `method='integrated'` (the `optimal_mix_triple_product` default, which numerically integrates the Bosch-Hale cross section), xi=1, a grid of 300 log-spaced points from 0.5 to 500 keV, D-T kept only for 1 < T < 100 keV, minimum taken with idxmin.\n- The minimum temperatures are points on the authors' 300-point grid (13.6067 and 14.2502 keV). They are not continuous optima, and I did not refine them.\n- Difference from spec (f_c): spec says f_c = 3.5/17.6 = 0.19886. The code uses `fraction_charged = 0.2` from `lib/reactions.ini`. I used the code's value.\n- Difference from spec (bremsstrahlung): spec says the loss term is C_B T^1/2 with no relativistic correction. The Table 3 cell uses the Putvinski relativistic correction (Zeff*(1+1.78 t^1.34) + 2.12 t (...), t = T/511). I used the code's version. As a check only, the same code with `'nonrelativistic'` gives 4.644767e20 (Q=1) and 2.931542e21 (Q=inf) at the same grid temperatures. The reported values are 4.648208e20 and 2.945042e21.\n- Difference from spec (units): spec says 1 MeV = 1.6e-13 J and C_B = 5.34e-37 W m^3 keV^-1/2. The code works in keV: C_B = 1.69e-38 * 6.24e18 / sqrt(1000) keV s^-1 m^3 keV^-1/2 (6.24e18 eV/J, i.e. 1 eV = 1.6026e-19 J), and eps_F = 17.6e3 keV. I used the code's values.\n- Requirements are pinned to the versions in the authors' uv.lock: numpy 2.2.6, scipy 1.16.1, pandas 2.2.2.\n- One run takes about 260 s, because the cell computes every reaction with integrated reactivities.\n"
+}

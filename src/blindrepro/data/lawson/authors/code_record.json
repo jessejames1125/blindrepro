@@ -1,0 +1,15 @@
+{
+  "url": "https://github.com/swurzel/lawson-criterion-paper",
+  "commit": "4ae563bfc409db5fb4afb2f9930a3a4fafba4f0d",
+  "fetched_at": "2026-11-02T10:10:54Z",
+  "values": {
+    "dt_min_triple_product_qfuel_1": 4.648207793350803e+20,
+    "dt_temperature_at_min_triple_product_qfuel_1": 13.606693841876535,
+    "dt_min_triple_product_qfuel_inf": 2.9450416590278843e+21,
+    "dt_temperature_at_min_triple_product_qfuel_inf": 14.250152192590539
+  },
+  "modified": false,
+  "could_not_run": "",
+  "model": "claude-opus-5-5",
+  "agent_seconds": 377.8
+}

@@ -1,0 +1,25 @@
+{
+  "claim": "For an idealized, steady-state (tau >> tau_E), spatially uniform, impurity-free equimolar D-T magnetic-confinement plasma with T = T_i = T_e and n = n_i = n_e, the triple product needed for a given fuel gain is n T tau_E = 3T^2 / [ (f_c + 1/Q_fuel) <sigma v>(T) eps_F / 4 - C_B T^{1/2} ] (Eq. triple_product_steady_state). The test is the minimum over T of this required triple product, and the temperature where the minimum occurs, for Q_fuel = 1 (fuel breakeven) and Q_fuel = infinity (ignition).",
+  "quantities": [
+    {
+      "key": "dt_min_triple_product_qfuel_1",
+      "description": "Minimum over T (T in keV, T = T_i = T_e) of n T tau_E = 3 T^2 / [ (f_c + 1/Q_fuel) <sigma v>_DT(T) eps_F / 4 - C_B T^{1/2} ] with Q_fuel = 1. Take the minimum only where the denominator is positive. Here n is the total ion density (n = n_i = n_e, equimolar D-T, Z = 1, uniform profiles, no impurities). Inputs: eps_F = 17.6 MeV (3.5 MeV alpha + 14.1 MeV neutron), f_c = 3.5/17.6 (alpha fraction), 1 MeV = 1.6e-13 J, C_B = 5.34e-37 W m^3 keV^-1/2. <sigma v>_DT is the thermal Maxwellian D-T reactivity from Bosch & Hale (1992); the paper numerically integrates the Bosch-Hale cross section, and the Bosch-Hale reactivity parametrization is an acceptable equivalent. Report the full-precision minimum value.",
+      "units": "m^-3 keV s"
+    },
+    {
+      "key": "dt_temperature_at_min_triple_product_qfuel_1",
+      "description": "The temperature T (= T_i = T_e) at which the Q_fuel = 1 triple product n T tau_E in dt_min_triple_product_qfuel_1 reaches its minimum, with the same equation, assumptions and inputs. Report at full precision.",
+      "units": "keV"
+    },
+    {
+      "key": "dt_min_triple_product_qfuel_inf",
+      "description": "Minimum over T (T in keV, T = T_i = T_e) of n T tau_E = 3 T^2 / [ f_c <sigma v>_DT(T) eps_F / 4 - C_B T^{1/2} ], i.e. the same expression with Q_fuel -> infinity (ignition, 1/Q_fuel = 0). Take the minimum only where the denominator is positive. Assumptions and inputs are the same as for dt_min_triple_product_qfuel_1: total ion density n = n_i = n_e, equimolar D-T, uniform profiles, eps_F = 17.6 MeV, f_c = 3.5/17.6, 1 MeV = 1.6e-13 J, C_B = 5.34e-37 W m^3 keV^-1/2, Bosch-Hale D-T reactivity. Report the full-precision minimum value.",
+      "units": "m^-3 keV s"
+    },
+    {
+      "key": "dt_temperature_at_min_triple_product_qfuel_inf",
+      "description": "The temperature T (= T_i = T_e) at which the Q_fuel = infinity (ignition) triple product n T tau_E in dt_min_triple_product_qfuel_inf reaches its minimum, with the same equation, assumptions and inputs. Report at full precision.",
+      "units": "keV"
+    }
+  ]
+}

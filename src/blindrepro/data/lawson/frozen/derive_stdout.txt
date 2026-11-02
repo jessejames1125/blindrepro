@@ -1,0 +1,5 @@
+Q=1: integrated min=4.6491236202e+20 at T=13.68946465 keV; parametrized min=4.6768710504e+20 at T=13.66092491 keV
+Q=inf: integrated min=2.9494628793e+21 at T=14.27528702 keV; parametrized min=2.9684577608e+21 at T=14.24859847 keV
+sv check T=10.0: int=1.141806e-22 param=1.136165e-22 m^3/s
+sv check T=20.0: int=4.362605e-22 param=4.330202e-22 m^3/s
+{"dt_min_triple_product_qfuel_1": 4.6491236202129346e+20, "dt_temperature_at_min_triple_product_qfuel_1": 13.689464651033298, "dt_min_triple_product_qfuel_inf": 2.9494628793337947e+21, "dt_temperature_at_min_triple_product_qfuel_inf": 14.275287015637346}

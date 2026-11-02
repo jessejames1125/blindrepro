@@ -1,0 +1,44 @@
+{
+  "status": "REPRODUCED",
+  "tolerance": 0.05,
+  "max_error": 0.006083094844246734,
+  "reason": "",
+  "rows": [
+    {
+      "key": "dt_min_triple_product_qfuel_1",
+      "derived": 4.6491236202129346e+20,
+      "authors": 4.648207793350803e+20,
+      "paper": 4.6e+20,
+      "error": 0.00019702795202956527,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "dt_temperature_at_min_triple_product_qfuel_1",
+      "derived": 13.689464651033298,
+      "authors": 13.606693841876535,
+      "paper": 14.0,
+      "error": 0.006083094844246734,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "dt_min_triple_product_qfuel_inf",
+      "derived": 2.9494628793337947e+21,
+      "authors": 2.9450416590278843e+21,
+      "paper": 2.9e+21,
+      "error": 0.0015012420256797817,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "dt_temperature_at_min_triple_product_qfuel_inf",
+      "derived": 14.275287015637346,
+      "authors": 14.250152192590539,
+      "paper": 14.0,
+      "error": 0.0017638283933469959,
+      "within": true,
+      "note": ""
+    }
+  ]
+}
