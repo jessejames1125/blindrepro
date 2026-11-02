@@ -28,29 +28,6 @@ If the model declines a step, or a reply is cut off at the token limit, the run 
 
 As of 0.1.0 this judge is tested against a local fake server that speaks the real event format. It has not been run against the real API.
 
-## What Anthropic's terms say
+## Your login
 
-Read on 2026-11-02. This is a reading of public pages, not legal advice. Check the pages yourself.
-
-**[Claude Code legal and compliance](https://code.claude.com/docs/en/legal-and-compliance):**
-
-> Anthropic does not permit third-party developers to offer Claude.ai login into their own applications, or to route requests through Free, Pro, Max, or Ultra plan credentials on behalf of their users. Moreover, developers may not collect, store, or intermediate Claude.ai credentials or session tokens
-
-> Nor does it prevent an end user from signing in to the unmodified Claude Code binary with their own Claude subscription
-
-> Advertised usage limits for Pro, Max, and Ultra plans assume ordinary, individual usage of Claude Code and the Agent SDK.
-
-**[Consumer Terms](https://www.anthropic.com/legal/consumer-terms), section 3, lists among things you may not do:**
-
-> Except when you are accessing our Services via an Anthropic API Key or where we otherwise explicitly permit it, to access the Services through automated or non-human means, whether through a bot, script, or otherwise.
-
-**[Headless docs](https://code.claude.com/docs/en/headless)** document `claude -p` for non-interactive and scripted use.
-
-**[Commercial Terms](https://www.anthropic.com/legal/commercial-terms)** govern API keys and allow using the services "to power products and services Customer makes available to its own customers and end users".
-
-What this tool does with that:
-
-- It never asks for, reads, stores or forwards a login token. It starts the unmodified binary on your machine, under your own sign-in, for your own research.
-- No page speaks directly to a local open source tool that starts the user's own `claude` command. The documented `claude -p` path looks to us like the explicit permission the Consumer Terms mention, but that is our reading.
-- Running many papers on a subscription may go beyond "ordinary, individual usage". For a lab service, a shared machine, a batch of papers, or anything done for other people, use `--judge api`.
-- Do not use outputs to train a model. The [Usage Policy](https://www.anthropic.com/legal/aup) restricts that.
+blindrepro never asks for, reads, stores or forwards a login token. It starts the unmodified `claude` program on your machine, which uses your own Claude plan. Set `--judge api` to bill an API key instead.
