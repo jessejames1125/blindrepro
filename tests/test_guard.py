@@ -99,3 +99,107 @@ def test_authors_mode_allows_processes_but_not_network(tmp_path):
 def test_blocked_log_is_valid_json(tmp_path):
     result = run(tmp_path, attempt("import socket; socket.gethostbyname('example.com')"))
     assert json.loads(json.dumps(result.blocked))[0]["detail"]
+
+
+def test_blocks_hard_links_to_outside_files(tmp_path):
+    outside = tmp_path / "outside.txt"
+    outside.write_text("secret", encoding="utf-8")
+    result = run(tmp_path, attempt(f"import os; os.link({str(outside)!r}, 'inside.txt'); print(open('inside.txt').read())"))
+    assert "BLOCKED" in result.stdout
+    assert "secret" not in result.stdout
+
+
+def test_blocks_symlinks(tmp_path):
+    outside = tmp_path / "outside.txt"
+    outside.write_text("secret", encoding="utf-8")
+    result = run(tmp_path, attempt(f"import os; os.symlink({str(outside)!r}, 'inside.txt')"))
+    assert "BLOCKED" in result.stdout
+
+
+def test_blocks_moving_outside_files_in(tmp_path):
+    outside = tmp_path / "outside.txt"
+    outside.write_text("secret", encoding="utf-8")
+    result = run(tmp_path, attempt(f"import os; os.rename({str(outside)!r}, 'inside.txt')"))
+    assert "BLOCKED" in result.stdout
+    assert outside.exists()
+
+
+def test_blocks_foreign_calls_through_ctypes(tmp_path):
+    outside = tmp_path / "outside.txt"
+    outside.write_text("secret", encoding="utf-8")
+    if sys.platform == "win32":
+        code = f"import ctypes; print(ctypes.WinDLL('kernel32').CreateFileW({str(outside)!r}, 0x80000000, 1, None, 3, 0, None))"
+    else:
+        code = f"import ctypes; print(ctypes.CDLL(None).open({str(outside).encode()!r}, 0))"
+    result = run(tmp_path, attempt(code))
+    assert "BLOCKED" in result.stdout
+    assert "ALLOWED" not in result.stdout
+
+
+def test_blocks_foreign_calls_through_pythonapi(tmp_path):
+    code = "import ctypes; ctypes.pythonapi.Py_GetVersion()"
+    result = run(tmp_path, attempt(code))
+    assert "BLOCKED" in result.stdout
+
+
+def test_blocks_sqlite_reading_outside_files(tmp_path):
+    outside = tmp_path / "outside.db"
+    result = run(tmp_path, attempt(f"import sqlite3; sqlite3.connect({str(outside)!r})"))
+    assert "BLOCKED" in result.stdout
+
+
+def test_blocks_process_functions_with_no_audit_event(tmp_path):
+    if sys.platform == "win32":
+        code = "import _winapi; _winapi.CreateProcess(None, 'cmd /c echo hi', None, None, False, 0, None, None, None)"
+    else:
+        code = "import _posixsubprocess; _posixsubprocess.fork_exec()"
+    result = run(tmp_path, attempt(code))
+    assert "BLOCKED" in result.stdout
+    assert "ALLOWED" not in result.stdout
+
+
+def test_blocks_native_modules_from_the_work_folder(tmp_path):
+    work = tmp_path / "work"
+    work.mkdir(exist_ok=True)
+    name = "fake.pyd" if sys.platform == "win32" else "fake.so"
+    (work / name).write_bytes(b"not really a module")
+    body = (
+        "import importlib.machinery, importlib.util\n"
+        f"loader = importlib.machinery.ExtensionFileLoader('fake', {name!r})\n"
+        "spec = importlib.util.spec_from_loader('fake', loader)\n"
+        "try:\n    loader.create_module(spec)\nexcept PermissionError as e:\n    print('BLOCKED', e)\nexcept Exception as e:\n    print('REACHED', e)\n"
+    )
+    result = run(tmp_path, body)
+    assert "BLOCKED" in result.stdout
+
+
+def test_authors_mode_is_not_strict(tmp_path):
+    code = "import ctypes; ctypes.pythonapi.Py_GetVersion"
+    result = run(tmp_path, attempt(code), allow_process=True)
+    assert "ALLOWED" in result.stdout
+
+
+def test_real_numeric_packages_work_under_the_strict_guard(tmp_path):
+    """Builds the actual environment, so this needs the network once."""
+    from blindrepro.envs import BLIND_PACKAGES, ensure_env
+
+    work = tmp_path / "work"
+    work.mkdir()
+    script = work / "s.py"
+    script.write_text(
+        "import numpy as np, scipy, scipy.linalg, scipy.integrate, scipy.optimize, scipy.special, scipy.sparse, scipy.stats\n"
+        "import sympy, mpmath\n"
+        "a = np.random.default_rng(1).normal(size=(30, 30))\n"
+        "print(float(np.linalg.norm(scipy.linalg.eigvals(a + a.T)[0])) > 0)\n"
+        "print(round(scipy.integrate.quad(lambda x: x * x, 0, 1)[0], 6))\n"
+        "print(round(scipy.optimize.brentq(lambda x: x * x - 2, 0, 2), 6))\n"
+        "print(scipy.special.gamma(5))\n"
+        "print(sympy.integrate(sympy.Symbol('x') ** 2, (sympy.Symbol('x'), 0, 1)))\n"
+        "print(mpmath.mp.pi)\n",
+        encoding="utf-8",
+    )
+    result = run_guarded(ensure_env(BLIND_PACKAGES), script, work, seconds=180)
+    assert result.ok, result.stderr[-2000:]
+    assert result.blocked == [], result.blocked
+    assert "0.333333" in result.stdout
+    assert "1.414214" in result.stdout

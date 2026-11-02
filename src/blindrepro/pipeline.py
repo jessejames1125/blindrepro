@@ -12,17 +12,16 @@ import re
 import shutil
 import subprocess
 import tempfile
-import time
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
 from . import __version__, prompts
-from .compare import NOT_COMPARED, Comparison, compare, flatten, literal_check, parse_result_line, relative_error
+from .compare import NOT_COMPARED, Comparison, compare, flatten, import_check, literal_check, parse_result_line, relative_error
 from .envs import BLIND_PACKAGES, PYTHON_VERSION, ensure_env, env_for_requirements, installed_packages, python_version
 from .judges import BUILT_IN, Session
 from .paper import Paper, leak_check, load_paper, redact
-from .record import check_freeze, freeze, shareable_transcript, sha256_file, tool_calls, write_jsonl
+from .record import check_freeze, freeze, shareable_transcript, tool_calls, write_jsonl
 from .sandbox import DEFAULT_MEMORY_MB, DEFAULT_SECONDS, run_guarded
 from .verdict import terminal_summary, verdict_markdown
 
@@ -423,6 +422,7 @@ def build_verdict(case: Case, spec: dict, record: dict, code: dict, comparison: 
             "values_shown": case.show_values,
             "leaks": leaks,
             "literals": literals,
+            "forbidden_imports": run_extra["imports"],
             "recall": recall,
             "cutoff": run_extra["cutoff"],
         },
@@ -437,6 +437,31 @@ def build_verdict(case: Case, spec: dict, record: dict, code: dict, comparison: 
             "agent_seconds": record["agent_seconds"],
         },
     }
+
+
+def _imports_seen(frozen: Path) -> list[str]:
+    """Forbidden imports in the final script and in every draft the agent wrote along the way."""
+    sources = []
+    derive_source = frozen / "blind" / "derive.py"
+    if derive_source.exists():
+        sources.append(derive_source.read_text(encoding="utf-8"))
+    transcript = frozen / "transcript.jsonl"
+    if transcript.exists():
+        for line in transcript.read_text(encoding="utf-8").splitlines():
+            event = json.loads(line)
+            content = (event.get("message") or {}).get("content")
+            if isinstance(content, list):
+                for block in content:
+                    if block.get("type") == "tool_use":
+                        sources += [str(block["input"][k]) for k in ("content", "new_string") if k in (block.get("input") or {})]
+    found: set[str] = set()
+    for source in sources:
+        found.update(import_check(source))
+    return sorted(found)
+
+
+def _read_if_there(path: Path) -> str:
+    return path.read_text(encoding="utf-8") if path.exists() else ""
 
 
 def run_case(case: Case, judge) -> dict:
@@ -487,12 +512,17 @@ def run_case(case: Case, judge) -> dict:
     leaks = leak_check(shown, truth)
     derive_source = case.out / "frozen" / "blind" / "derive.py"
     literals = literal_check(derive_source.read_text(encoding="utf-8"), truth) if derive_source.exists() else []
-    extra = {"cutoff": cutoff_statement(paper, record["model"], case.model_cutoff)}
+    extra = {
+        "cutoff": cutoff_statement(paper, record["model"], case.model_cutoff),
+        "imports": _imports_seen(case.out / "frozen"),
+    }
     verdict = build_verdict(
         case, spec, record, code, comparison, explanation,
         recall_summary(recall, code.get("values"), case.tolerance),
         leaks, literals, paper.to_dict(), extra,
     )
+    verdict["blind_notes"] = _read_if_there(case.out / "frozen" / "blind" / "notes.md")
+    verdict["adapter_notes"] = _read_if_there(case.out / "authors" / "notes.md")
     write_json(case.out / "verdict.json", verdict)
     (case.out / "verdict.md").write_text(verdict_markdown(verdict), encoding="utf-8", newline="\n")
     shutil.rmtree(work, ignore_errors=True)
@@ -501,11 +531,3 @@ def run_case(case: Case, judge) -> dict:
 
 def show(verdict: dict) -> None:
     print(terminal_summary(verdict), flush=True)
-
-
-def elapsed(start: float) -> str:
-    return f"{time.monotonic() - start:.0f} s"
-
-
-def sha_of(path: Path) -> str:
-    return sha256_file(path)

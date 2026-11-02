@@ -57,7 +57,8 @@ def blinding_facts(data: dict) -> list[str]:
     facts = []
     blind = data["blinding"]
     facts.append(f"Authors' code: fetched at {blind['code_fetched_at'] or 'never'}, after the derivation froze at {blind['frozen_at']}.")
-    facts.append(f"Agent tools: {', '.join(blind['tools_offered']) or 'none'}. No shell, no web.")
+    tools = [name.replace("mcp__blindrepro__", "") for name in blind["tools_offered"]]
+    facts.append(f"Agent tools: {', '.join(tools) or 'none'}. No shell, no web.")
     facts.append(
         f"Scripts run under a guard with network, other processes and outside files off. "
         f"Blocked attempts: {blind['guard_blocked']}. Refused tool calls: {blind['refused_calls']}."
@@ -81,6 +82,12 @@ def blinding_facts(data: dict) -> list[str]:
         "Typed-in answers: no number in derive.py matches a target value."
         if not literals
         else f"Typed-in answers: {len(literals)} numbers in derive.py match a target value (see verdict.json)."
+    )
+    imports = blind.get("forbidden_imports", [])
+    facts.append(
+        "Scripts: the agent's drafts import no networking, process or low-level module."
+        if not imports
+        else f"Scripts: the agent's drafts import {', '.join(imports)}. Read them in transcript.jsonl."
     )
     recall = blind.get("recall")
     if recall is None:
@@ -133,6 +140,10 @@ def verdict_markdown(data: dict) -> str:
         lines += ["", "## Authors' code did not run", "", code["could_not_run"].strip()]
     if data.get("explanation"):
         lines += ["", "## Where it diverged (a model's reading, not a checked claim)", "", data["explanation"].strip()]
+    if data.get("blind_notes"):
+        lines += ["", "## What the blind agent says it assumed or took from memory", "", data["blind_notes"].strip()]
+    if data.get("adapter_notes"):
+        lines += ["", "## How the authors' code was called", "", data["adapter_notes"].strip()]
     lines += ["", "## What was blinded", ""]
     lines += [f"- {fact}" for fact in blinding_facts(data)]
     lines += ["", "## What was not blinded", ""]

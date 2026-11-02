@@ -50,7 +50,8 @@ Write adapter.py in this folder. Run from this folder, it must obtain each quant
 Write requirements.txt with the pip packages their code needs, one per line, pinned to versions from the code's era if it needs that. The run tool builds that environment and runs adapter.py. Scripts have no network, can only write in this folder, and get {seconds} seconds and {memory_mb} MB per run.
 
 Rules:
-- Call their functions and scripts with the settings the paper uses. Do not reimplement their method and do not change it. Add code/ to sys.path yourself if needed.
+- Find the script, notebook cell or function the authors use to produce this published result, and report what it produces with their settings. Do not reimplement their method and do not change it. Add code/ to sys.path yourself if needed.
+- If their settings differ from a detail in spec.json, use theirs and write the difference in notes.md. That difference is a finding.
 - Do not edit anything under code/. If their code cannot run without an edit, make the smallest one and say why in notes.md. Every edit is recorded and reported.
 - If the repository stores precomputed outputs but the code that made them cannot run, do not read those outputs as if you had run the code. Treat it as a failure to run.
 - If you cannot get their code to run after honest attempts, write could_not_run.md: what you tried, the exact error and what is missing. Failing to run is a useful finding. Do not work around it by writing your own version.

@@ -130,6 +130,34 @@ def parse_result_line(stdout: str) -> dict | None:
         return None
 
 
+FORBIDDEN_IMPORTS = {
+    "ctypes", "_ctypes", "cffi", "_winapi", "_posixsubprocess", "subprocess", "socket", "ssl",
+    "urllib", "http", "requests", "httpx", "ftplib", "sqlite3", "mmap", "multiprocessing",
+    "git", "pip", "site", "winreg", "msvcrt",
+}
+
+
+def import_check(source: str) -> list[str]:
+    """Modules a derivation has no reason to import, so a reader can look closer."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return []
+    found = set()
+    for node in ast.walk(tree):
+        names = []
+        if isinstance(node, ast.Import):
+            names = [alias.name for alias in node.names]
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            names = [node.module]
+        elif isinstance(node, ast.Call) and getattr(node.func, "id", "") == "__import__" and node.args:
+            argument = node.args[0]
+            if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
+                names = [argument.value]
+        found.update(name.split(".")[0] for name in names if name.split(".")[0] in FORBIDDEN_IMPORTS)
+    return sorted(found)
+
+
 def literal_check(source: str, values: dict[str, float | None], rel: float = 0.001) -> list[dict]:
     """Numbers typed into the derivation that match a target value. A flag for a human, not a verdict."""
     try:

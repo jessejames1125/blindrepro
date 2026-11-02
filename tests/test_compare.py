@@ -1,6 +1,6 @@
 import math
 
-from blindrepro.compare import compare, flatten, literal_check, parse_result_line
+from blindrepro.compare import compare, flatten, import_check, literal_check, parse_result_line
 
 
 def test_reproduced_when_all_values_are_within_the_limit():
@@ -92,3 +92,12 @@ def test_literal_check_ignores_small_integers_and_computed_values():
 
 def test_literal_check_survives_a_syntax_error():
     assert literal_check("def (", {"a": 1.0}) == []
+
+
+def test_import_check_finds_low_level_modules():
+    source = "import numpy\nimport ctypes\nfrom urllib.request import urlopen\nx = __import__('socket')\n"
+    assert import_check(source) == ["ctypes", "socket", "urllib"]
+
+
+def test_import_check_is_quiet_for_numeric_code():
+    assert import_check("import numpy as np\nfrom scipy import linalg\nimport json, math\n") == []
