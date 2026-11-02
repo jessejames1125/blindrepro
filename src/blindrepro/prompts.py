@@ -17,7 +17,7 @@ Rules:
 - quantities covers the target and nothing else, at most 30 entries. Each must be a single number or a list of numbers. If the target is an equation, choose evaluation points stated in the paper.
 - paper_values holds each number exactly as the paper prints it. Use null where the paper prints no number.
 - redact lists every string that prints a target value or gives it away: table rows, sentences of results, figure captions quoting the values, the abstract's numbers. Copy each string character for character, keep each as short as possible, and search the whole file, because results repeat. Keep every equation, method, parameter and input needed to do the computation.
-- If the target cannot be computed from the paper on a laptop in about ten minutes with no outside dataset, write the reason in not_computable and leave the rest empty.
+- Standard published formulas, constants or fit coefficients that the paper cites count as available: the next agent may use them from memory and must say so. Write a reason in not_computable, and leave the rest empty, only if the target needs a dataset, measurements or code that cannot be rebuilt from the paper, or more than about ten minutes on a laptop.
 
 Do not compute anything. Finish by writing spec.json and stop."""
 
