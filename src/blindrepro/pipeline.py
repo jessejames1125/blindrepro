@@ -89,6 +89,8 @@ def swaps_for(workspace: Path) -> list[tuple[str, str]]:
         (str(home), "<home>"),
         # A script can spell the path without its drive, which still names the account.
         (str(Path(home.parent.name) / home.name), "<home>"),
+        # Last, so the paths above are swapped whole first. Too short a name would hit ordinary words.
+        *([(home.name, "<user>")] if len(home.name) >= 3 else []),
     ]
 
 

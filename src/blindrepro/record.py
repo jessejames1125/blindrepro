@@ -30,7 +30,10 @@ def _swap_paths(text: str, swaps: list[tuple[str, str]]) -> str:
     # Windows paths ignore case, and the guard reports them lower-cased.
     flags = re.IGNORECASE if os.name == "nt" else 0
     for old, new in swaps:
-        if old:
+        if old and not any(sep in old for sep in ("\\", "/")):
+            # A bare name, such as the account name, is swapped only as a whole word.
+            text = re.sub(rf"(?<![A-Za-z0-9_]){re.escape(old)}(?![A-Za-z0-9_])", lambda _match: new, text, flags=flags)
+        elif old:
             for form in (old, old.replace("\\", "/"), old.replace("\\", "\\\\")):
                 text = re.sub(re.escape(form), lambda _match: new, text, flags=flags)
     return text

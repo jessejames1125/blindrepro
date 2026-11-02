@@ -1,4 +1,5 @@
 import json
+import os
 
 from blindrepro.record import check_freeze, check_seal, freeze, seal, shareable_transcript, tool_calls
 
@@ -97,6 +98,23 @@ def test_paths_are_swapped_in_every_spelling():
     events = [{"type": "assistant", "message": {"content": "C:\\Users\\someone\\a C:/Users/someone/b C:\\\\Users\\\\someone\\\\c /c/Users/someone/d"}}]
     text = shareable_transcript(events, swaps)[0]["message"]["content"]
     assert "someone" not in text
+
+
+def test_the_account_name_is_swapped_as_a_whole_word():
+    # An adapter script once skipped folders with root.endswith("someone"), which no path swap caught.
+    events = [{"type": "assistant", "message": {"content": 'root.endswith("someone") someoneelse Someone'}}]
+    text = shareable_transcript(events, [("someone", "<user>")])[0]["message"]["content"]
+    # Windows account names ignore case, so there the capitalized one goes too.
+    last = "<user>" if os.name == "nt" else "Someone"
+    assert text == f'root.endswith("<user>") someoneelse {last}'
+
+
+def test_the_swaps_name_the_account():
+    from pathlib import Path
+
+    from blindrepro.pipeline import swaps_for
+
+    assert (Path.home().name, "<user>") in swaps_for(Path("work"))
 
 
 def test_a_record_file_added_in_a_subfolder_is_caught(tmp_path):
