@@ -285,23 +285,83 @@ def test_verify_refuses_a_changed_record(tmp_path, case_for):
     (tmp_path / "run" / "frozen" / "blind" / "derive.py").write_text("print(1)\n", encoding="utf-8")
     lines = []
     assert verify(tmp_path / "run", say=lines.append) == 2
-    assert lines[0].startswith("REFUSED")
+    assert lines[0].startswith("Note: verify runs the scripts")
+    assert lines[1].startswith("REFUSED")
 
 
-def test_verify_catches_authors_code_that_changed(tmp_path, case_for):
-    run(tmp_path, case_for)
+def test_verify_refuses_edited_authors_values(tmp_path, case_for):
+    run(tmp_path, case_for, area="2.0")
     record_path = tmp_path / "run" / "authors" / "code_record.json"
-    (tmp_path / "authors_repo" / "circle.py").write_text("AREA = 1.0\n", encoding="utf-8")
-    import subprocess
-
-    subprocess.run(["git", "-C", str(tmp_path / "authors_repo"), "add", "."], check=True)
-    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.com", "-C", str(tmp_path / "authors_repo"), "commit", "-q", "-m", "change"], check=True)
     record = json.loads(record_path.read_text(encoding="utf-8"))
-    record["commit"] = ""
+    record["values"]["area"] = 3.14159265
     record_path.write_text(json.dumps(record), encoding="utf-8")
     lines = []
+    assert verify(tmp_path / "run", say=lines.append, skip_authors=True) == 2
+    assert "authors/code_record.json changed after the seal" in "\n".join(lines)
+
+
+def test_verify_refuses_an_unexpected_freeze_hash(tmp_path, case_for):
+    verdict = run(tmp_path, case_for)
+    lines = []
+    assert verify(tmp_path / "run", say=lines.append, expect="0" * 64) == 2
+    assert verify(tmp_path / "run", say=lines.append, expect=verdict["blinding"]["freeze_hash"]) == 0
+
+
+def test_verify_is_incomplete_when_the_derivation_does_not_rerun(tmp_path, case_for, monkeypatch):
+    run(tmp_path, case_for)
+    from blindrepro import verify as verify_module
+
+    monkeypatch.setattr(verify_module, "rerun_derivation", lambda bundle, record: (None, 0.0))
+    lines = []
     assert verify(tmp_path / "run", say=lines.append) == 1
-    assert any("does not match" in line for line in lines)
+    assert any("this check is incomplete" in line for line in lines)
+
+
+def test_verify_refuses_a_package_line_that_is_not_a_name(tmp_path, case_for):
+    from blindrepro.record import canonical, seal, sha256_bytes
+
+    run(tmp_path, case_for)
+    freeze_path = tmp_path / "run" / "frozen" / "freeze.json"
+    record = json.loads(freeze_path.read_text(encoding="utf-8"))
+    record.pop("freeze_hash")
+    record["packages"] = ["--index-url=https://example.com/simple", "numpy"]
+    record["freeze_hash"] = sha256_bytes(canonical(record))
+    freeze_path.write_text(json.dumps(record), encoding="utf-8")
+    seal(tmp_path / "run", record["freeze_hash"])
+    lines = []
+    assert verify(tmp_path / "run", say=lines.append) == 2
+    assert any("not a plain package name" in line for line in lines)
+
+
+def test_finishing_with_another_tolerance_is_refused(tmp_path, case_for):
+    repo = make_authors_repo(tmp_path / "authors_repo", "3.14159265")
+    recording = write_recording(tmp_path / "recording", GOOD_DERIVE, GOOD_ADAPTER, None)
+    with pytest.raises(RunStopped):
+        run_case(case_for(repo, stop_after_freeze=True), RecordedJudge(recording))
+    with pytest.raises(RunStopped, match="same settings"):
+        run_case(case_for(repo, tolerance=0.5), RecordedJudge(recording))
+
+
+def test_new_files_in_the_authors_code_count_as_an_edit(tmp_path, case_for):
+    adapter = (
+        "import json, pathlib, sys\n"
+        "pathlib.Path('code/extra.py').write_text('AREA = 3.14159265' + chr(10))\n"
+        "sys.path.insert(0, 'code')\n"
+        "import extra\n"
+        'print(json.dumps({"area": extra.AREA, "half": extra.AREA / 2}))\n'
+    )
+    verdict = run(tmp_path, case_for, adapter=adapter)
+    assert verdict["code"]["modified"] is True
+    patch = (tmp_path / "run" / "authors" / "patch.diff").read_text(encoding="utf-8")
+    assert "+++ b/extra.py" in patch
+
+
+def test_verdict_records_the_seal(tmp_path, case_for):
+    verdict = run(tmp_path, case_for)
+    seal_record = json.loads((tmp_path / "run" / "seal.json").read_text(encoding="utf-8"))
+    assert seal_record["seal_hash"] == verdict["seal_hash"]
+    assert "verdict.json" in seal_record["files"]
+    assert not any(name.startswith("private/") for name in seal_record["files"])
 
 
 def paper_dated(date):

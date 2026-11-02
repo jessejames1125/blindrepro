@@ -56,9 +56,17 @@ def headline(comparison: Comparison) -> str:
 def blinding_facts(data: dict) -> list[str]:
     facts = []
     blind = data["blinding"]
-    facts.append(f"Authors' code: fetched at {blind['code_fetched_at'] or 'never'}, after the derivation froze at {blind['frozen_at']}.")
+    fetched, frozen = blind["code_fetched_at"], blind["frozen_at"]
+    if not fetched:
+        facts.append(f"Authors' code: never fetched. The derivation froze at {frozen}.")
+    elif fetched > frozen:
+        facts.append(f"Authors' code: fetched at {fetched}, after the derivation froze at {frozen}.")
+    else:
+        facts.append(f"Authors' code: fetched at {fetched}, BEFORE the derivation froze at {frozen}. This run is not blind.")
     tools = [name.replace("mcp__blindrepro__", "") for name in blind["tools_offered"]]
-    facts.append(f"Agent tools: {', '.join(tools) or 'none'}. No shell, no web.")
+    open_doors = [t for t in tools if t in ("Bash", "PowerShell", "WebFetch", "WebSearch") or t.startswith("mcp__")]
+    doors = f"Also offered: {', '.join(open_doors)}." if open_doors else "No shell, no web."
+    facts.append(f"Agent tools: {', '.join(tools) or 'none'}. {doors}")
     facts.append(
         f"Scripts run under a guard with network, other processes and outside files off. "
         f"Blocked attempts: {blind['guard_blocked']}. Refused tool calls: {blind['refused_calls']}."
@@ -72,11 +80,12 @@ def blinding_facts(data: dict) -> list[str]:
             f"{redaction.get('code_links_removed', 0)} code links removed before the agent read it."
         )
     leaks = blind.get("leaks", [])
-    facts.append(
-        "Leak check: no target value found in the text the agent read."
-        if not leaks
-        else f"Leak check: {len(leaks)} target values still appeared in the text the agent read (see verdict.json)."
-    )
+    if blind.get("values_searched", 1) == 0:
+        facts.append("Leak check: not done, because neither the authors' code nor the paper gave a value to search for.")
+    elif not leaks:
+        facts.append("Leak check: no target value found in the text the agent read.")
+    else:
+        facts.append(f"Leak check: {len(leaks)} target values still appeared in the text the agent read (see verdict.json).")
     literals = blind.get("literals", [])
     facts.append(
         "Typed-in answers: no number in derive.py matches a target value."
@@ -89,6 +98,9 @@ def blinding_facts(data: dict) -> list[str]:
         if not imports
         else f"Scripts: the agent's drafts import {', '.join(imports)}. Read them in transcript.jsonl."
     )
+    tampering = blind.get("tampering", [])
+    if tampering:
+        facts.append(f"Scripts reach into the interpreter ({', '.join(tampering)}), which could get past the guard. Read them in transcript.jsonl.")
     recall = blind.get("recall")
     if recall is None:
         facts.append("Memory check: not run.")
@@ -106,7 +118,7 @@ NOT_BLINDED = [
     "The agent read the paper, including its method. That is the point of the test.",
     "A model may have seen this paper or code during training. The memory check catches stated values, not everything a model absorbed.",
     "The freeze hash proves the files did not change later. It does not prove when they were made, or that the operator ran this once. To prove the order, publish the hash before comparing (--stop-after-freeze).",
-    "The guard stops accidents and ordinary model behavior. Native code could get around it.",
+    "The guard stops accidents and ordinary model behavior. A script that patches Python's own modules or loads native code could get around it; the flags above and the transcript are the check for that.",
     "The adapter that calls the authors' code was written by a model. It is in the record for inspection.",
 ]
 
@@ -130,7 +142,7 @@ def verdict_markdown(data: dict) -> str:
         table(comparison),
         "```",
         "",
-        "Error is |blind - authors| / |authors|. The arithmetic is done by code, not a model.",
+        "Error is |blind - authors| / |authors|, or the plain difference where the authors' value is 0. The arithmetic is done by code, not a model.",
         "Paper values, where shown, were read from the paper by a model and were hidden from the blind agent.",
     ]
     code = data["code"]
@@ -158,7 +170,8 @@ def verdict_markdown(data: dict) -> str:
         f"- Tool: blindrepro {run['tool_version']}. Run date: {run['date']}.",
         f"- Python {run['python']}. Packages: {', '.join(run['packages'])}.",
         "- Prompts, transcripts and the derivation are in this folder. The paper's text and the authors' code are withheld as hashes and links.",
-        "- Check again: `blindrepro verify <this folder>`",
+        "- The whole folder, the authors' side included, is hashed once more at the end in `seal.json`.",
+        "- Check again: `blindrepro verify <this folder> --expect <freeze hash>`",
         "",
     ]
     return "\n".join(lines)

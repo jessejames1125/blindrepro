@@ -17,11 +17,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import __version__, prompts
-from .compare import NOT_COMPARED, Comparison, compare, flatten, import_check, literal_check, parse_result_line, relative_error
+from .compare import NOT_COMPARED, Comparison, compare, flatten, import_check, literal_check, parse_result_line, relative_error, tamper_check
 from .envs import BLIND_PACKAGES, PYTHON_VERSION, ensure_env, env_for_requirements, installed_packages, python_version
 from .judges import BUILT_IN, Session
 from .paper import Paper, leak_check, load_paper, redact
-from .record import check_freeze, freeze, shareable_transcript, tool_calls, write_jsonl
+from .envs import BadRequirement
+from .record import _swap_paths, check_freeze, freeze, seal, shareable_transcript, tool_calls, write_jsonl
 from .sandbox import DEFAULT_MEMORY_MB, DEFAULT_SECONDS, run_guarded
 from .verdict import terminal_summary, verdict_markdown
 
@@ -34,6 +35,10 @@ TRAINING_CUTOFFS = {
 }
 PRIVATE_NOTICE = "This folder holds the paper's full text. Do not publish it unless the paper's license allows.\n"
 BLIND_EXCLUDE = {"paper.txt", "spec.json", ".tmp", "runs.jsonl", "__pycache__"}
+CODE_SUFFIXES = {
+    ".py", ".pyx", ".pxd", ".pth", ".ipynb", ".c", ".h", ".cc", ".cpp", ".hpp", ".f", ".f90", ".jl", ".m",
+    ".r", ".rs", ".go", ".js", ".ts", ".sh", ".bat", ".ps1", ".cfg", ".toml", ".ini", ".yaml", ".yml", ".json",
+}
 
 
 class RunStopped(Exception):
@@ -85,6 +90,11 @@ def swaps_for(workspace: Path) -> list[tuple[str, str]]:
         # A script can spell the path without its drive, which still names the account.
         (str(Path(home.parent.name) / home.name), "<home>"),
     ]
+
+
+def public(text: str, workspace: Path) -> str:
+    """Text from a script or the guard, with local paths swapped out, ready for the record."""
+    return _swap_paths(text, swaps_for(workspace))
 
 
 def save_session(session: Session, workspace: Path, path: Path, prompt: str) -> dict:
@@ -144,7 +154,8 @@ def scope(case: Case, judge, full_text: str) -> dict:
         session = judge.session(prompt, work, ["Read", "Grep", "Write"], None, min(case.minutes, 15), stage="scope")
         save_session(session, work, case.out / "scope" / "transcript.jsonl", prompt)
         if not (work / "spec.json").exists():
-            raise RunStopped("The scoping step wrote no spec.json.")
+            said = " ".join(session.text.split())[-600:] or "nothing"
+            raise RunStopped(f"The scoping step wrote no spec.json. The agent's last words: {said}")
         spec = read_json(work / "spec.json")
         shutil.rmtree(work, ignore_errors=True)
     if spec.get("not_computable"):
@@ -170,6 +181,8 @@ def derive(case: Case, judge, spec: dict, paper: Paper, redacted_text: str, reda
     packages = BLIND_PACKAGES + case.allow_packages
     python = ensure_env(packages)
     work = Path(tempfile.mkdtemp(prefix="blindrepro-blind-"))
+    # The run log sits outside the folder, where the agent's scripts cannot edit it.
+    logs = Path(tempfile.mkdtemp(prefix="blindrepro-log-"))
     (work / "paper.txt").write_text(redacted_text, encoding="utf-8")
     write_json(work / "spec.json", public_spec(spec))
     prompt = prompts.DERIVE.format(
@@ -183,7 +196,7 @@ def derive(case: Case, judge, spec: dict, paper: Paper, redacted_text: str, reda
         "python": str(python),
         "script": "derive.py",
         "description": "Run derive.py in the work folder through the guard and return its output.",
-        "log": str(work / "runs.jsonl"),
+        "log": str(logs / "runs.jsonl"),
         "seconds": case.seconds,
         "memory_mb": case.memory_mb,
     }
@@ -199,8 +212,9 @@ def derive(case: Case, judge, spec: dict, paper: Paper, redacted_text: str, reda
             shutil.copy2(item, blind / item.name)
     write_json(frozen / "spec_shown.json", public_spec(spec))
     runs = []
-    if (work / "runs.jsonl").exists():
-        runs = [json.loads(line) for line in (work / "runs.jsonl").read_text(encoding="utf-8").splitlines()]
+    if (logs / "runs.jsonl").exists():
+        runs = [json.loads(public(line, work)) for line in (logs / "runs.jsonl").read_text(encoding="utf-8").splitlines()]
+    shutil.rmtree(logs, ignore_errors=True)
     write_jsonl(frozen / "script_runs.jsonl", [{k: v for k, v in r.items() if k != "at"} for r in runs])
 
     log("Step 3 of 5: freezing. The derivation runs once more on its own, then every file is hashed.")
@@ -211,6 +225,7 @@ def derive(case: Case, judge, spec: dict, paper: Paper, redacted_text: str, reda
             shutil.copy2(item, fresh / item.name)
         values, result = run_script(python, fresh, "derive.py", case)
         blocked = len(result.blocked)
+        result.stdout, result.stderr = public(result.stdout, fresh), public(result.stderr, fresh)
         (frozen / "derive_stdout.txt").write_text(result.stdout[-200000:], encoding="utf-8", newline="\n")
         shutil.rmtree(fresh, ignore_errors=True)
     write_json(frozen / "results.json", values if values is not None else {})
@@ -223,6 +238,7 @@ def derive(case: Case, judge, spec: dict, paper: Paper, redacted_text: str, reda
         "redaction": redaction,
         "target": case.target,
         "tolerance": case.tolerance,
+        "values_shown": case.show_values,
         "model": info["model"],
         "judge": judge.name,
         "judge_version": info["version"],
@@ -285,9 +301,45 @@ def fetch_code(url: str, commit: str, dest: Path) -> str:
     return done.stdout.strip()
 
 
-def code_changes(code: Path) -> str:
-    done = subprocess.run(["git", "-C", str(code), "diff"], capture_output=True, text=True, encoding="utf-8", errors="replace")
-    return done.stdout
+def code_changes(pristine: Path, code: Path) -> str:
+    """Every edit, new file and deleted file under code/, as a patch git can apply.
+
+    The agent and the authors' code could have rewritten code/.git, so git never reads it here:
+    both trees are copied side by side and compared with no repository and no user settings.
+    """
+    def skip_outputs(folder: str, names: list[str]) -> set[str]:
+        """New files count when they are code; new data files are the code's own output."""
+        place = Path(folder).relative_to(code)
+        skipped = {".git", "__pycache__"}
+        for name in names:
+            new_file = (Path(folder) / name).is_file() and not (pristine / place / name).exists()
+            if new_file and Path(name).suffix.lower() not in CODE_SUFFIXES:
+                skipped.add(name)
+        return skipped
+
+    with tempfile.TemporaryDirectory(prefix="blindrepro-diff-") as scratch:
+        root = Path(scratch)
+        shutil.copytree(pristine, root / "a", ignore=shutil.ignore_patterns(".git"), symlinks=True)
+        shutil.copytree(code, root / "b", ignore=skip_outputs, symlinks=True)
+        env = {k: v for k, v in os.environ.items() if k in ("PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP")}
+        env.update(HOME=scratch, GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull)
+        done = subprocess.run(
+            ["git", "diff", "--no-index", "--no-ext-diff", "--no-textconv", "--binary", "a", "b"],
+            cwd=root,
+            env=env,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+    # With --no-index each path also carries its folder name (a/a/x, b/b/x, or a/b/x for a new
+    # file). Drop it from the header lines so the patch applies to a fresh clone.
+    lines = []
+    for line in done.stdout.splitlines(keepends=True):
+        if line.startswith(("diff --git ", "--- ", "+++ ")):
+            line = re.sub(r"(^|\s)([ab])/[ab]/", r"\1\2/", line)
+        lines.append(line)
+    return "".join(lines)
 
 
 def adapter_python(work: Path) -> Path:
@@ -295,6 +347,13 @@ def adapter_python(work: Path) -> Path:
     if requirements.exists():
         return env_for_requirements(requirements)
     return ensure_env(["numpy", "scipy"])
+
+
+def snapshot(code: Path) -> Path:
+    """A copy of the authors' code as fetched, outside every folder an agent can reach."""
+    pristine = Path(tempfile.mkdtemp(prefix="blindrepro-pristine-")) / "code"
+    shutil.copytree(code, pristine, ignore=shutil.ignore_patterns(".git"), symlinks=True)
+    return pristine
 
 
 def authors_step(case: Case, judge, spec: dict, work: Path) -> dict:
@@ -322,6 +381,8 @@ def authors_step(case: Case, judge, spec: dict, work: Path) -> dict:
         write_json(record_path, record)
         return record
     write_json(work / "spec.json", public_spec(spec))
+    pristine = snapshot(code_dir)
+    logs = Path(tempfile.mkdtemp(prefix="blindrepro-log-"))
     prompt = prompts.ADAPTER.format(commit=commit, seconds=case.seconds, memory_mb=case.memory_mb)
     run_config = {
         "workspace": str(work),
@@ -329,7 +390,7 @@ def authors_step(case: Case, judge, spec: dict, work: Path) -> dict:
         "script": "adapter.py",
         "requirements": "requirements.txt",
         "description": "Build the environment from requirements.txt, run adapter.py through the guard, and return its output.",
-        "log": str(work / "runs.jsonl"),
+        "log": str(logs / "runs.jsonl"),
         "seconds": case.seconds,
         "memory_mb": case.memory_mb,
         "allow_process": True,
@@ -340,19 +401,24 @@ def authors_step(case: Case, judge, spec: dict, work: Path) -> dict:
     for name in ("adapter.py", "requirements.txt", "notes.md", "could_not_run.md"):
         if (work / name).exists():
             shutil.copy2(work / name, folder / name)
-    diff = code_changes(code_dir)
-    if diff:
-        (folder / "patch.diff").write_text(diff, encoding="utf-8", newline="\n")
+    shutil.rmtree(logs, ignore_errors=True)
     values = None
     error_text = ""
     if (work / "adapter.py").exists():
         try:
             values, result = run_script(adapter_python(work), work, "adapter.py", case, allow_process=True)
-            (folder / "adapter_stdout.txt").write_text(result.stdout[-200000:], encoding="utf-8", newline="\n")
+            (folder / "adapter_stdout.txt").write_text(public(result.stdout, work)[-200000:], encoding="utf-8", newline="\n")
             if values is None:
-                error_text = (result.stderr or result.stdout)[-2000:]
+                error_text = public(result.stderr or result.stdout, work)[-2000:]
         except subprocess.CalledProcessError as error:
             error_text = f"Could not build the environment: {error}"
+        except BadRequirement as refused:
+            error_text = str(refused)
+    # Taken after the last run, so an edit the adapter makes while running is caught too.
+    diff = code_changes(pristine, code_dir)
+    shutil.rmtree(pristine.parent, ignore_errors=True)
+    if diff:
+        (folder / "patch.diff").write_text(diff, encoding="utf-8", newline="\n")
     could_not_run = (work / "could_not_run.md").read_text(encoding="utf-8") if (work / "could_not_run.md").exists() else ""
     record = {
         "url": case.code,
@@ -430,6 +496,8 @@ def build_verdict(case: Case, spec: dict, record: dict, code: dict, comparison: 
             "leaks": leaks,
             "literals": literals,
             "forbidden_imports": run_extra["imports"],
+            "tampering": run_extra["tampering"],
+            "values_searched": run_extra["values_searched"],
             "recall": recall,
             "cutoff": run_extra["cutoff"],
         },
@@ -446,8 +514,8 @@ def build_verdict(case: Case, spec: dict, record: dict, code: dict, comparison: 
     }
 
 
-def _imports_seen(frozen: Path) -> list[str]:
-    """Forbidden imports in the final script and in every draft the agent wrote along the way."""
+def _scripts_seen(frozen: Path) -> tuple[list[str], list[str]]:
+    """Forbidden imports and interpreter tampering in the final script and in every draft."""
     sources = []
     derive_source = frozen / "blind" / "derive.py"
     if derive_source.exists():
@@ -461,10 +529,23 @@ def _imports_seen(frozen: Path) -> list[str]:
                 for block in content:
                     if block.get("type") == "tool_use":
                         sources += [str(block["input"][k]) for k in ("content", "new_string") if k in (block.get("input") or {})]
-    found: set[str] = set()
+    imports: set[str] = set()
+    tampering: set[str] = set()
     for source in sources:
-        found.update(import_check(source))
-    return sorted(found)
+        imports.update(import_check(source))
+        tampering.update(tamper_check(source))
+    return sorted(imports), sorted(tampering)
+
+
+def _one_per_quantity(hits: list[dict], where: str) -> list[dict]:
+    """The authors' value and the paper's value can match the same spot; report it once."""
+    seen, kept = set(), []
+    for hit in hits:
+        mark = (hit["key"].removesuffix(" (paper)"), hit[where])
+        if mark not in seen:
+            seen.add(mark)
+            kept.append(hit)
+    return kept
 
 
 def _read_if_there(path: Path) -> str:
@@ -492,6 +573,11 @@ def run_case(case: Case, judge) -> dict:
     (private / "paper_shown.txt").write_text(shown, encoding="utf-8")
 
     record = derive(case, judge, spec, paper, shown, redaction)
+    if record["tolerance"] != case.tolerance or record.get("values_shown", False) != case.show_values:
+        raise RunStopped(
+            f"This run was frozen with --tolerance {record['tolerance']}"
+            f"{' and --show-values' if record.get('values_shown') else ''}. Finish it with the same settings."
+        )
     if case.stop_after_freeze and not (case.out / "authors" / "code_record.json").exists():
         raise RunStopped(
             f"Stopped after the freeze, as asked. Publish this hash somewhere public, then run the same command without --stop-after-freeze:\n{record['freeze_hash']}"
@@ -505,7 +591,7 @@ def run_case(case: Case, judge) -> dict:
     code = authors_step(case, judge, spec, work)
     derived = read_json(case.out / "frozen" / "results.json") or None
     expected = [q["key"] for q in spec["quantities"]]
-    comparison = compare(derived, code.get("values"), spec.get("paper_values"), case.tolerance, expected)
+    comparison = compare(derived, code.get("values"), spec.get("paper_values"), record["tolerance"], expected)
     if code.get("fetch_error"):
         comparison.reason = f"The authors' code could not be fetched: {code['fetch_error'].strip()}"
     elif comparison.status == NOT_COMPARED and code.get("could_not_run"):
@@ -514,18 +600,24 @@ def run_case(case: Case, judge) -> dict:
     explanation = ""
     if comparison.status == "DIVERGED" and not getattr(judge, "skip_explain", False):
         explanation = explain(case, judge, spec, comparison, work)
+    # Search for the authors' values and the paper's printed values, each under its own name.
     truth = {k: v for k, v in flatten(code.get("values") or {}).items() if v is not None}
-    truth.update({k: v for k, v in flatten(spec.get("paper_values") or {}).items() if v is not None and k not in truth})
-    leaks = leak_check(shown, truth)
+    truth.update({f"{k} (paper)": v for k, v in flatten(spec.get("paper_values") or {}).items() if v is not None})
+    seen_text = shown + "\n" + json.dumps(public_spec(spec))
+    leaks = _one_per_quantity(leak_check(seen_text, truth), "printed")
     derive_source = case.out / "frozen" / "blind" / "derive.py"
     literals = literal_check(derive_source.read_text(encoding="utf-8"), truth) if derive_source.exists() else []
+    literals = _one_per_quantity(literals, "line")
+    imports, tampering = _scripts_seen(case.out / "frozen")
     extra = {
         "cutoff": cutoff_statement(paper, record["model"], case.model_cutoff),
-        "imports": _imports_seen(case.out / "frozen"),
+        "imports": imports,
+        "tampering": tampering,
+        "values_searched": len(truth),
     }
     verdict = build_verdict(
         case, spec, record, code, comparison, explanation,
-        recall_summary(recall, code.get("values"), case.tolerance),
+        recall_summary(recall, code.get("values"), record["tolerance"]),
         leaks, literals, paper.to_dict(), extra,
     )
     verdict["blind_notes"] = _read_if_there(case.out / "frozen" / "blind" / "notes.md")
@@ -533,6 +625,8 @@ def run_case(case: Case, judge) -> dict:
     write_json(case.out / "verdict.json", verdict)
     (case.out / "verdict.md").write_text(verdict_markdown(verdict), encoding="utf-8", newline="\n")
     shutil.rmtree(work, ignore_errors=True)
+    # Seal last: from here on, a change to the authors' side or the verdict shows in verify.
+    verdict["seal_hash"] = seal(case.out, record["freeze_hash"])["seal_hash"]
     return verdict
 
 

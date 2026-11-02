@@ -16,6 +16,7 @@ Write spec.json with this shape:
 Rules:
 - quantities covers the target and nothing else, at most 30 entries. Each must be a single number or a list of numbers. If the target is an equation, choose evaluation points stated in the paper.
 - paper_values holds each number exactly as the paper prints it. Use null where the paper prints no number.
+- Define each quantity as the full-precision number, never rounded to the paper's printed digits: rounding both sides would hide or invent differences.
 - redact lists every string that prints a target value or gives it away: table rows, sentences of results, figure captions quoting the values, the abstract's numbers. Copy each string character for character, keep each as short as possible, and search the whole file, because results repeat. Keep every equation, method, parameter and input needed to do the computation.
 - Standard published formulas, constants or fit coefficients that the paper cites count as available: the next agent may use them from memory and must say so. Write a reason in not_computable, and leave the rest empty, only if the target needs a dataset, measurements or code that cannot be rebuilt from the paper, or more than about ten minutes on a laptop.
 
@@ -30,6 +31,7 @@ You have: Python {python} with the standard library and these packages only: {pa
 Rules:
 - Compute each value from the method the paper states, or from first principles when it points to a standard result. Do not type a remembered or published result in as an answer.
 - Where the paper leaves a choice open, take the most defensible reading and carry on.
+- Print full precision. Do not round to the paper's printed digits.
 - Write notes.md with one line for each assumption you made and each constant you took from memory rather than from the paper, saying where you believe it comes from. This is part of the record.
 - You will never see the authors' code. Finish when derive.py prints every key. Then stop, with a one-line status."""
 
@@ -55,6 +57,7 @@ Rules:
 - Do not edit anything under code/. If their code cannot run without an edit, make the smallest one and say why in notes.md. Every edit is recorded and reported.
 - If the repository stores precomputed outputs but the code that made them cannot run, do not read those outputs as if you had run the code. Treat it as a failure to run.
 - If you cannot get their code to run after honest attempts, write could_not_run.md: what you tried, the exact error and what is missing. Failing to run is a useful finding. Do not work around it by writing your own version.
+- Print full precision. Do not round to the paper's printed digits.
 - Write notes.md with one line per choice you made about settings.
 Finish, then stop with a one-line status."""
 
