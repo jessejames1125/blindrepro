@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install
+        run: uv pip install --system -e ".[dev]"
+      - name: Tests
+        run: python -m pytest tests --cov --cov-fail-under=80
+      - name: Doctor
+        run: blindrepro doctor
+      - name: Demo from the built package
+        run: |
+          uv build --wheel
+          uvx --from ./dist/blindrepro-0.1.0-py3-none-any.whl blindrepro demo lawson
+      - name: Tamper demo
+        run: blindrepro demo lawson --tamper
