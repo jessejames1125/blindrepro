@@ -87,7 +87,7 @@ def _run(args) -> int:
     judge = make_judge(args.judge, args.model, args.effort)
     try:
         verdict = pipeline.run_case(case, judge)
-    except (RunStopped, InstallFailed) as stopped:
+    except (RunStopped, InstallFailed, JudgeError) as stopped:
         print(stopped)
         out.mkdir(parents=True, exist_ok=True)
         (out / "stopped.txt").write_text(f"{stopped}\n", encoding="utf-8", newline="\n")

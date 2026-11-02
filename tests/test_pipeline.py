@@ -3,7 +3,7 @@ import json
 import pytest
 from conftest import GOOD_ADAPTER, GOOD_DERIVE, SPEC, make_authors_repo, write_recording
 
-from blindrepro.judges import RecordedJudge, Session
+from blindrepro.judges import JudgeError, RecordedJudge, Session
 from blindrepro.paper import Paper
 from blindrepro.pipeline import RunStopped, cutoff_statement, run_case, show
 from blindrepro.verify import verify
@@ -52,6 +52,21 @@ def test_adapter_that_crashes_is_reported_with_its_error(tmp_path, case_for):
     verdict = run(tmp_path, case_for, adapter="raise ValueError('their code broke')\n")
     assert verdict["comparison"]["status"] == "NOT COMPARED"
     assert "their code broke" in verdict["code"]["could_not_run"]
+
+
+def test_an_adapter_agent_that_runs_out_of_time_keeps_the_blind_result(tmp_path, case_for):
+    class TimesOut(RecordedJudge):
+        def session(self, prompt, workspace, tools, run_config=None, minutes=30, stage=""):
+            if stage == "adapter":
+                raise JudgeError("claude returned no usable session. Its error output: stopped after 30 minutes")
+            return super().session(prompt, workspace, tools, run_config, minutes, stage)
+
+    repo = make_authors_repo(tmp_path / "authors_repo")
+    recording = write_recording(tmp_path / "recording", GOOD_DERIVE, None)
+    verdict = run_case(case_for(repo), TimesOut(recording))
+    assert verdict["comparison"]["status"] == "NOT COMPARED"
+    assert "stopped after 30 minutes" in verdict["code"]["could_not_run"]
+    assert (tmp_path / "run" / "frozen" / "freeze.json").exists()
 
 
 def test_code_that_cannot_be_fetched_is_not_compared(tmp_path, case_for):

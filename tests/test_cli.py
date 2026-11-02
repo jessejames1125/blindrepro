@@ -58,11 +58,13 @@ def test_a_stopped_run_says_why_in_its_folder(tmp_path, capsys):
     assert "needs a dataset" in (out / "stopped.txt").read_text(encoding="utf-8")
 
 
-def test_a_failed_install_stops_the_run_with_its_reason(tmp_path, capsys, monkeypatch):
-    from blindrepro import envs, pipeline
+@pytest.mark.parametrize("kind", ["install", "judge"])
+def test_a_failed_install_or_agent_stops_the_run_with_its_reason(tmp_path, capsys, monkeypatch, kind):
+    from blindrepro import envs, judges, pipeline
 
     def fail(case, judge):
-        raise envs.InstallFailed("Installing the packages took more than 15 minutes, so it was stopped.")
+        error = envs.InstallFailed if kind == "install" else judges.JudgeError
+        raise error("Installing the packages took more than 15 minutes, so it was stopped.")
 
     monkeypatch.setattr(pipeline, "run_case", fail)
     out = tmp_path / "r"

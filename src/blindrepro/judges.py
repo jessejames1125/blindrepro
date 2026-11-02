@@ -16,6 +16,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .sandbox import run_tree
 from .toolserver import run_tool
 
 SYSTEM_PROMPT = (
@@ -23,6 +24,8 @@ SYSTEM_PROMPT = (
     "You have no web access and no shell. Finish the task, then stop."
 )
 RUN_TOOL = "mcp__blindrepro__run"
+# A session transcript is read whole: its first line names the model.
+TRANSCRIPT_LIMIT = 500_000_000
 BUILT_IN = ["Read", "Write", "Edit", "Grep", "Glob"]
 
 
@@ -129,22 +132,17 @@ class ClaudeCli:
                 allowed.append(RUN_TOOL)
             if allowed:
                 command += ["--allowedTools", ",".join(allowed)]
-            try:
-                done = subprocess.run(
-                    command,
-                    cwd=workspace,
-                    input=prompt,
-                    capture_output=True,
-                    text=True,
-                    encoding="utf-8",
-                    errors="replace",
-                    env=_env_for_claude(),
-                    timeout=minutes * 60,
-                )
-                stdout, stderr = done.stdout, done.stderr
-            except subprocess.TimeoutExpired as stopped:
-                stdout = (stopped.stdout or b"").decode("utf-8", "replace")
-                stderr = f"stopped after {minutes} minutes"
+            # Run so that a timeout also ends the tool server and anything it started, such as an install.
+            done = run_tree(
+                command,
+                env=_env_for_claude(),
+                seconds=minutes * 60,
+                cwd=workspace,
+                input_text=prompt,
+                output_limit=TRANSCRIPT_LIMIT,
+            )
+            stdout = done.stdout
+            stderr = f"stopped after {minutes:g} minutes" if done.timed_out else done.stderr
         events = []
         for line in stdout.splitlines():
             try:

@@ -185,14 +185,23 @@ def run_guarded(
     return RunResult(process.returncode, out, err, time.monotonic() - start, timed_out, blocked)
 
 
-def run_tree(command: list[str], *, env: dict[str, str] | None, seconds: int) -> RunResult:
+def run_tree(
+    command: list[str],
+    *,
+    env: dict[str, str] | None,
+    seconds: float,
+    cwd: Path | None = None,
+    input_text: str = "",
+    output_limit: int = OUTPUT_LIMIT,
+) -> RunResult:
     """Run a command with a clock. When the clock runs out, everything it started stops too."""
     start = time.monotonic()
     with tempfile.TemporaryDirectory(prefix="blindrepro-run-") as scratch:
-        out_path, err_path = Path(scratch) / "stdout.txt", Path(scratch) / "stderr.txt"
-        with out_path.open("wb") as out_file, err_path.open("wb") as err_file:
+        in_path, out_path, err_path = (Path(scratch) / name for name in ("stdin.txt", "stdout.txt", "stderr.txt"))
+        in_path.write_text(input_text, encoding="utf-8")
+        with in_path.open("rb") as in_file, out_path.open("wb") as out_file, err_path.open("wb") as err_file:
             process = subprocess.Popen(
-                command, env=env, stdin=subprocess.DEVNULL, stdout=out_file, stderr=err_file, start_new_session=os.name != "nt"
+                command, cwd=cwd, env=env, stdin=in_file, stdout=out_file, stderr=err_file, start_new_session=os.name != "nt"
             )
             job = _windows_job(process, None) if os.name == "nt" else None
             timed_out = False
@@ -205,7 +214,7 @@ def run_tree(command: list[str], *, env: dict[str, str] | None, seconds: int) ->
                 ctypes.WinDLL("kernel32").CloseHandle(ctypes.c_void_p(job))
             elif not timed_out:
                 _stop(process)
-        out, err = _tail(out_path), _tail(err_path)
+        out, err = _tail(out_path, output_limit), _tail(err_path, output_limit)
     return RunResult(process.returncode, out, err, time.monotonic() - start, timed_out)
 
 
@@ -223,12 +232,12 @@ def _stop(process: subprocess.Popen) -> None:
     process.wait()
 
 
-def _tail(path: Path) -> str:
+def _tail(path: Path, limit: int = OUTPUT_LIMIT) -> str:
     size = path.stat().st_size
     with path.open("rb") as handle:
-        if size > OUTPUT_LIMIT:
-            handle.seek(size - OUTPUT_LIMIT)
-            prefix = f"[first {size - OUTPUT_LIMIT} bytes of output cut]\n"
+        if size > limit:
+            handle.seek(size - limit)
+            prefix = f"[first {size - limit} bytes of output cut]\n"
         else:
             prefix = ""
         return prefix + handle.read().decode("utf-8", "replace")

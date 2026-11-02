@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
@@ -23,6 +24,13 @@ mode = os.environ.get("FAKE_CLAUDE_MODE", "ok")
 if mode == "crash":
     sys.stderr.write("not signed in")
     sys.exit(1)
+if mode == "hang":
+    import subprocess, time
+    marker = os.environ["FAKE_CLAUDE_MARKER"]
+    child = f"import time, pathlib; time.sleep(4); pathlib.Path({marker!r}).write_text('alive')"
+    subprocess.Popen([sys.executable, "-c", child])
+    print(json.dumps({"type": "system", "subtype": "init", "model": "claude-fake-1", "tools": []}), flush=True)
+    time.sleep(60)
 print(json.dumps({"type": "system", "subtype": "init", "model": "claude-fake-1", "tools": ["Read", "Write"], "claude_code_version": "9.9.9"}))
 print("not json")
 print(json.dumps({"type": "assistant", "message": {"content": [{"type": "text", "text": "hi"}]}}))
@@ -81,6 +89,17 @@ def test_claude_failure_is_a_clear_error(tmp_path, fake_claude, monkeypatch):
     monkeypatch.setenv("FAKE_CLAUDE_MODE", "crash")
     with pytest.raises(JudgeError, match="not signed in"):
         ClaudeCli(command=command).session("task", tmp_path / "work", [], None)
+
+
+def test_claude_that_runs_out_of_time_stops_with_everything_it_started(tmp_path, fake_claude, monkeypatch):
+    command, _ = fake_claude
+    marker = tmp_path / "tool-still-running.txt"
+    monkeypatch.setenv("FAKE_CLAUDE_MODE", "hang")
+    monkeypatch.setenv("FAKE_CLAUDE_MARKER", str(marker))
+    with pytest.raises(JudgeError, match="stopped after"):
+        ClaudeCli(command=command).session("task", tmp_path / "work", [], None, minutes=0.03)
+    time.sleep(6)
+    assert not marker.exists()
 
 
 def test_missing_claude_is_a_clear_error(monkeypatch):

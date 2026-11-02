@@ -19,7 +19,7 @@ from pathlib import Path
 from . import __version__, prompts
 from .compare import NOT_COMPARED, Comparison, compare, flatten, import_check, literal_check, parse_result_line, relative_error, tamper_check
 from .envs import BLIND_PACKAGES, PYTHON_VERSION, InstallFailed, ensure_env, env_for_requirements, installed_packages, python_version
-from .judges import BUILT_IN, Session
+from .judges import BUILT_IN, JudgeError, Session
 from .paper import Paper, leak_check, load_paper, redact
 from .envs import BadRequirement
 from .record import _swap_paths, check_freeze, freeze, seal, shareable_transcript, tool_calls, write_jsonl
@@ -395,9 +395,15 @@ def authors_step(case: Case, judge, spec: dict, work: Path) -> dict:
         "memory_mb": case.memory_mb,
         "allow_process": True,
     }
-    session = judge.session(prompt, work, BUILT_IN, run_config, case.minutes, stage="adapter")
     folder.mkdir(parents=True, exist_ok=True)
-    info = save_session(session, work, folder / "transcript.jsonl", prompt)
+    stopped = ""
+    try:
+        session = judge.session(prompt, work, BUILT_IN, run_config, case.minutes, stage="adapter")
+        info = save_session(session, work, folder / "transcript.jsonl", prompt)
+    except JudgeError as error:
+        # The blind result is already frozen, so record why the authors' side is missing and go on.
+        stopped = f"The adapter agent stopped: {error}"
+        info = {"model": getattr(judge, "model", ""), "seconds": None}
     for name in ("adapter.py", "requirements.txt", "notes.md", "could_not_run.md"):
         if (work / name).exists():
             shutil.copy2(work / name, folder / name)
@@ -426,7 +432,7 @@ def authors_step(case: Case, judge, spec: dict, work: Path) -> dict:
         "fetched_at": fetched_at,
         "values": values,
         "modified": bool(diff),
-        "could_not_run": could_not_run or error_text,
+        "could_not_run": could_not_run or error_text or stopped,
         "model": info["model"],
         "agent_seconds": info["seconds"],
     }
