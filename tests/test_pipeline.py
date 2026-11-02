@@ -69,6 +69,21 @@ def test_an_adapter_agent_that_runs_out_of_time_keeps_the_blind_result(tmp_path,
     assert (tmp_path / "run" / "frozen" / "freeze.json").exists()
 
 
+def test_an_install_error_reaches_the_record_without_local_paths(tmp_path, case_for, monkeypatch):
+    from pathlib import Path
+
+    from blindrepro import pipeline
+    from blindrepro.envs import InstallFailed
+
+    def fail(work):
+        raise InstallFailed(f"Installing the packages failed: cannot write {Path.home() / 'cache'}")
+
+    monkeypatch.setattr(pipeline, "adapter_python", fail)
+    verdict = run(tmp_path, case_for)
+    assert "Installing the packages failed" in verdict["code"]["could_not_run"]
+    assert str(Path.home()) not in verdict["code"]["could_not_run"]
+
+
 def test_code_that_cannot_be_fetched_is_not_compared(tmp_path, case_for):
     recording = write_recording(tmp_path / "recording", GOOD_DERIVE, GOOD_ADAPTER)
     verdict = run_case(case_for(tmp_path / "no_such_repo"), RecordedJudge(recording))

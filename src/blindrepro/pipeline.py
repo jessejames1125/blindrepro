@@ -81,6 +81,10 @@ def write_json(path: Path, data) -> None:
     path.write_text(json.dumps(data, indent=2, ensure_ascii=True) + "\n", encoding="utf-8", newline="\n")
 
 
+# Default account names that are also ordinary words in transcripts ("type": "user") and code.
+COMMON_ACCOUNTS = frozenset({"user", "users", "root", "admin", "administrator", "runner", "ubuntu", "app", "vscode", "guest", "default", "home"})
+
+
 def swaps_for(workspace: Path) -> list[tuple[str, str]]:
     home = Path.home()
     return [
@@ -90,7 +94,7 @@ def swaps_for(workspace: Path) -> list[tuple[str, str]]:
         # A script can spell the path without its drive, which still names the account.
         (str(Path(home.parent.name) / home.name), "<home>"),
         # Last, so the paths above are swapped whole first. Too short a name would hit ordinary words.
-        *([(home.name, "<user>")] if len(home.name) >= 3 else []),
+        *([(home.name, "<user>")] if len(home.name) >= 3 and home.name.lower() not in COMMON_ACCOUNTS else []),
     ]
 
 
@@ -404,7 +408,7 @@ def authors_step(case: Case, judge, spec: dict, work: Path) -> dict:
         info = save_session(session, work, folder / "transcript.jsonl", prompt)
     except JudgeError as error:
         # The blind result is already frozen, so record why the authors' side is missing and go on.
-        stopped = f"The adapter agent stopped: {error}"
+        stopped = public(f"The adapter agent stopped: {error}", work)
         info = {"model": getattr(judge, "model", ""), "seconds": None}
     for name in ("adapter.py", "requirements.txt", "notes.md", "could_not_run.md"):
         if (work / name).exists():
@@ -419,9 +423,9 @@ def authors_step(case: Case, judge, spec: dict, work: Path) -> dict:
             if values is None:
                 error_text = public(result.stderr or result.stdout, work)[-2000:]
         except subprocess.CalledProcessError as error:
-            error_text = f"Could not build the environment: {error}"
+            error_text = public(f"Could not build the environment: {error}", work)
         except (BadRequirement, InstallFailed) as refused:
-            error_text = str(refused)
+            error_text = public(str(refused), work)
     # Taken after the last run, so an edit the adapter makes while running is caught too.
     diff = code_changes(pristine, code_dir)
     shutil.rmtree(pristine.parent, ignore_errors=True)

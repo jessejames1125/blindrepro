@@ -109,6 +109,16 @@ def test_the_account_name_is_swapped_as_a_whole_word():
     assert text == f'root.endswith("<user>") someoneelse {last}'
 
 
+def test_a_common_account_name_is_not_swapped_as_a_word(monkeypatch):
+    from pathlib import Path
+
+    from blindrepro import pipeline
+
+    for name in ("User", "root", "runner"):
+        monkeypatch.setattr(pipeline.Path, "home", classmethod(lambda cls, name=name: Path("/home") / name))
+        assert all(new != "<user>" for _old, new in pipeline.swaps_for(Path("work")))
+
+
 def test_the_swaps_name_the_account():
     from pathlib import Path
 
