@@ -15,6 +15,7 @@ from pathlib import Path
 GUARD = Path(__file__).with_name("guard.py")
 DEFAULT_SECONDS = 600
 DEFAULT_MEMORY_MB = 4096
+OUTPUT_LIMIT = 2_000_000
 KEEP_ENV = ("SYSTEMROOT", "WINDIR", "PATH", "LANG", "LC_ALL", "TZ", "PATHEXT", "NUMBER_OF_PROCESSORS")
 
 
@@ -150,33 +151,63 @@ def run_guarded(
             encoding="utf-8",
         )
         start = time.monotonic()
-        process = subprocess.Popen(
-            [str(python), "-I", "-B", str(GUARD), str(policy_path), str(script)],
-            cwd=workspace,
-            env=clean_env(workspace),
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            preexec_fn=None if os.name == "nt" else _posix_limit(memory_mb),
-        )
-        job = _windows_job(process, memory_mb) if os.name == "nt" else None
-        timed_out = False
-        try:
-            out, err = process.communicate(timeout=seconds)
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            process.kill()
-            out, err = process.communicate()
-        if job is not None:
-            ctypes.WinDLL("kernel32").CloseHandle(ctypes.c_void_p(job))
+        # Output goes to files, so a script that prints without end cannot fill this process's
+        # memory, and a child that keeps the output open cannot stall the clock.
+        out_path, err_path = Path(scratch) / "stdout.txt", Path(scratch) / "stderr.txt"
+        with out_path.open("wb") as out_file, err_path.open("wb") as err_file:
+            process = subprocess.Popen(
+                [str(python), "-I", "-B", str(GUARD), str(policy_path), str(script)],
+                cwd=workspace,
+                env=clean_env(workspace),
+                stdin=subprocess.DEVNULL,
+                stdout=out_file,
+                stderr=err_file,
+                preexec_fn=None if os.name == "nt" else _posix_limit(memory_mb),
+                start_new_session=os.name != "nt",
+            )
+            job = _windows_job(process, memory_mb) if os.name == "nt" else None
+            timed_out = False
+            try:
+                process.wait(timeout=seconds)
+            except subprocess.TimeoutExpired:
+                timed_out = True
+                _stop(process)
+            if job is not None:
+                # Closing the job ends every process the script started.
+                ctypes.WinDLL("kernel32").CloseHandle(ctypes.c_void_p(job))
+            elif not timed_out:
+                _stop(process)
+        out, err = _tail(out_path), _tail(err_path)
         blocked = []
         if log_path.exists():
-            for line in log_path.read_text(encoding="utf-8").splitlines():
+            for line in log_path.read_text(encoding="utf-8").splitlines()[:1000]:
                 blocked.append(json.loads(line))
     return RunResult(process.returncode, out, err, time.monotonic() - start, timed_out, blocked)
+
+
+def _stop(process: subprocess.Popen) -> None:
+    """End the script and, on Linux and Mac, anything it started."""
+    if os.name != "nt":
+        import signal
+
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+    if process.poll() is None:
+        process.kill()
+    process.wait()
+
+
+def _tail(path: Path) -> str:
+    size = path.stat().st_size
+    with path.open("rb") as handle:
+        if size > OUTPUT_LIMIT:
+            handle.seek(size - OUTPUT_LIMIT)
+            prefix = f"[first {size - OUTPUT_LIMIT} bytes of output cut]\n"
+        else:
+            prefix = ""
+        return prefix + handle.read().decode("utf-8", "replace")
 
 
 def default_python() -> Path:

@@ -179,6 +179,49 @@ def test_authors_mode_is_not_strict(tmp_path):
     assert "ALLOWED" in result.stdout
 
 
+def test_rewriting_the_guard_module_changes_nothing(tmp_path):
+    outside = tmp_path / "outside.txt"
+    outside.write_text("secret", encoding="utf-8")
+    body = (
+        "import sys\n"
+        "frame = sys._getframe()\n"
+        "while frame is not None:\n"
+        "    g = frame.f_globals\n"
+        "    if 'NETWORK' in g and 'install' in g:\n"
+        "        g['NETWORK'].clear(); g['PROCESS'].clear(); g['inside'] = lambda *a: True\n"
+        "        g['SYSTEM_READS'] = ('',)\n"
+        "    frame = frame.f_back\n"
+        + attempt(f"print(open({str(outside)!r}).read())")
+        + attempt("import socket; socket.getaddrinfo('example.com', 80)")
+    )
+    result = run(tmp_path, body)
+    assert "secret" not in result.stdout
+    assert result.stdout.count("BLOCKED") == 2
+
+
+@pytest.mark.parametrize(
+    "code",
+    [
+        "import gc; gc.get_objects()",
+        "import gc; gc.get_referrers(open)",
+        "def f(): pass\n    f.__code__ = (lambda: 1).__code__",
+    ],
+)
+def test_blocks_reaching_the_hook_through_the_interpreter(tmp_path, code):
+    result = run(tmp_path, attempt(code))
+    assert "BLOCKED" in result.stdout
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="/proc exists on Linux only")
+def test_blocks_the_parent_process_environment(tmp_path):
+    result = run(tmp_path, attempt("import os; print(open(f'/proc/{os.getppid()}/environ').read()[:20])"))
+    if not Path("/proc").exists():
+        pytest.skip("no /proc on this system")
+    assert "BLOCKED" in result.stdout
+    own = run(tmp_path, "print(len(open('/proc/self/status').read()) > 0)\n")
+    assert own.stdout.strip() == "True"
+
+
 def test_system_facts_are_read_before_the_guard_starts(tmp_path):
     """A busy Windows system query makes platform fall back to starting a process, which the guard logs."""
     result = run(tmp_path, "import platform\nprint(platform._uname_cache is not None)\nprint(platform.machine() != '')\n")
@@ -210,3 +253,23 @@ def test_real_numeric_packages_work_under_the_strict_guard(tmp_path):
     assert result.blocked == [], result.blocked
     assert "0.333333" in result.stdout
     assert "1.414214" in result.stdout
+
+
+def test_endless_output_is_cut_and_kept_from_the_end(tmp_path):
+    result = run(tmp_path, "import sys\nfor i in range(400000):\n    sys.stdout.write('x' * 20 + chr(10))\nprint('LAST')\n")
+    assert result.ok
+    assert len(result.stdout) < 2_100_000
+    assert result.stdout.rstrip().endswith("LAST")
+    assert result.stdout.startswith("[first ")
+
+
+def test_a_child_left_running_does_not_hold_the_run_open(tmp_path):
+    body = (
+        "import subprocess, sys\n"
+        "subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])\n"
+        "print('parent done')\n"
+    )
+    result = run(tmp_path, body, allow_process=True, seconds=40)
+    assert result.ok
+    assert result.seconds < 20
+    assert "parent done" in result.stdout
