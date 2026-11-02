@@ -18,7 +18,7 @@ from pathlib import Path
 
 from . import __version__, prompts
 from .compare import NOT_COMPARED, Comparison, compare, flatten, import_check, literal_check, parse_result_line, relative_error, tamper_check
-from .envs import BLIND_PACKAGES, PYTHON_VERSION, ensure_env, env_for_requirements, installed_packages, python_version
+from .envs import BLIND_PACKAGES, PYTHON_VERSION, InstallFailed, ensure_env, env_for_requirements, installed_packages, python_version
 from .judges import BUILT_IN, Session
 from .paper import Paper, leak_check, load_paper, redact
 from .envs import BadRequirement
@@ -412,7 +412,7 @@ def authors_step(case: Case, judge, spec: dict, work: Path) -> dict:
                 error_text = public(result.stderr or result.stdout, work)[-2000:]
         except subprocess.CalledProcessError as error:
             error_text = f"Could not build the environment: {error}"
-        except BadRequirement as refused:
+        except (BadRequirement, InstallFailed) as refused:
             error_text = str(refused)
     # Taken after the last run, so an edit the adapter makes while running is caught too.
     diff = code_changes(pristine, code_dir)

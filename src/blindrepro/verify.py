@@ -9,7 +9,7 @@ import time
 from pathlib import Path
 
 from .compare import Comparison, compare, flatten, relative_error
-from .envs import BadRequirement, check_requirements, ensure_env, env_for_requirements
+from .envs import BadRequirement, InstallFailed, check_requirements, ensure_env, env_for_requirements
 from .pipeline import fetch_code, read_json
 from .record import SEAL_FILE, check_freeze, check_seal
 from .sandbox import DEFAULT_MEMORY_MB, DEFAULT_SECONDS, run_guarded
@@ -65,7 +65,7 @@ def rerun_authors(bundle: Path, record: dict) -> tuple[dict | None, float, str]:
         requirements = work / "requirements.txt"
         try:
             python = env_for_requirements(requirements) if requirements.exists() else ensure_env(["numpy", "scipy"])
-        except BadRequirement as bad:
+        except (BadRequirement, InstallFailed) as bad:
             return None, 0.0, str(bad)
         result = run_guarded(
             python,

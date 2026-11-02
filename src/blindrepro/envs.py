@@ -37,9 +37,15 @@ REQUIREMENT = re.compile(
     r"(?:\s*(?:==|>=|<=|~=|!=|<|>)\s*[A-Za-z0-9.*+!_-]+(?:\s*,\s*(?:==|>=|<=|~=|!=|<|>)\s*[A-Za-z0-9.*+!_-]+)*)?"
 )
 SECRET_WORDS = ("KEY", "TOKEN", "SECRET", "PASSWORD", "CREDENTIAL", "AUTH", "COOKIE", "SESSION")
+# A package with no wheel for this system builds from source, which can run for an hour or hang.
+INSTALL_SECONDS = 900
 
 
 class BadRequirement(ValueError):
+    pass
+
+
+class InstallFailed(RuntimeError):
     pass
 
 
@@ -63,7 +69,16 @@ def _install(env: Path, args: list[str]) -> None:
     else:
         subprocess.run([sys.executable, "-m", "venv", str(env)], check=True, env=clean)
         command = [str(python_in(env)), "-m", "pip", "install", "--quiet", "--", *args]
-    subprocess.run(command, check=True, env=clean)
+    from .sandbox import run_tree
+
+    result = run_tree(command, env=clean, seconds=INSTALL_SECONDS)
+    if result.timed_out:
+        raise InstallFailed(
+            f"Installing the packages took more than {INSTALL_SECONDS // 60} minutes, so it was stopped. "
+            "A package may be building from source; pin a version that has a wheel for this system."
+        )
+    if result.returncode != 0:
+        raise InstallFailed("Installing the packages failed: " + (result.stderr or result.stdout)[-1500:].strip())
 
 
 def ensure_env(packages: list[str]) -> Path:
@@ -75,7 +90,11 @@ def ensure_env(packages: list[str]) -> Path:
     if not marker.exists():
         shutil.rmtree(env, ignore_errors=True)
         env.parent.mkdir(parents=True, exist_ok=True)
-        _install(env, list(packages))
+        try:
+            _install(env, list(packages))
+        except InstallFailed:
+            shutil.rmtree(env, ignore_errors=True)
+            raise
         marker.write_text("\n".join(packages), encoding="utf-8")
     return python_in(env)
 

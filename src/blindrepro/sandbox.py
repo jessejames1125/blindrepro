@@ -73,8 +73,8 @@ def _posix_limit(memory_mb: int):
     return apply
 
 
-def _windows_job(process: subprocess.Popen, memory_mb: int):
-    """Cap memory with a job object, and kill child processes along with the parent."""
+def _windows_job(process: subprocess.Popen, memory_mb: int | None):
+    """Cap memory with a job object (unless memory_mb is None), and kill child processes along with the parent."""
     from ctypes import wintypes
 
     class BASIC(ctypes.Structure):
@@ -116,8 +116,8 @@ def _windows_job(process: subprocess.Popen, memory_mb: int):
     job = kernel.CreateJobObjectW(None, None)
     info = EXTENDED()
     job_memory, kill_on_close = 0x200, 0x2000
-    info.Basic.LimitFlags = job_memory | kill_on_close
-    info.JobMemoryLimit = memory_mb * 1024 * 1024
+    info.Basic.LimitFlags = kill_on_close if memory_mb is None else job_memory | kill_on_close
+    info.JobMemoryLimit = 0 if memory_mb is None else memory_mb * 1024 * 1024
     extended_limit_class = 9
     kernel.SetInformationJobObject(job, extended_limit_class, ctypes.byref(info), ctypes.sizeof(info))
     kernel.AssignProcessToJobObject(job, int(process._handle))
@@ -183,6 +183,30 @@ def run_guarded(
             for line in log_path.read_text(encoding="utf-8").splitlines()[:1000]:
                 blocked.append(json.loads(line))
     return RunResult(process.returncode, out, err, time.monotonic() - start, timed_out, blocked)
+
+
+def run_tree(command: list[str], *, env: dict[str, str] | None, seconds: int) -> RunResult:
+    """Run a command with a clock. When the clock runs out, everything it started stops too."""
+    start = time.monotonic()
+    with tempfile.TemporaryDirectory(prefix="blindrepro-run-") as scratch:
+        out_path, err_path = Path(scratch) / "stdout.txt", Path(scratch) / "stderr.txt"
+        with out_path.open("wb") as out_file, err_path.open("wb") as err_file:
+            process = subprocess.Popen(
+                command, env=env, stdin=subprocess.DEVNULL, stdout=out_file, stderr=err_file, start_new_session=os.name != "nt"
+            )
+            job = _windows_job(process, None) if os.name == "nt" else None
+            timed_out = False
+            try:
+                process.wait(timeout=seconds)
+            except subprocess.TimeoutExpired:
+                timed_out = True
+                _stop(process)
+            if job is not None:
+                ctypes.WinDLL("kernel32").CloseHandle(ctypes.c_void_p(job))
+            elif not timed_out:
+                _stop(process)
+        out, err = _tail(out_path), _tail(err_path)
+    return RunResult(process.returncode, out, err, time.monotonic() - start, timed_out)
 
 
 def _stop(process: subprocess.Popen) -> None:

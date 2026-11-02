@@ -58,6 +58,19 @@ def test_a_stopped_run_says_why_in_its_folder(tmp_path, capsys):
     assert "needs a dataset" in (out / "stopped.txt").read_text(encoding="utf-8")
 
 
+def test_a_failed_install_stops_the_run_with_its_reason(tmp_path, capsys, monkeypatch):
+    from blindrepro import envs, pipeline
+
+    def fail(case, judge):
+        raise envs.InstallFailed("Installing the packages took more than 15 minutes, so it was stopped.")
+
+    monkeypatch.setattr(pipeline, "run_case", fail)
+    out = tmp_path / "r"
+    code = cli.main(["run", "x", "--target", "y", "--code", "z", "--out", str(out), "--judge", f"recorded:{tmp_path}"])
+    assert code == 3
+    assert "15 minutes" in (out / "stopped.txt").read_text(encoding="utf-8")
+
+
 def bundled_case(tmp_path):
     repo = make_authors_repo(tmp_path / "repo")
     recording = write_recording(tmp_path / "recording", GOOD_DERIVE, GOOD_ADAPTER)

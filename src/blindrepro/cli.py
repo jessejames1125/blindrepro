@@ -61,7 +61,9 @@ def _slug(text: str) -> str:
 
 
 def _run(args) -> int:
-    from .pipeline import Case, RunStopped, run_case, show
+    from .envs import InstallFailed
+    from . import pipeline
+    from .pipeline import Case, RunStopped, show
 
     out = Path(args.out) if args.out else Path("blindrepro-runs") / _slug(args.paper)
     case = Case(
@@ -84,8 +86,8 @@ def _run(args) -> int:
     print("Note: this runs the authors' code on your machine under the guard, which is not a security boundary. Use a container for code you do not trust.")
     judge = make_judge(args.judge, args.model, args.effort)
     try:
-        verdict = run_case(case, judge)
-    except RunStopped as stopped:
+        verdict = pipeline.run_case(case, judge)
+    except (RunStopped, InstallFailed) as stopped:
         print(stopped)
         out.mkdir(parents=True, exist_ok=True)
         (out / "stopped.txt").write_text(f"{stopped}\n", encoding="utf-8", newline="\n")
