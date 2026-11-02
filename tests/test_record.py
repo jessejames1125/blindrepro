@@ -119,12 +119,13 @@ def test_a_common_account_name_is_not_swapped_as_a_word(monkeypatch):
         assert all(new != "<user>" for _old, new in pipeline.swaps_for(Path("work")))
 
 
-def test_the_swaps_name_the_account():
+def test_the_swaps_name_the_account(monkeypatch):
     from pathlib import Path
 
-    from blindrepro.pipeline import swaps_for
+    from blindrepro import pipeline
 
-    assert (Path.home().name, "<user>") in swaps_for(Path("work"))
+    monkeypatch.setattr(pipeline.Path, "home", classmethod(lambda cls: Path("/home/someone")))
+    assert ("someone", "<user>") in pipeline.swaps_for(Path("work"))
 
 
 def test_a_record_file_added_in_a_subfolder_is_caught(tmp_path):
