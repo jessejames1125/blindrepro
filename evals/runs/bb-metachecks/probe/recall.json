@@ -1,0 +1,24 @@
+{
+  "stated": {
+    "k_72": 12,
+    "k_90": 8,
+    "k_108": 8,
+    "k_144": 12,
+    "k_288": 12,
+    "r_M_72": null,
+    "r_M_90": null,
+    "r_M_108": null,
+    "r_M_144": null,
+    "r_M_288": null,
+    "d_S_72": null,
+    "d_S_90": null,
+    "d_S_108": null,
+    "d_S_144": null,
+    "d_S_288": null,
+    "gross_leader_c0": null,
+    "gross_leader_c1": null,
+    "gross_leader_c2": null,
+    "p2_coefficient_exact_repair_72": null
+  },
+  "model": "claude-opus-5-5"
+}

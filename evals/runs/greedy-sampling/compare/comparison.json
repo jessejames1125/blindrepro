@@ -1,0 +1,62 @@
+{
+  "status": "REPRODUCED",
+  "tolerance": 0.05,
+  "max_error": 4.941697779175402e-09,
+  "reason": "",
+  "rows": [
+    {
+      "key": "pgreedy_max_power_neff20_m20",
+      "derived": 3.1622647058135134,
+      "authors": 3.1622647058135134,
+      "paper": null,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "gelfand_lower_neff20_n20",
+      "derived": 0.4688128171957017,
+      "authors": 0.4688128170129016,
+      "paper": null,
+      "error": 3.899213113421412e-10,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "pgreedy_max_power_neff40_m40",
+      "derived": 4.472054875036885,
+      "authors": 4.472054875036885,
+      "paper": null,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "gelfand_lower_neff40_n40",
+      "derived": 0.494854727278602,
+      "authors": 0.4948547266067724,
+      "paper": null,
+      "error": 1.3576300504922473e-09,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "pgreedy_max_power_neff80_m80",
+      "derived": 6.324243275301261,
+      "authors": 6.324243275301261,
+      "paper": null,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "gelfand_lower_neff80_n80",
+      "derived": 0.5194625065537127,
+      "authors": 0.519462503986686,
+      "paper": null,
+      "error": 4.941697779175402e-09,
+      "within": true,
+      "note": ""
+    }
+  ]
+}

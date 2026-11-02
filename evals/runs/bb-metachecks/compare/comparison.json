@@ -1,0 +1,179 @@
+{
+  "status": "REPRODUCED",
+  "tolerance": 0.05,
+  "max_error": 0.0,
+  "reason": "",
+  "rows": [
+    {
+      "key": "k_72",
+      "derived": 12.0,
+      "authors": 12.0,
+      "paper": 12.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "r_M_72",
+      "derived": 6.0,
+      "authors": 6.0,
+      "paper": 6.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "d_S_72",
+      "derived": 3.0,
+      "authors": 3.0,
+      "paper": 3.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "k_90",
+      "derived": 8.0,
+      "authors": 8.0,
+      "paper": 8.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "r_M_90",
+      "derived": 4.0,
+      "authors": 4.0,
+      "paper": 4.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "d_S_90",
+      "derived": 2.0,
+      "authors": 2.0,
+      "paper": 2.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "k_108",
+      "derived": 8.0,
+      "authors": 8.0,
+      "paper": 8.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "r_M_108",
+      "derived": 4.0,
+      "authors": 4.0,
+      "paper": 4.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "d_S_108",
+      "derived": 2.0,
+      "authors": 2.0,
+      "paper": 2.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "k_144",
+      "derived": 12.0,
+      "authors": 12.0,
+      "paper": 12.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "r_M_144",
+      "derived": 6.0,
+      "authors": 6.0,
+      "paper": 6.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "d_S_144",
+      "derived": 2.0,
+      "authors": 2.0,
+      "paper": 2.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "k_288",
+      "derived": 12.0,
+      "authors": 12.0,
+      "paper": 12.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "r_M_288",
+      "derived": 6.0,
+      "authors": 6.0,
+      "paper": 6.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "d_S_288",
+      "derived": 2.0,
+      "authors": 2.0,
+      "paper": 2.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "gross_leader_c0",
+      "derived": 1.0,
+      "authors": 1.0,
+      "paper": 1.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "gross_leader_c1",
+      "derived": 36.0,
+      "authors": 36.0,
+      "paper": 36.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "gross_leader_c2",
+      "derived": 27.0,
+      "authors": 27.0,
+      "paper": 27.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "p2_coefficient_exact_repair_72",
+      "derived": 603.0,
+      "authors": 603.0,
+      "paper": 603.0,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    }
+  ]
+}

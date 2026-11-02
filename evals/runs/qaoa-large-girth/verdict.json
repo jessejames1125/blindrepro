@@ -1,0 +1,263 @@
+{
+  "tool": "blindrepro",
+  "paper": {
+    "ref": "arXiv:2110.14206",
+    "url": "https://arxiv.org/abs/2110.14206",
+    "title": "The Quantum Approximate Optimization Algorithm at High Depth for MaxCut on Large-Girth Regular Graphs and the Sherrington-Kirkpatrick Model",
+    "first_public": "2021-10-27",
+    "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "source_kind": "arxiv-latex",
+    "sha256": "7ad75420c48c5302cb3ee948f678ade73ed3d407d71aed1d88507d0c30345a72"
+  },
+  "target": "The table of the infinite-degree QAOA MaxCut values nu_p and the optimal parameters' energy for depths p = 1 to 8",
+  "claim": "For the depth-p QAOA applied to MaxCut on large-girth (D+1)-regular graphs, in the limit D -> infinity, the cut fraction is 1/2 + nu_p(gamma,beta)/sqrt(D), where nu_p is given by the paper's infinite-D G-matrix iteration (equivalently, the QAOA energy density on the SK model). The tested result is the optimum bar_nu_p = max over (gamma,beta) of nu_p for depths p = 1 to 8.",
+  "quantities": [
+    {
+      "key": "nu_bar_p1",
+      "description": "bar_nu_1 = max over gamma in R^1, beta in R^1 of nu_1(gamma,beta). Here nu_p(gamma,beta) = lim_{D->inf} nu_p(D,gamma,beta) = (i/2) sum_{j=-p..p} Gamma_j (G^{(p)}_{0,j})^2. Index vectors as (a_1..a_p, a_0, a_{-p}..a_{-1}), with a_i in {+1,-1}. Gamma_r = gamma_r, Gamma_0 = 0, Gamma_{-r} = -gamma_r. f(a) = (1/2) <a_1|e^{i beta_1 X}|a_2> ... <a_p|e^{i beta_p X}|a_0> <a_0|e^{-i beta_p X}|a_{-p}> ... <a_{-2}|e^{-i beta_1 X}|a_{-1}>, where <a|e^{i beta X}|b> = cos(beta) if a=b and i sin(beta) otherwise. G^{(0)}_{jk} = sum_a f(a) a_j a_k. G^{(m)}_{jk} = sum_a f(a) a_j a_k exp(-(1/2) sum_{j',k'} G^{(m-1)}_{j'k'} Gamma_{j'} Gamma_{k'} a_{j'} a_{k'}) for m = 1..p. The cost driver is C = -(1/sqrt(D)) sum_{edges} Z_u Z_v. Report the global maximum at full precision. The result equals the SK-model QAOA energy V_p maximized over parameters.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "nu_bar_p2",
+      "description": "bar_nu_2 = max over gamma, beta in R^2 of nu_2(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 2. Report the global maximum at full precision.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "nu_bar_p3",
+      "description": "bar_nu_3 = max over gamma, beta in R^3 of nu_3(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 3. Report the global maximum at full precision.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "nu_bar_p4",
+      "description": "bar_nu_4 = max over gamma, beta in R^4 of nu_4(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 4. Report the global maximum at full precision.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "nu_bar_p5",
+      "description": "bar_nu_5 = max over gamma, beta in R^5 of nu_5(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 5. Report the global maximum at full precision.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "nu_bar_p6",
+      "description": "bar_nu_6 = max over gamma, beta in R^6 of nu_6(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 6. Report the global maximum at full precision.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "nu_bar_p7",
+      "description": "bar_nu_7 = max over gamma, beta in R^7 of nu_7(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 7. Report the global maximum at full precision.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "nu_bar_p8",
+      "description": "bar_nu_8 = max over gamma, beta in R^8 of nu_8(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 8. Report the global maximum at full precision.",
+      "units": "dimensionless"
+    }
+  ],
+  "code": {
+    "url": "https://github.com/benjaminvillalonga/large-girth-maxcut-qaoa",
+    "commit": "b5bbc23ad4309af12a95666862cd082bddcac0e3",
+    "fetched_at": "2026-11-02T11:26:55Z",
+    "modified": true,
+    "could_not_run": "# Partial failure: the authors' optimizer (code/src/optimize.cpp) could not be built\n\nThe authors get the maximum over (gamma, beta) by running optimize.cpp. It uses LBFGSpp's LBFGSSolver with epsilon=1e-7, max_iterations=1000, and forward-difference gradients with step delta taken from argv. This program could not be compiled.\n\nWhat I tried:\n- `ziglang` (clang 16/19 + libc++) with Eigen 3.4.0 from `cmeel-eigen`. optimize.cpp failed with:\n  `code\\src\\optimize.cpp:6:10: fatal error: 'LBFGS.h' file not found`\n- I looked for a pip package that ships the LBFGSpp headers. `lbfgspp` and `cmeel-lbfgspp` are not in the package registry (\"was not found in the package registry\"). The `gpboost` wheel does not ship them either. Scripts have no network access, so I could not fetch LBFGSpp (github.com/yixuan/LBFGSpp) any other way.\n- No system C++ compiler or header tree was reachable. Listing C:\\msys64 and Visual Studio was blocked by the guard.\n\nMissing: the header-only LBFGSpp library (include/LBFGS.h and LBFGSpp/*.h).\n\nWhat did run: the authors' evaluator (evaluate.cpp and MatrixBuilder in matrix_builder.cpp, after a two-line edit to make it compile, see notes.md). It was run at the authors' published optimal parameters from code/data.csv. The values in adapter.py's JSON are therefore nu_p at the published (rounded) optimal parameters. They are not the output of a fresh optimization run.\n",
+    "fetch_error": null
+  },
+  "comparison": {
+    "status": "REPRODUCED",
+    "tolerance": 0.05,
+    "max_error": 4.464347319735937e-08,
+    "reason": "",
+    "rows": [
+      {
+        "key": "nu_bar_p1",
+        "derived": 0.30326532985631677,
+        "authors": 0.3032653298542708,
+        "paper": 0.3033,
+        "error": 6.746483358033803e-12,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "nu_bar_p2",
+        "derived": 0.4075450299961164,
+        "authors": 0.4075450178436366,
+        "paper": 0.4075,
+        "error": 2.9818742146677765e-08,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "nu_bar_p3",
+        "derived": 0.47261898322175666,
+        "authors": 0.47261897952283444,
+        "paper": 0.4726,
+        "error": 7.826436060197618e-09,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "nu_bar_p4",
+        "derived": 0.51567882638654,
+        "authors": 0.5156788202438393,
+        "paper": 0.5157,
+        "error": 1.1911873127811389e-08,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "nu_bar_p5",
+        "derived": 0.5476456452864975,
+        "authors": 0.5476456346823727,
+        "paper": 0.5476,
+        "error": 1.9363113898685882e-08,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "nu_bar_p6",
+        "derived": 0.5721372293163591,
+        "authors": 0.5721372072811373,
+        "paper": 0.5721,
+        "error": 3.8513876722161626e-08,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "nu_bar_p7",
+        "derived": 0.591481130546388,
+        "authors": 0.5914811068927609,
+        "paper": 0.5915,
+        "error": 3.9990503130843576e-08,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "nu_bar_p8",
+        "derived": 0.6072664655842862,
+        "authors": 0.6072664384738032,
+        "paper": 0.6073,
+        "error": 4.464347319735937e-08,
+        "within": true,
+        "note": ""
+      }
+    ]
+  },
+  "explanation": "",
+  "blinding": {
+    "freeze_hash": "d8f4e3677325f709e02216672f13d6225e2981e6ab13750d03dc9018a1e1b80d",
+    "frozen_at": "2026-11-02T11:26:48Z",
+    "code_fetched_at": "2026-11-02T11:26:55Z",
+    "tools_offered": [
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read",
+      "Write",
+      "mcp__blindrepro__run"
+    ],
+    "refused_calls": 0,
+    "guard_blocked": 0,
+    "redaction": {
+      "strings_removed": 2,
+      "strings_not_found": [],
+      "code_links_removed": 2
+    },
+    "values_shown": false,
+    "leaks": [
+      {
+        "key": "nu_bar_p1",
+        "value": 0.3032653298542708,
+        "printed": "0.3028",
+        "context": "0.2949, 0.5144, 0.5586, 0.6429 & 0.5710, 0.4176, 0.3028, 0.1729 \\\\ \\hline 5 & 0.2705, 0."
+      },
+      {
+        "key": "nu_bar_p2",
+        "value": 0.4075450178436366,
+        "printed": "0.4090",
+        "context": ".4327, 0.4516, 0.4830, 0.5147, & 0.6085, 0.4810, 0.4090, 0.3534, 0.2857, \\\\ & 0.5686, 0.6"
+      },
+      {
+        "key": "nu_bar_p3",
+        "value": 0.47261897952283444,
+        "printed": "0.4703",
+        "context": "392, 0.4103, \\\\ & 0.4103, 0.4179, 0.4304, 0.4471, 0.4703, & 0.3843, 0.3554, 0.3243, 0.290"
+      },
+      {
+        "key": "nu_bar_p4",
+        "value": 0.5156788202438393,
+        "printed": "0.5144",
+        "context": "& 0.5500, 0.3675, 0.2109 \\\\ \\hline 4 & 0.2949, 0.5144, 0.5586, 0.6429 & 0.5710, 0.4176"
+      },
+      {
+        "key": "nu_bar_p5",
+        "value": 0.5476456346823727,
+        "printed": "0.5500",
+        "context": ", 0.2690 \\\\ \\hline 3 & 0.3297, 0.5688, 0.6406 & 0.5500, 0.3675, 0.2109 \\\\ \\hline 4 & 0."
+      },
+      {
+        "key": "nu_bar_p6",
+        "value": 0.5721372072811373,
+        "printed": "0.5710",
+        "context": "\\\\ \\hline 4 & 0.2949, 0.5144, 0.5586, 0.6429 & 0.5710, 0.4176, 0.3028, 0.1729 \\\\ \\hlin"
+      },
+      {
+        "key": "nu_bar_p7",
+        "value": 0.5914811068927609,
+        "printed": "0.5899",
+        "context": "ine 5 & 0.2705, 0.4804, 0.5074, 0.5646, 0.6397 & 0.5899, 0.4492, 0.3559, 0.2643, 0.1486 \\"
+      },
+      {
+        "key": "nu_bar_p8",
+        "value": 0.6072664384738032,
+        "printed": "0.6085",
+        "context": "ne 7 & 0.2383, 0.4327, 0.4516, 0.4830, 0.5147, & 0.6085, 0.4810, 0.4090, 0.3534, 0.2857,"
+      }
+    ],
+    "literals": [
+      {
+        "key": "nu_bar_p6",
+        "literal": 0.5717,
+        "line": 116
+      }
+    ],
+    "forbidden_imports": [],
+    "tampering": [],
+    "values_searched": 16,
+    "recall": {
+      "stated": 8,
+      "total": 8,
+      "matched": 8,
+      "values": {
+        "nu_bar_p1": 0.3033,
+        "nu_bar_p2": 0.4075,
+        "nu_bar_p3": 0.4726,
+        "nu_bar_p4": 0.5157,
+        "nu_bar_p5": 0.5476,
+        "nu_bar_p6": 0.5721,
+        "nu_bar_p7": 0.5915,
+        "nu_bar_p8": 0.6073
+      }
+    },
+    "cutoff": {
+      "cutoff": "2026-06",
+      "after_cutoff": false,
+      "statement": "2026-06 per the vendor. Paper first posted 2021-10-27, before that, so it may be in training data."
+    }
+  },
+  "run": {
+    "model": "claude-opus-5-5",
+    "judge": "claude-cli",
+    "judge_version": "2.1.316",
+    "tool_version": "0.1.0",
+    "date": "2026-11-02",
+    "python": "3.12.13",
+    "packages": [
+      "mpmath==1.3.0",
+      "numpy==2.5.4",
+      "scipy==1.18.1",
+      "sympy==1.14.0"
+    ],
+    "agent_seconds": 705.6
+  },
+  "blind_notes": "- Method: infinite-D G-matrix iteration exactly as in paper Sec. 3.2 / spec.json; nu taken as the real part (imaginary part ~1e-15 is roundoff).\n- Used symmetry f(-a)=f(a), H(-a)=H(a) (paper Sec. 4.1) to sum over half the bit strings (a_1=+1) and double; exact, not an approximation.\n- Gradient by hand-written reverse-mode differentiation of the iteration (holomorphic chain rule, real part taken); checked against central finite differences for p<=3 (err ~1e-10).\n- Optimizer: scipy L-BFGS-B (paper used LBFGS++); \"global maximum\" = best over multistart: the paper's 4-digit optimal angles (Appendix table) as one warm start, the INTERP p->p+1 heuristic (from memory: Zhou et al., PRX 2020, ref ZhouQAOA in paper) as another, plus uniform random starts (gamma in [0.05,1.2], beta in [-0.8,0.8]; ranges my own choice). Fewer random starts at p=7,8 because of the 600 s runtime limit.\n- Global optimality cannot be proven; the reported values are the best local maxima found, and all non-random starts converged to the same value.\n- Sanity check from memory: p=1 SK optimum is 1/sqrt(4e)=0.303265... at gamma=1/2, beta=pi/8 (Farhi et al. 2019); the code reproduces it but does not use it.\n",
+  "adapter_notes": "# Notes on settings and choices\n\n- Authors' code: C++ in code/src (matrix_builder.cpp = infinite-D G-matrix iteration; evaluate.cpp = nu_p at given params; optimize.cpp = LBFGS++ maximization). MaxCut is the q=2 case (`evaluate_matrix` uses M^q and sqrt(2/q), which is 1 for q=2).\n- **The authors' optimizer (optimize.cpp) could not be built:** it needs the header-only LBFGSpp library (`#include <LBFGS.h>`), which is not in the repo and not on PyPI (tried `lbfgspp`, `cmeel-lbfgspp`, and checked the `gpboost` wheel). See could_not_run.md.\n- So the reported numbers are NOT outputs of their optimization run. Each one is nu_p from the authors' own evaluator (MatrixBuilder::build_matrix + evaluate_matrix, i.e. evaluate.cpp) at the authors' published optimal (gamma, beta) for q=2, p=1..8, which come from code/data.csv (columns 4..4+2p-1, given to 4 decimals). The \"optimal nu\" column of data.csv is not used. It is only a sanity check (it matches to 4 digits).\n- Because the parameters are rounded to 4 decimals, each value is a lower bound on the true maximum and sits very close to it (the gradient is zero at the optimum, so the error is second order). For p=1 the exact value is 1/sqrt(4e)=0.303265329856317. We get 0.3032653298542708, which is about 2e-12 lower.\n- Compiler: no system compiler is reachable, so I used zig's clang/libc++ (pip `ziglang==0.14.0`). zig 0.11.0 failed at link time (`undefined symbol _create_locale`, a mingw/libc++ issue). Eigen 3.4.0 headers come from pip `cmeel-eigen==3.4.0.2` (the code needs Eigen >= 3.4 for `Eigen::all` / `Eigen::Vector`).\n- Build flags: same as the Makefile (-O3 -march=native) but without -fopenmp, because zig ships no OpenMP runtime. `<omp.h>` is replaced by a single-thread stub, shim/omp.h (omp_get_thread_num()=0, omp_get_max_threads()=1). This does not change the math. It only changes the order of the floating-point summation compared with a multi-threaded run.\n- **Edit to code/ (required to compile):** in code/src/matrix_builder.cpp, lines 29 and 31, `types::Complex({0., 1.})` was changed to `types::Complex(0., 1.)`. Under libc++ (zig 0.11 and 0.14) the braced form is an ambiguous constructor call (complex<float> vs complex<long double> converting constructors). It compiles under the authors' g++/libstdc++. Both forms give the same value, the imaginary unit i.\n- Precision: evaluate.cpp prints with setprecision(8). To report full precision I also built shim/evaluate_fullprec.cpp. It is a copy of evaluate.cpp's main with setprecision(17) that does not print the matrix, and it links the authors' unchanged matrix_builder.cpp. The adapter runs both binaries: the 8-digit output of the authors' evaluate.cpp matches the 17-digit values for every p. The JSON reports the 17-digit values.\n- Spec vs. code: the spec's definition (Gamma ordering, f(a), G iteration, nu = (i/2) sum Gamma_j G_{0j}^2) is what MatrixBuilder implements for q=2. I found no difference in settings.\n"
+}

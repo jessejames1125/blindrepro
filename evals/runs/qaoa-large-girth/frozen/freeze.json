@@ -1,0 +1,68 @@
+{
+  "files": {
+    "blind/derive.py": "10edbc7a0fa14d14dab64ee309ee0463454565af48e2b8bf9d4f30abe6eff389",
+    "blind/notes.md": "70ec99ebfd6140041e33572a995f7ec07a88647d673a8f80c4088a35e966d44b",
+    "derive_stdout.txt": "e25ede22c087a5d44aa20bbe020d99d14d07a546b03f176922e17b89a8452a15",
+    "results.json": "729aa0c13d56cb262b2773b0b3bdcfd724a10bec8a187d31683c18dd648612c5",
+    "script_runs.jsonl": "aa7ef9a7bd82283fbfc72a191052cae12d37228cfc85f0d258551784980f2c98",
+    "spec_shown.json": "c6cbd1c7c178b449504ef5bbf57c6465d527ae9267756edfcd85f62b47ff56b0",
+    "transcript.jsonl": "1b1142f44edfb376c22246629adaebf5cb013849021b811eb7df1e806020f47d",
+    "transcript.prompt.txt": "55feab640eda841305057113e923339ed4286769b06eb722e0c6bdd0ee97d840"
+  },
+  "frozen_at": "2026-11-02T11:26:48Z",
+  "tool_version": "0.1.0",
+  "paper": {
+    "ref": "arXiv:2110.14206",
+    "url": "https://arxiv.org/abs/2110.14206",
+    "title": "The Quantum Approximate Optimization Algorithm at High Depth for MaxCut on Large-Girth Regular Graphs and the Sherrington-Kirkpatrick Model",
+    "first_public": "2021-10-27",
+    "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "source_kind": "arxiv-latex",
+    "sha256": "7ad75420c48c5302cb3ee948f678ade73ed3d407d71aed1d88507d0c30345a72"
+  },
+  "paper_shown_sha256": "285a45c9ec9bae86d64661e134fc4d9f6be7fb8ba35759a4a38a09315c7ee79c",
+  "redaction": {
+    "strings_removed": 2,
+    "strings_not_found": [],
+    "code_links_removed": 2
+  },
+  "target": "The table of the infinite-degree QAOA MaxCut values nu_p and the optimal parameters' energy for depths p = 1 to 8",
+  "tolerance": 0.05,
+  "values_shown": false,
+  "model": "claude-opus-5-5",
+  "judge": "claude-cli",
+  "judge_version": "2.1.316",
+  "tools_offered": [
+    "Edit",
+    "Glob",
+    "Grep",
+    "Read",
+    "Write",
+    "mcp__blindrepro__run"
+  ],
+  "refused_calls": [],
+  "agent_tool_calls": 11,
+  "agent_seconds": 705.6,
+  "python": "3.12.13",
+  "packages": [
+    "mpmath==1.3.0",
+    "numpy==2.5.4",
+    "scipy==1.18.1",
+    "sympy==1.14.0"
+  ],
+  "allowed_packages": [
+    "numpy",
+    "scipy",
+    "sympy",
+    "mpmath"
+  ],
+  "guard_blocked_during_session": 0,
+  "guard_blocked_at_freeze": 0,
+  "derivation_ran": true,
+  "script_error": "",
+  "limits": {
+    "seconds": 600,
+    "memory_mb": 2048
+  },
+  "freeze_hash": "d8f4e3677325f709e02216672f13d6225e2981e6ab13750d03dc9018a1e1b80d"
+}

@@ -1,0 +1,21 @@
+paper_full.txt holds a research paper. A researcher wants to test whether this result can be reproduced from the paper alone: The table of the infinite-degree QAOA MaxCut values nu_p and the optimal parameters' energy for depths p = 1 to 8
+
+Write spec.json with this shape:
+{
+  "claim": "one or two sentences stating the result being tested, with its setting and assumptions, and no target values",
+  "quantities": [
+    {"key": "snake_case_name", "description": "exact definition with conditions, enough for an independent expert to compute it, and no target values", "units": "units or 'dimensionless'"}
+  ],
+  "paper_values": {"snake_case_name": 1.23},
+  "redact": ["exact substrings of paper_full.txt to blank"],
+  "not_computable": ""
+}
+
+Rules:
+- quantities covers the target and nothing else, at most 30 entries. Each must be a single number or a list of numbers. If the target is an equation, choose evaluation points stated in the paper.
+- paper_values holds each number exactly as the paper prints it. Use null where the paper prints no number.
+- Define each quantity as the full-precision number, never rounded to the paper's printed digits: rounding both sides would hide or invent differences.
+- redact lists every string that prints a target value or gives it away: table rows, sentences of results, figure captions quoting the values, the abstract's numbers. Copy each string character for character, keep each as short as possible, and search the whole file, because results repeat. Keep every equation, method, parameter and input needed to do the computation.
+- Standard published formulas, constants or fit coefficients that the paper cites count as available: the next agent may use them from memory and must say so. Write a reason in not_computable, and leave the rest empty, only if the target needs a dataset, measurements or code that cannot be rebuilt from the paper, or more than about ten minutes on a laptop.
+
+Do not compute anything. Finish by writing spec.json and stop.

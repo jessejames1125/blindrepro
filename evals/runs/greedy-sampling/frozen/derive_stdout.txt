@@ -1,0 +1,4 @@
+Neff=20: sqrt(c/pi)=3.1622776601683795
+Neff=40: sqrt(c/pi)=4.47213595499958
+Neff=80: sqrt(c/pi)=6.324555320336759
+{"pgreedy_max_power_neff20_m20": 3.1622647058135134, "gelfand_lower_neff20_n20": 0.4688128171957017, "pgreedy_max_power_neff40_m40": 4.472054875036885, "gelfand_lower_neff40_n40": 0.494854727278602, "pgreedy_max_power_neff80_m80": 6.324243275301261, "gelfand_lower_neff80_n80": 0.5194625065537127}

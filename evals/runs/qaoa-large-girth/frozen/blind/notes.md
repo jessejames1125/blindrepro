@@ -1,0 +1,6 @@
+- Method: infinite-D G-matrix iteration exactly as in paper Sec. 3.2 / spec.json; nu taken as the real part (imaginary part ~1e-15 is roundoff).
+- Used symmetry f(-a)=f(a), H(-a)=H(a) (paper Sec. 4.1) to sum over half the bit strings (a_1=+1) and double; exact, not an approximation.
+- Gradient by hand-written reverse-mode differentiation of the iteration (holomorphic chain rule, real part taken); checked against central finite differences for p<=3 (err ~1e-10).
+- Optimizer: scipy L-BFGS-B (paper used LBFGS++); "global maximum" = best over multistart: the paper's 4-digit optimal angles (Appendix table) as one warm start, the INTERP p->p+1 heuristic (from memory: Zhou et al., PRX 2020, ref ZhouQAOA in paper) as another, plus uniform random starts (gamma in [0.05,1.2], beta in [-0.8,0.8]; ranges my own choice). Fewer random starts at p=7,8 because of the 600 s runtime limit.
+- Global optimality cannot be proven; the reported values are the best local maxima found, and all non-random starts converged to the same value.
+- Sanity check from memory: p=1 SK optimum is 1/sqrt(4e)=0.303265... at gamma=1/2, beta=pi/8 (Farhi et al. 2019); the code reproduces it but does not use it.

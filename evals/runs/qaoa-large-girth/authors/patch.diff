@@ -1,0 +1,16 @@
+diff --git a/src/matrix_builder.cpp b/src/matrix_builder.cpp
+index ccb2266..d3ed9d4 100644
+--- a/src/matrix_builder.cpp
++++ b/src/matrix_builder.cpp
+@@ -26,9 +26,9 @@ Params::Params(
+     Betas(i) = betas(i);
+     Betas(2 * p - i - 1) = -betas(i);
+     trigs(0, i) = std::cos(betas(i));
+-    trigs(1, i) = types::Complex({0., 1.}) * std::sin(betas(i));
++    trigs(1, i) = types::Complex(0., 1.) * std::sin(betas(i));
+     trigs(0, 2 * p - i - 1) = std::cos(-betas(i));
+-    trigs(1, 2 * p - i - 1) = types::Complex({0., 1.}) * std::sin(-betas(i));
++    trigs(1, 2 * p - i - 1) = types::Complex(0., 1.) * std::sin(-betas(i));
+     ratios(i) = trigs(1, i) / trigs(0, i);
+     ratios(2 * p - i - 1) = trigs(1, 2 * p - i - 1) / trigs(0, 2 * p - i - 1);
+   }

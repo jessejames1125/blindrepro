@@ -1,0 +1,41 @@
+{
+  "claim": "For the pure spherical p-spin model xi(x)=x^p at p=4, the landscape threshold energies E_infinity (where the typical Hessian shift reaches the edge of the semicircle), E_2 and E_1 (zeros of the annealed index-k complexity functions), and E_0 (the ground-state energy constant) follow from the paper's closed-form pure-case complexity functions by root finding.",
+  "quantities": [
+    {
+      "key": "E_infinity_p4",
+      "description": "E_infinity(xi) = 2*sqrt(xi''(1))/xi'(1) for xi(x)=x^4, i.e. 2*sqrt((p-1)/p) at p=4. Report the full-precision value.",
+      "units": "dimensionless (energy per spin)"
+    },
+    {
+      "key": "E_2_p4",
+      "description": "For p=4, let J(t) = (1/2) * integral from t to -2 of sqrt(x^2-4) dx for t <= -2 (J=0 for t>-2), and I_1(u) = J(u*sqrt(p/(p-1))). For u <= -E_infinity, Theta_k(u) = (1/2)log(p-1) - (p-2)/(4(p-1)) u^2 - (k+1) I_1(u). E_2 = sup{a>0 : Theta_2(-a) >= 0}, i.e. the root a > E_infinity of Theta_2(-a)=0 (k=2, so the coefficient of I_1 is 3). Report the full-precision value.",
+      "units": "dimensionless (energy per spin)"
+    },
+    {
+      "key": "E_1_p4",
+      "description": "Same setup as E_2_p4 with k=1 (coefficient of I_1 equal to 2): E_1 = sup{a>0 : Theta_1(-a) >= 0} for p=4, the root a > E_infinity of (1/2)log 3 - (1/6) a^2 - 2 J(-a*sqrt(4/3)) = 0. Report the full-precision value.",
+      "units": "dimensionless (energy per spin)"
+    },
+    {
+      "key": "E_0_p4",
+      "description": "Ground-state constant E_0 for the pure p=4 spherical spin glass, with (1/N) min H_N -> -E_0. For the pure model (Auffinger-Ben Arous-Cerny), this equals the root a > E_infinity of Theta_0(-a)=0, where Theta_0(u) = (1/2)log(p-1) - (p-2)/(4(p-1)) u^2 - I_1(u) (the paper's pure-case formula with k=0, coefficient of I_1 equal to 1), with I_1 and J as in E_2_p4. This agrees with the zero-temperature Crisanti-Sommers/Parisi formula. Report the full-precision value.",
+      "units": "dimensionless (energy per spin)"
+    }
+  ],
+  "paper_values": {
+    "E_infinity_p4": 1.73205,
+    "E_2_p4": 1.77648,
+    "E_1_p4": 1.7833,
+    "E_0_p4": 1.79409
+  },
+  "redact": [
+    "E_\\infty(4)=1.73205",
+    "E_2(4)=1.77648",
+    "E_1(4)=1.78330",
+    "E_0(4)=1.79409",
+    "$E_1=1.7833003$",
+    "$1.1\\times10^{-2}$",
+    "$N(E_0-E_1)\\approx0.09$--$0.17$"
+  ],
+  "not_computable": ""
+}

@@ -1,0 +1,15 @@
+{
+  "iota_uniform_family": 2.0,
+  "iota_sheared_axis": 2.286900125857014,
+  "iota_sheared_edge": 2.287771735487265,
+  "force_residual_uniform_family": [
+    6.280369834735101e-16,
+    7.076646171787873e-16,
+    4.1714917592537933e-16
+  ],
+  "force_residual_sheared_family": [
+    0.0,
+    1.981054078594269e-15,
+    1.8184997996137306e-15
+  ]
+}

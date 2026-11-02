@@ -1,0 +1,19 @@
+{
+  "url": "https://github.com/benjaminvillalonga/large-girth-maxcut-qaoa",
+  "commit": "b5bbc23ad4309af12a95666862cd082bddcac0e3",
+  "fetched_at": "2026-11-02T11:26:55Z",
+  "values": {
+    "nu_bar_p1": 0.3032653298542708,
+    "nu_bar_p2": 0.4075450178436366,
+    "nu_bar_p3": 0.47261897952283444,
+    "nu_bar_p4": 0.5156788202438393,
+    "nu_bar_p5": 0.5476456346823727,
+    "nu_bar_p6": 0.5721372072811373,
+    "nu_bar_p7": 0.5914811068927609,
+    "nu_bar_p8": 0.6072664384738032
+  },
+  "modified": true,
+  "could_not_run": "# Partial failure: the authors' optimizer (code/src/optimize.cpp) could not be built\n\nThe authors get the maximum over (gamma, beta) by running optimize.cpp. It uses LBFGSpp's LBFGSSolver with epsilon=1e-7, max_iterations=1000, and forward-difference gradients with step delta taken from argv. This program could not be compiled.\n\nWhat I tried:\n- `ziglang` (clang 16/19 + libc++) with Eigen 3.4.0 from `cmeel-eigen`. optimize.cpp failed with:\n  `code\\src\\optimize.cpp:6:10: fatal error: 'LBFGS.h' file not found`\n- I looked for a pip package that ships the LBFGSpp headers. `lbfgspp` and `cmeel-lbfgspp` are not in the package registry (\"was not found in the package registry\"). The `gpboost` wheel does not ship them either. Scripts have no network access, so I could not fetch LBFGSpp (github.com/yixuan/LBFGSpp) any other way.\n- No system C++ compiler or header tree was reachable. Listing C:\\msys64 and Visual Studio was blocked by the guard.\n\nMissing: the header-only LBFGSpp library (include/LBFGS.h and LBFGSpp/*.h).\n\nWhat did run: the authors' evaluator (evaluate.cpp and MatrixBuilder in matrix_builder.cpp, after a two-line edit to make it compile, see notes.md). It was run at the authors' published optimal parameters from code/data.csv. The values in adapter.py's JSON are therefore nu_p at the published (rounded) optimal parameters. They are not the output of a fresh optimization run.\n",
+  "model": "claude-opus-5-5",
+  "agent_seconds": 595.7
+}

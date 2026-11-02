@@ -1,0 +1,12 @@
+This is a memory check. You have no tools and no paper. Do not derive or calculate anything.
+
+Paper: Spectral Gap Bounds for Langevin Dynamics in Mixed Spherical Spin Glasses (arXiv:2609.15157)
+Result: For the pure spherical p-spin model xi(x)=x^p at p=4, the landscape threshold energies E_infinity (where the typical Hessian shift reaches the edge of the semicircle), E_2 and E_1 (zeros of the annealed index-k complexity functions), and E_0 (the ground-state energy constant) follow from the paper's closed-form pure-case complexity functions by root finding.
+
+From memory alone, what are these values as published?
+- E_infinity_p4: E_infinity(xi) = 2*sqrt(xi''(1))/xi'(1) for xi(x)=x^4, i.e. 2*sqrt((p-1)/p) at p=4. Report the full-precision value. (dimensionless (energy per spin))
+- E_2_p4: For p=4, let J(t) = (1/2) * integral from t to -2 of sqrt(x^2-4) dx for t <= -2 (J=0 for t>-2), and I_1(u) = J(u*sqrt(p/(p-1))). For u <= -E_infinity, Theta_k(u) = (1/2)log(p-1) - (p-2)/(4(p-1)) u^2 - (k+1) I_1(u). E_2 = sup{a>0 : Theta_2(-a) >= 0}, i.e. the root a > E_infinity of Theta_2(-a)=0 (k=2, so the coefficient of I_1 is 3). Report the full-precision value. (dimensionless (energy per spin))
+- E_1_p4: Same setup as E_2_p4 with k=1 (coefficient of I_1 equal to 2): E_1 = sup{a>0 : Theta_1(-a) >= 0} for p=4, the root a > E_infinity of (1/2)log 3 - (1/6) a^2 - 2 J(-a*sqrt(4/3)) = 0. Report the full-precision value. (dimensionless (energy per spin))
+- E_0_p4: Ground-state constant E_0 for the pure p=4 spherical spin glass, with (1/N) min H_N -> -E_0. For the pure model (Auffinger-Ben Arous-Cerny), this equals the root a > E_infinity of Theta_0(-a)=0, where Theta_0(u) = (1/2)log(p-1) - (p-2)/(4(p-1)) u^2 - I_1(u) (the paper's pure-case formula with k=0, coefficient of I_1 equal to 1), with I_1 and J as in E_2_p4. This agrees with the zero-temperature Crisanti-Sommers/Parisi formula. Report the full-precision value. (dimensionless (energy per spin))
+
+Reply with one JSON object mapping each key to the published number as you recall it, or to null if you do not recall it. Null is the expected answer when you do not actually remember. Reply with the JSON only.

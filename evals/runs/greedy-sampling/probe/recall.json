@@ -1,0 +1,11 @@
+{
+  "stated": {
+    "pgreedy_max_power_neff20_m20": null,
+    "pgreedy_max_power_neff40_m40": null,
+    "pgreedy_max_power_neff80_m80": null,
+    "gelfand_lower_neff20_n20": null,
+    "gelfand_lower_neff40_n40": null,
+    "gelfand_lower_neff80_n80": null
+  },
+  "model": "claude-opus-5-5"
+}

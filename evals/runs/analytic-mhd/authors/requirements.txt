@@ -1,0 +1,6 @@
+numpy
+scipy
+matplotlib
+jax==0.9.2
+jaxlib==0.9.2
+desc-opt==0.17.3

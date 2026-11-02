@@ -1,0 +1,16 @@
+This is a memory check. You have no tools and no paper. Do not derive or calculate anything.
+
+Paper: The Quantum Approximate Optimization Algorithm at High Depth for MaxCut on Large-Girth Regular Graphs and the Sherrington-Kirkpatrick Model (arXiv:2110.14206)
+Result: For the depth-p QAOA applied to MaxCut on large-girth (D+1)-regular graphs, in the limit D -> infinity, the cut fraction is 1/2 + nu_p(gamma,beta)/sqrt(D), where nu_p is given by the paper's infinite-D G-matrix iteration (equivalently, the QAOA energy density on the SK model). The tested result is the optimum bar_nu_p = max over (gamma,beta) of nu_p for depths p = 1 to 8.
+
+From memory alone, what are these values as published?
+- nu_bar_p1: bar_nu_1 = max over gamma in R^1, beta in R^1 of nu_1(gamma,beta). Here nu_p(gamma,beta) = lim_{D->inf} nu_p(D,gamma,beta) = (i/2) sum_{j=-p..p} Gamma_j (G^{(p)}_{0,j})^2. Index vectors as (a_1..a_p, a_0, a_{-p}..a_{-1}), with a_i in {+1,-1}. Gamma_r = gamma_r, Gamma_0 = 0, Gamma_{-r} = -gamma_r. f(a) = (1/2) <a_1|e^{i beta_1 X}|a_2> ... <a_p|e^{i beta_p X}|a_0> <a_0|e^{-i beta_p X}|a_{-p}> ... <a_{-2}|e^{-i beta_1 X}|a_{-1}>, where <a|e^{i beta X}|b> = cos(beta) if a=b and i sin(beta) otherwise. G^{(0)}_{jk} = sum_a f(a) a_j a_k. G^{(m)}_{jk} = sum_a f(a) a_j a_k exp(-(1/2) sum_{j',k'} G^{(m-1)}_{j'k'} Gamma_{j'} Gamma_{k'} a_{j'} a_{k'}) for m = 1..p. The cost driver is C = -(1/sqrt(D)) sum_{edges} Z_u Z_v. Report the global maximum at full precision. The result equals the SK-model QAOA energy V_p maximized over parameters. (dimensionless)
+- nu_bar_p2: bar_nu_2 = max over gamma, beta in R^2 of nu_2(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 2. Report the global maximum at full precision. (dimensionless)
+- nu_bar_p3: bar_nu_3 = max over gamma, beta in R^3 of nu_3(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 3. Report the global maximum at full precision. (dimensionless)
+- nu_bar_p4: bar_nu_4 = max over gamma, beta in R^4 of nu_4(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 4. Report the global maximum at full precision. (dimensionless)
+- nu_bar_p5: bar_nu_5 = max over gamma, beta in R^5 of nu_5(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 5. Report the global maximum at full precision. (dimensionless)
+- nu_bar_p6: bar_nu_6 = max over gamma, beta in R^6 of nu_6(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 6. Report the global maximum at full precision. (dimensionless)
+- nu_bar_p7: bar_nu_7 = max over gamma, beta in R^7 of nu_7(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 7. Report the global maximum at full precision. (dimensionless)
+- nu_bar_p8: bar_nu_8 = max over gamma, beta in R^8 of nu_8(gamma,beta), using the same infinite-D iteration and definitions as nu_bar_p1 with p = 8. Report the global maximum at full precision. (dimensionless)
+
+Reply with one JSON object mapping each key to the published number as you recall it, or to null if you do not recall it. Null is the expected answer when you do not actually remember. Reply with the JSON only.

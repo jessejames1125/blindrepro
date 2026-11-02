@@ -1,0 +1,181 @@
+{
+  "claim": "For the five standard two-block bivariate bicycle (BB) codes [[72,12,6]], [[90,8,10]], [[108,8,10]], Gross [[144,12,12]] and [[288,12,18]] (generators and periods as listed in the paper's standard-code table, ring R=F2[x,y]/(x^l-1,y^m-1), selected check matrix H=[L_{b*}|L_{a*}]), the encoded dimension k, the metacheck rank r_M=dim ker H^T and the syndrome distance d_S (minimum nonzero weight of im H) take specific values. The test also covers the exact minimum-weight metasyndrome coset-leader histogram (c_0,c_1,c_2) of the Gross code and the p^2 coefficient of the exact minimum-weight syndrome-repair failure curve of the [[72,12,6]] code.",
+  "quantities": [
+    {
+      "key": "k_72",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2 (N=lm=36). H=[L_{b*}|L_{a*}], where L_c is the N x N binary matrix of multiplication by c in R=F2[x,y]/(x^l-1,y^m-1) in the monomial basis 1,x,...,x^{l-1},y,xy,... (x index fastest), and c*(x,y)=c(x^-1,y^-1).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_90",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=15, m=3, a=x^9+y+y^2, b=1+x^2+x^7 (N=45), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_108",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=9, m=6, a=x^3+y+y^2, b=y^3+x+x^2 (N=54), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_144",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the Gross BB code with l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2 (N=72), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_288",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=12, m=12, a=x^3+y^2+y^7, b=y^3+x+x^2 (N=144), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_72",
+      "description": "Metacheck rank r_M = dim_F2 ker(H^T) = N - rank_F2(H) for the [[72,12,6]] code (l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2), H=[L_{b*}|L_{a*}] as in k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_90",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the [[90,8,10]] code (l=15, m=3, a=x^9+y+y^2, b=1+x^2+x^7).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_108",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the [[108,8,10]] code (l=9, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_144",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the Gross [[144,12,12]] code (l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_288",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the [[288,12,18]] code (l=12, m=12, a=x^3+y^2+y^7, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_72",
+      "description": "Syndrome distance d_S = minimum Hamming weight of a nonzero vector in the valid-syndrome code S = im H (equivalently the ideal (a*,b*) of R) for the [[72,12,6]] code (l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_90",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the [[90,8,10]] code (l=15, m=3, a=x^9+y+y^2, b=1+x^2+x^7).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_108",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the [[108,8,10]] code (l=9, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_144",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the Gross [[144,12,12]] code (l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_288",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the [[288,12,18]] code (l=12, m=12, a=x^3+y^2+y^7, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gross_leader_c0",
+      "description": "For the Gross [[144,12,12]] code (l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2, N=72), with M any full-row-rank matrix whose row space is ker H^T: c_0 is the number of metasyndromes (elements of F2^{r_M}, equivalently cosets of S=im H in F2^N) whose minimum-weight coset leader has Hamming weight 0.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gross_leader_c1",
+      "description": "For the Gross code as in gross_leader_c0: c_1 is the number of metasyndromes whose minimum-weight coset leader (minimum Hamming weight of xi in F2^N with M xi equal to that metasyndrome) has weight exactly 1.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gross_leader_c2",
+      "description": "For the Gross code as in gross_leader_c0: c_2 is the number of metasyndromes whose minimum-weight coset leader has weight exactly 2.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "p2_coefficient_exact_repair_72",
+      "description": "For the [[72,12,6]] code (l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2, N=36), let c_w be its minimum-weight metasyndrome leader histogram (defined as in gross_leader_c0..c2, for all w). The exact minimum-weight repair failure probability under i.i.d. measurement flips of probability p is P(p) = 1 - sum_w c_w p^w (1-p)^(N-w). Report the coefficient of p^2 in the Taylor expansion of P(p) about p=0.",
+      "units": "dimensionless"
+    }
+  ],
+  "paper_values": {
+    "k_72": 12,
+    "k_90": 8,
+    "k_108": 8,
+    "k_144": 12,
+    "k_288": 12,
+    "r_M_72": 6,
+    "r_M_90": 4,
+    "r_M_108": 4,
+    "r_M_144": 6,
+    "r_M_288": 6,
+    "d_S_72": 3,
+    "d_S_90": 2,
+    "d_S_108": 2,
+    "d_S_144": 2,
+    "d_S_288": 2,
+    "gross_leader_c0": 1,
+    "gross_leader_c1": 36,
+    "gross_leader_c2": 27,
+    "p2_coefficient_exact_repair_72": 603
+  },
+  "redact": [
+    "all single\nmeasurement faults are distinguishable in a 72-qubit BB code, whereas the\n144-qubit Gross code merges its 72 syndrome locations into 36 indistinguishable\npairs",
+    "such as $x^6$ in the Gross code",
+    "For Gross, $K_M=\\langle x^6\\rangle$, so the 72 checks form 36\npairs: remeasuring one check\nfrom each pair uses 36 additional measurements instead of repeating all 72.",
+    "$|\\calA^\\times|=36,9,9,36,36$",
+    "whereas Gross has $72\\to36\\to36$",
+    "$9$ rather than $15$ when $k=8$ in the trinomial rows",
+    "as in BB$(6,3)$ and Gross below",
+    "$|K_M|=2$, so an optimal metasyndrome-only exact-reconstruction rule\nnecessarily misidentifies half of the single measurement faults",
+    "but weight six for Gross",
+    "Thus the same 50\\% single-fault",
+    "Gross has $(\\wamb,\\bar\\mu_1)=(6,6)$",
+    "For $\\qcode{108}{8}{10}$ the minimum is four but the\naverage is $26/5=5.2$",
+    "&12&6&6&6&3&1&36&$0/36$&--&--",
+    "&8&10&10&10&2&5&9&$36/45$&4&4",
+    "&8&12&10&10&2&6&9&$45/54$&4&$5.2$",
+    "&12&12&12&12&2&2&36&$36/72$&6&6",
+    "&12&18&18&18&2&4&36&$108/144$&$\\ge8$&$\\ge8$",
+    "$\\ds=3$, so minimum-weight repair corrects\nevery single measurement fault",
+    "(16,16,16,16,18,18)",
+    "(20,20,20,20)",
+    "(24,24,24,24)",
+    "(32,32,32,32,36,36)",
+    "(64,64,64,64,72,72)",
+    "the Gross metachecks are invariant\nunder $x^6$, the $\\qcode{288}{12}{18}$ metachecks under $x^6$ and $y^6$, and\nthe $\\qcode{90}{8}{10}$ metachecks under $x^3$",
+    "& $\\{1\\}$ & 1 & 0 & 0 & 36 & $0/36$ & $9/36$ & $603/630$ & $603/630$",
+    "& $\\langle x^3\\rangle$ & 5 & 36 & 36 & 9 & $36/45$ & $40/45$ & $984/990$ & $986/990$",
+    "& $\\langle x^3,y^3\\rangle$ & 6 & 45 & 45 & 9 & $45/54$ & $45/54$ & $1425/1431$ & $1425/1431$",
+    "& $\\langle x^6\\rangle$ & 2 & 36 & 36 & 36 & $36/72$ & $36/72$ & $2529/2556$ & $2529/2556$",
+    "& $\\langle x^6,y^6\\rangle$ & 4 & 108 & 108 & 36 & -- & -- & -- & --",
+    "There $\\ds=3$, so",
+    "so the Gross code has only 36 distinct single-fault labels\nfor 72 measurement locations, whereas all 36 locations of\n$\\qcode{72}{12}{6}$ are distinct",
+    "& 6 & 3 & $(1,36,27)$",
+    "& 6 & 2 & $(1,36,27)$",
+    "& 4 & 2 & $(1,9,6)$",
+    "all single faults are unique and 603 of the\n$\\binom{36}{2}=630$ weight-two patterns are not selected leaders of their\nmetasyndromes",
+    "P_{\\rm repair}^{\\rm MW}(p)=603p^2+O(p^3)",
+    "(0.001,0.000589798230044) (0.0013,0.000990170181973) (0.0016,0.00148999412327) (0.002,0.00230764654095) (0.0025,0.00356615056188) (0.003,0.00507899192772) (0.0037,0.00760761278817) (0.0045,0.011056975152) (0.0055,0.0161589444302) (0.0067,0.0233580169384) (0.0082,0.0338613858624) (0.01,0.0484271180369) (0.012,0.06678159908) (0.015,0.0978250309639)",
+    "(0.001,0.0359460143601) (0.0013,0.0466956888163) (0.0016,0.0574225938389) (0.002,0.071683371054) (0.0025,0.0894306468251) (0.003,0.107076402233) (0.0037,0.131583401966) (0.0045,0.15926952763) (0.0055,0.193327428626) (0.0067,0.233290108162) (0.0082,0.281697823291) (0.01,0.337312067063) (0.012,0.395726848308) (0.015,0.47640550561)",
+    "{1-(1-x)^36}",
+    "$603p_M^2$ at low $p_M$",
+    "quadratically with coefficient $603$",
+    "$1-(1-p_M)^{36}$",
+    "minimum-weight repair corrects every single measurement fault and failure\nbegins at weight two",
+    "metasyndrome sees only the parity within 36 translation pairs",
+    "$P_{\\rm repair}\\ge0.3036$, compared with the exact value $0.3373$",
+    "$\\qcode{72}{12}{6}$, $\\ds=3$",
+    "Gross $\\qcode{144}{12}{12}$, $\\ds=2$",
+    "$u_1=36$, $\\wamb=6$",
+    "& 3 & $0/36$ & --",
+    "& 2 & $36/45$ & 4",
+    "& 2 & $45/54$ & 4",
+    "& 2 & $36/72$ & 6",
+    "& 2 & $108/144$ & $\\ge8$",
+    "the four rows with\n$\\ds=2$",
+    "as illustrated by BB$(6,3)$ and Gross in Section~\\ref{sec:soundness}",
+    "Although $\\ds=3$ guarantees",
+    "corrects every single measurement fault, whereas Gross has\n36 unavoidable single-fault mis-reconstructions"
+  ],
+  "not_computable": ""
+}

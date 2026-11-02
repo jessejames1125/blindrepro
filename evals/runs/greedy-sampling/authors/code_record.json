@@ -1,0 +1,17 @@
+{
+  "url": "https://github.com/Zeppo1994/Gelfand-Numbers-and-P-Greedy",
+  "commit": "9d20e919fcaa2a145f3df5350bb509a762a0143f",
+  "fetched_at": "2026-11-02T11:38:40Z",
+  "values": {
+    "pgreedy_max_power_neff20_m20": 3.1622647058135134,
+    "gelfand_lower_neff20_n20": 0.4688128170129016,
+    "pgreedy_max_power_neff40_m40": 4.472054875036885,
+    "gelfand_lower_neff40_n40": 0.4948547266067724,
+    "pgreedy_max_power_neff80_m80": 6.324243275301261,
+    "gelfand_lower_neff80_n80": 0.519462503986686
+  },
+  "modified": false,
+  "could_not_run": "",
+  "model": "claude-opus-5-5",
+  "agent_seconds": 116.1
+}

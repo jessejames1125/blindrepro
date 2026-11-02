@@ -1,0 +1,366 @@
+{
+  "tool": "blindrepro",
+  "paper": {
+    "ref": "arXiv:2609.39121",
+    "url": "https://arxiv.org/abs/2609.39121",
+    "title": "Metachecks in Bivariate Bicycle Codes: Syndrome Distance, Measurement Faults, and Repair Limits",
+    "first_public": "2026-09-30",
+    "license": "http://creativecommons.org/licenses/by/4.0/",
+    "source_kind": "arxiv-latex",
+    "sha256": "eebb03cb725da6a6abcc10cd2daf8351f4faf85d9adcca59c370375e117d7c50"
+  },
+  "target": "The table of standard codes: for each of the five standard bivariate bicycle codes, k, the metacheck rank r_M, and the syndrome distance d_S; plus the leader histogram for the [[144,12,12]] code and the p^2 coefficient of the exact repair curve",
+  "claim": "For the five standard two-block bivariate bicycle (BB) codes [[72,12,6]], [[90,8,10]], [[108,8,10]], Gross [[144,12,12]] and [[288,12,18]] (generators and periods as listed in the paper's standard-code table, ring R=F2[x,y]/(x^l-1,y^m-1), selected check matrix H=[L_{b*}|L_{a*}]), the encoded dimension k, the metacheck rank r_M=dim ker H^T and the syndrome distance d_S (minimum nonzero weight of im H) take specific values. The test also covers the exact minimum-weight metasyndrome coset-leader histogram (c_0,c_1,c_2) of the Gross code and the p^2 coefficient of the exact minimum-weight syndrome-repair failure curve of the [[72,12,6]] code.",
+  "quantities": [
+    {
+      "key": "k_72",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2 (N=lm=36). H=[L_{b*}|L_{a*}], where L_c is the N x N binary matrix of multiplication by c in R=F2[x,y]/(x^l-1,y^m-1) in the monomial basis 1,x,...,x^{l-1},y,xy,... (x index fastest), and c*(x,y)=c(x^-1,y^-1).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_90",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=15, m=3, a=x^9+y+y^2, b=1+x^2+x^7 (N=45), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_108",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=9, m=6, a=x^3+y+y^2, b=y^3+x+x^2 (N=54), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_144",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the Gross BB code with l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2 (N=72), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_288",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=12, m=12, a=x^3+y^2+y^7, b=y^3+x+x^2 (N=144), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_72",
+      "description": "Metacheck rank r_M = dim_F2 ker(H^T) = N - rank_F2(H) for the [[72,12,6]] code (l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2), H=[L_{b*}|L_{a*}] as in k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_90",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the [[90,8,10]] code (l=15, m=3, a=x^9+y+y^2, b=1+x^2+x^7).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_108",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the [[108,8,10]] code (l=9, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_144",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the Gross [[144,12,12]] code (l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_288",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the [[288,12,18]] code (l=12, m=12, a=x^3+y^2+y^7, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_72",
+      "description": "Syndrome distance d_S = minimum Hamming weight of a nonzero vector in the valid-syndrome code S = im H (equivalently the ideal (a*,b*) of R) for the [[72,12,6]] code (l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_90",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the [[90,8,10]] code (l=15, m=3, a=x^9+y+y^2, b=1+x^2+x^7).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_108",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the [[108,8,10]] code (l=9, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_144",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the Gross [[144,12,12]] code (l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_288",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the [[288,12,18]] code (l=12, m=12, a=x^3+y^2+y^7, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gross_leader_c0",
+      "description": "For the Gross [[144,12,12]] code (l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2, N=72), with M any full-row-rank matrix whose row space is ker H^T: c_0 is the number of metasyndromes (elements of F2^{r_M}, equivalently cosets of S=im H in F2^N) whose minimum-weight coset leader has Hamming weight 0.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gross_leader_c1",
+      "description": "For the Gross code as in gross_leader_c0: c_1 is the number of metasyndromes whose minimum-weight coset leader (minimum Hamming weight of xi in F2^N with M xi equal to that metasyndrome) has weight exactly 1.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gross_leader_c2",
+      "description": "For the Gross code as in gross_leader_c0: c_2 is the number of metasyndromes whose minimum-weight coset leader has weight exactly 2.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "p2_coefficient_exact_repair_72",
+      "description": "For the [[72,12,6]] code (l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2, N=36), let c_w be its minimum-weight metasyndrome leader histogram (defined as in gross_leader_c0..c2, for all w). The exact minimum-weight repair failure probability under i.i.d. measurement flips of probability p is P(p) = 1 - sum_w c_w p^w (1-p)^(N-w). Report the coefficient of p^2 in the Taylor expansion of P(p) about p=0.",
+      "units": "dimensionless"
+    }
+  ],
+  "code": {
+    "url": "https://github.com/mohammad-rowshan/BB-Codes-Metachecks-Syndrome-Repair",
+    "commit": "b35ff72ad7d634fb922a5108d57b154497033d68",
+    "fetched_at": "2026-11-02T11:08:08Z",
+    "modified": false,
+    "could_not_run": "",
+    "fetch_error": null
+  },
+  "comparison": {
+    "status": "REPRODUCED",
+    "tolerance": 0.05,
+    "max_error": 0.0,
+    "reason": "",
+    "rows": [
+      {
+        "key": "k_72",
+        "derived": 12.0,
+        "authors": 12.0,
+        "paper": 12.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "r_M_72",
+        "derived": 6.0,
+        "authors": 6.0,
+        "paper": 6.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "d_S_72",
+        "derived": 3.0,
+        "authors": 3.0,
+        "paper": 3.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "k_90",
+        "derived": 8.0,
+        "authors": 8.0,
+        "paper": 8.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "r_M_90",
+        "derived": 4.0,
+        "authors": 4.0,
+        "paper": 4.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "d_S_90",
+        "derived": 2.0,
+        "authors": 2.0,
+        "paper": 2.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "k_108",
+        "derived": 8.0,
+        "authors": 8.0,
+        "paper": 8.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "r_M_108",
+        "derived": 4.0,
+        "authors": 4.0,
+        "paper": 4.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "d_S_108",
+        "derived": 2.0,
+        "authors": 2.0,
+        "paper": 2.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "k_144",
+        "derived": 12.0,
+        "authors": 12.0,
+        "paper": 12.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "r_M_144",
+        "derived": 6.0,
+        "authors": 6.0,
+        "paper": 6.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "d_S_144",
+        "derived": 2.0,
+        "authors": 2.0,
+        "paper": 2.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "k_288",
+        "derived": 12.0,
+        "authors": 12.0,
+        "paper": 12.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "r_M_288",
+        "derived": 6.0,
+        "authors": 6.0,
+        "paper": 6.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "d_S_288",
+        "derived": 2.0,
+        "authors": 2.0,
+        "paper": 2.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "gross_leader_c0",
+        "derived": 1.0,
+        "authors": 1.0,
+        "paper": 1.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "gross_leader_c1",
+        "derived": 36.0,
+        "authors": 36.0,
+        "paper": 36.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "gross_leader_c2",
+        "derived": 27.0,
+        "authors": 27.0,
+        "paper": 27.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "p2_coefficient_exact_repair_72",
+        "derived": 603.0,
+        "authors": 603.0,
+        "paper": 603.0,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      }
+    ]
+  },
+  "explanation": "",
+  "blinding": {
+    "freeze_hash": "0c79313af4118a6d13fb7e9817b34e3fb53a0c75108ecf98fe465e2f12056419",
+    "frozen_at": "2026-11-02T11:07:58Z",
+    "code_fetched_at": "2026-11-02T11:08:08Z",
+    "tools_offered": [
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read",
+      "Write",
+      "mcp__blindrepro__run"
+    ],
+    "refused_calls": 0,
+    "guard_blocked": 0,
+    "redaction": {
+      "strings_removed": 61,
+      "strings_not_found": [],
+      "code_links_removed": 1
+    },
+    "values_shown": false,
+    "leaks": [
+      {
+        "key": "p2_coefficient_exact_repair_72",
+        "value": 603.0,
+        "printed": "603",
+        "context": "hus \\begin{equation} [value removed], \\label{eq:603} \\end{equation} so the first unavoid"
+      }
+    ],
+    "literals": [],
+    "forbidden_imports": [],
+    "tampering": [],
+    "values_searched": 38,
+    "recall": {
+      "stated": 5,
+      "total": 19,
+      "matched": 5,
+      "values": {
+        "k_72": 12.0,
+        "k_90": 8.0,
+        "k_108": 8.0,
+        "k_144": 12.0,
+        "k_288": 12.0
+      }
+    },
+    "cutoff": {
+      "cutoff": "2026-06",
+      "after_cutoff": true,
+      "statement": "2026-06 per the vendor. Paper first posted 2026-09-30, after that, so it should not be in training data."
+    }
+  },
+  "run": {
+    "model": "claude-opus-5-5",
+    "judge": "claude-cli",
+    "judge_version": "2.1.316",
+    "tool_version": "0.1.0",
+    "date": "2026-11-02",
+    "python": "3.12.13",
+    "packages": [
+      "mpmath==1.3.0",
+      "numpy==2.5.4",
+      "scipy==1.18.1",
+      "sympy==1.14.0"
+    ],
+    "agent_seconds": 76.6
+  },
+  "blind_notes": "# Notes / assumptions\n\n- Generators and periods for the five codes come from spec.json and match the paper text (108-qubit example). I typed in no other code constants.\n- Monomial x^i y^j maps to index i + l*j (x index fastest), as the paper says. L_c has column g = c*g, and c* is (x,y) -> (x^-1, y^-1) with exponents taken mod l and m.\n- H = H_Z = [L_{b*} | L_{a*}] (paper eq. sector). k = 2N - 2 rank(H). The script asserts H_X H_Z^T = 0 and rank H_X = rank H_Z.\n- The metacheck space is ker H^T, the vectors orthogonal to every column of H. M is a basis of that space. Any basis gives the same d_S and the same leader histogram.\n- d_S is the smallest nonzero weight in im H = ker M, i.e. the smallest number of columns of M that sum to zero. It is found by BFS: d_S = 1 + min over h of the BFS distance from 0 to column h, using only the other columns. This is exact because a shortest representation never repeats a column.\n- The leader histogram c_w comes from a BFS over all 2^{r_M} metasyndromes, with the columns of M as generators (paper App. A). Only weights are counted, so the tie-break order does not matter.\n- The p^2 coefficient is found by expanding P(p) = 1 - sum_w c_w p^w (1-p)^(N-w) exactly in sympy (paper eq. exact_repair).\n- Sanity check: the running BB(3,3) example reproduces the paper's stated k=8, d_S=3 and histogram (1,9,6).\n- I took no constants from memory.\n",
+  "adapter_notes": "# Notes\n\n- Source: code/bb_manuscript_reproduce.py (the only script; README says it reproduces every exact quantity in the paper). No files under code/ were edited.\n- adapter.py imports the module and calls the authors' `audit_code()` on their `STANDARD_CODES` with the same settings their `main()` uses by default (no `--quick`): exact_onesided=True, mu_max=16, cross_check=False. The spec quantities don't depend on these settings. I did not call `main()` itself because it only prints part of the values (r_M and the histograms go to a CSV); `audit_code` is the function `main()` calls.\n- Code parameters (l, m, a, b) in STANDARD_CODES match spec.json for all five codes.\n- H: the authors use H = H_Z = [L_b^T | L_a^T]. Since L_c^T = L_{c*}, this is the spec's [L_{b*} | L_{a*}]. Monomial index i + l*j matches the spec.\n- k: the authors compute k = n - rank(H_X) - rank(H_Z), not the spec's 2N - 2 rank(H). These agree because rank H_X = rank H_Z here; their own check r_M = k/2 passes.\n- r_M = number of rows of nullspace(H^T) = N - rank(H), as in the spec.\n- d_S: the authors' `syndrome_distance(mcheck)` is exact only up to weight 4 and returns None above that. Every code gives 2 or 3, so this limit doesn't matter.\n- Gross c_0, c_1, c_2: taken from the authors' breadth-first `coset_leaders(mcheck)` histogram, which is (1, 36, 27).\n- p^2 coefficient: computed the authors' way, C(36,2) - c_2 = 603 (they derive it from d_S = 3). The spec defines it as the Taylor coefficient of 1 - sum_w c_w p^w (1-p)^(N-w). Working that expansion by hand with (c_0, c_1, c_2) = (1, 36, 27) gives -(630 - 36*35 + 27) = 603, so the two definitions agree. This hand check was not computed by adapter.py.\n- The authors' built-in check against the manuscript reported no disagreements. Their P_repair(0.01) for [[72,12,6]] is 0.04842711803694644 (printed for information, not in spec).\n- requirements.txt: numpy only, unpinned. The code needs nothing version-specific (Python >= 3.10 for int.bit_count). matplotlib is optional and isn't used by the adapter.\n- Runtime is about 68 s, nearly all spent on the [[288,12,18]] one-sided and mu(g) searches that are part of audit_code under the default settings.\n"
+}

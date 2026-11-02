@@ -1,0 +1,16 @@
+{
+  "paper": "arxiv:2110.14206",
+  "target": "The table of the infinite-degree QAOA MaxCut values nu_p and the optimal parameters' energy for depths p = 1 to 8",
+  "code": "https://github.com/benjaminvillalonga/large-girth-maxcut-qaoa",
+  "commit": "b5bbc23ad4309af12a95666862cd082bddcac0e3",
+  "tolerance": 0.05,
+  "seconds": 600,
+  "memory_mb": 2048,
+  "minutes": 30,
+  "allow_packages": [],
+  "show_values": false,
+  "skip_recall": false,
+  "stop_after_freeze": false,
+  "model_cutoff": "",
+  "spec": ""
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "name": "lawson",
+    "field": "fusion (magnetic confinement)",
+    "paper": "arxiv:2105.10954",
+    "target": "Table 3, the deuterium-tritium row only for magnetic confinement: the minimum triple product and the temperature where it occurs, at Q_fuel = 1 and Q_fuel = infinity, for the uniform-profile case",
+    "code": "https://github.com/swurzel/lawson-criterion-paper",
+    "commit": "4ae563bfc409db5fb4afb2f9930a3a4fafba4f0d",
+    "note": "The paper's rounded 14 keV also sits in another table row the agent read; the agent's values (13.69, 14.28) are not that number."
+  },
+  {
+    "name": "spin-glass-thresholds",
+    "field": "statistical physics",
+    "paper": "arxiv:2609.15157",
+    "target": "The theoretical threshold energies E_infinity, E_2, E_1 and E_0 for the pure spherical p-spin model at p = 4, from the paper's threshold equations",
+    "code": "https://github.com/mbadieik/spectral_gap_for_mixed_spherical_spin_glasses",
+    "commit": "4fda784d6fe32bc53296064f736cc9253c01e07d",
+    "note": "Posted after the model's training cutoff. Closed-form thresholds, so agreement to about 1e-14 is expected when both sides are right."
+  },
+  {
+    "name": "bb-metachecks",
+    "field": "quantum error correction",
+    "paper": "arxiv:2609.39121",
+    "target": "The table of standard codes: for each of the five standard bivariate bicycle codes, k, the metacheck rank r_M, and the syndrome distance d_S; plus the leader histogram for the [[144,12,12]] code and the p^2 coefficient of the exact repair curve",
+    "code": "https://github.com/mohammad-rowshan/BB-Codes-Metachecks-Syndrome-Repair",
+    "commit": "b35ff72ad7d634fb922a5108d57b154497033d68",
+    "note": "Posted after the cutoff. Integers, so exact matches are expected. The 5 recalled values are code sizes k from earlier papers. The text flag is an equation label, eq:603, named after its value."
+  },
+  {
+    "name": "qaoa-large-girth",
+    "field": "quantum algorithms",
+    "paper": "arxiv:2110.14206",
+    "target": "The table of the infinite-degree QAOA MaxCut values nu_p and the optimal parameters' energy for depths p = 1 to 8",
+    "code": "https://github.com/benjaminvillalonga/large-girth-maxcut-qaoa",
+    "commit": "b5bbc23ad4309af12a95666862cd082bddcac0e3",
+    "note": "Not blind: the model recited all 8 values from memory. Its 8 text and 1 typed-number flags came from an older, looser rule; the current rule leaves 1, an angle equal to 0.4726."
+  },
+  {
+    "name": "near-axis-stellarator",
+    "field": "fusion (stellarators)",
+    "paper": "arxiv:1809.10246",
+    "target": "The rotational transform on axis and the related near-axis quantities the paper reports for the configurations of sections 5.1, 5.2 and 5.3",
+    "code": "https://github.com/landreman/pyQSC",
+    "commit": "cd75359ea47548d5db7ccb458c100085c04ba1bc",
+    "note": "Miss on one quantity: the authors' code reports elongation in the plane normal to the axis; the paper's 2.52 is in the R-z plane, which the blind value matches. The 3 recalled values are the iotas."
+  },
+  {
+    "name": "analytic-mhd",
+    "field": "fusion (MHD theory)",
+    "paper": "arxiv:2609.26742",
+    "target": "For both solution families, the rotational transform: the uniform family's value, and the sheared family's values at the flux surfaces where the paper states or plots them; plus the force-balance residual of the explicit formulas at sample points",
+    "code": "https://github.com/landreman/analytic_3d_equilibria",
+    "commit": "c97fbcdd879206e0cfee6ad6e885ae0b13e215e8",
+    "note": "Could not run the authors' code on Windows (a dependency has no wheel and its source build ran past the limit twice). Not retried; Linux or Mac may work.",
+    "posted": "2026-09-22"
+  },
+  {
+    "name": "greedy-sampling",
+    "field": "numerical analysis",
+    "paper": "arxiv:2609.01578",
+    "target": "The numerical experiment for the Paley-Wiener sinc kernel on [-1, 1]: the P-greedy maximum of the power function and the covariance-eigenvalue-tail lower bound, at the measurement budgets the paper's experiment uses",
+    "code": "https://github.com/Zeppo1994/Gelfand-Numbers-and-P-Greedy",
+    "commit": "9d20e919fcaa2a145f3df5350bb509a762a0143f",
+    "note": "Posted after the cutoff. At this budget the P-greedy maximum has barely moved from its start, sqrt(c/pi), so this checks the code path more than a converged result."
+  }
+]

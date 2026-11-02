@@ -1,0 +1,13 @@
+{
+  "stated": {
+    "nu_bar_p1": 0.3033,
+    "nu_bar_p2": 0.4075,
+    "nu_bar_p3": 0.4726,
+    "nu_bar_p4": 0.5157,
+    "nu_bar_p5": 0.5476,
+    "nu_bar_p6": 0.5721,
+    "nu_bar_p7": 0.5915,
+    "nu_bar_p8": 0.6073
+  },
+  "model": "claude-opus-5-5"
+}

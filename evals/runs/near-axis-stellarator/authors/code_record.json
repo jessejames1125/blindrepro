@@ -1,0 +1,17 @@
+{
+  "url": "https://github.com/landreman/pyQSC",
+  "commit": "cd75359ea47548d5db7ccb458c100085c04ba1bc",
+  "fetched_at": "2026-11-02T10:28:29Z",
+  "values": {
+    "iota_qa_sec51": 0.41830691021517685,
+    "max_elongation_qa_sec51": 2.413737055374738,
+    "iota_qh_sec52": 1.9310972553572894,
+    "max_elongation_qh_sec52": 3.0812714122991336,
+    "iota_asym_sec53": 0.31118137312312505,
+    "max_elongation_asym_sec53": 3.3047871229519408
+  },
+  "modified": false,
+  "could_not_run": "",
+  "model": "claude-opus-5-5",
+  "agent_seconds": 86.7
+}

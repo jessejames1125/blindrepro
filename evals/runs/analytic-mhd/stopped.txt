@@ -1,0 +1,1 @@
+Could not run the authors' code. The adapter needed desc-opt 0.17.3, which pulls in jax-finufft; jax-finufft has no Windows wheel, and its source build did not finish within the 15-minute install limit in either run. The blind derivation is frozen (hash 5af1c1f963838775a1fb4c82a1f10a71a7665e56cb0f65902c464f5f95007315) but nothing was compared.

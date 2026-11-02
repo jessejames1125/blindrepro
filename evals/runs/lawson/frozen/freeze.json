@@ -1,0 +1,68 @@
+{
+  "files": {
+    "blind/derive.py": "c38ac6f73f7bd098934200113f97856a3e9344641c0be203dcd1ac5cca8ce4df",
+    "blind/notes.md": "6d51d3d05eaf9a861d9b3289ae772745d061eace2a82001378a224030549b7ef",
+    "derive_stdout.txt": "d0a856b297dba9d51975bc5f9117b4819de9ab65fa7037073dfa948e1ff49bd5",
+    "results.json": "19079b5801af8074d706a9553072d3374f55a2ec905220feadde60c8e582cc3c",
+    "script_runs.jsonl": "f9a066a1474d298a69aaa4ca037da237563f66edb453c80d54501132d2a65592",
+    "spec_shown.json": "97d6ed394a3b7ef464a50b00c3c143e7edebe9a3c25e9b25cb7c2da6b68ed580",
+    "transcript.jsonl": "3ecf365dbc832f43b41d25e7a7ba7c441744dff0548e6102e9350da78a8628da",
+    "transcript.prompt.txt": "55feab640eda841305057113e923339ed4286769b06eb722e0c6bdd0ee97d840"
+  },
+  "frozen_at": "2026-11-02T10:10:47Z",
+  "tool_version": "0.1.0",
+  "paper": {
+    "ref": "arXiv:2105.10954",
+    "url": "https://arxiv.org/abs/2105.10954",
+    "title": "Progress toward fusion energy breakeven and gain as measured against the Lawson criterion",
+    "first_public": "2021-05-23",
+    "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "source_kind": "arxiv-latex",
+    "sha256": "a853cf1c811f95022257786f6d13b69bedb9c1c58cdc0ce31dbd2e1d2aa62fb7"
+  },
+  "paper_shown_sha256": "c6ac9b6c3718f794e13ae9e226be4b4a03403c8aafbe571b9eddcdd2d4c9450d",
+  "redaction": {
+    "strings_removed": 2,
+    "strings_not_found": [],
+    "code_links_removed": 0
+  },
+  "target": "Table 3, the deuterium-tritium row only for magnetic confinement: the minimum triple product and the temperature where it occurs, at Q_fuel = 1 and Q_fuel = infinity, for the uniform-profile case",
+  "tolerance": 0.05,
+  "values_shown": false,
+  "model": "claude-opus-5-5",
+  "judge": "claude-cli",
+  "judge_version": "2.1.316",
+  "tools_offered": [
+    "Edit",
+    "Glob",
+    "Grep",
+    "Read",
+    "Write",
+    "mcp__blindrepro__run"
+  ],
+  "refused_calls": [],
+  "agent_tool_calls": 11,
+  "agent_seconds": 190.9,
+  "python": "3.12.13",
+  "packages": [
+    "mpmath==1.3.0",
+    "numpy==2.5.4",
+    "scipy==1.18.1",
+    "sympy==1.14.0"
+  ],
+  "allowed_packages": [
+    "numpy",
+    "scipy",
+    "sympy",
+    "mpmath"
+  ],
+  "guard_blocked_during_session": 0,
+  "guard_blocked_at_freeze": 0,
+  "derivation_ran": true,
+  "script_error": "",
+  "limits": {
+    "seconds": 600,
+    "memory_mb": 2048
+  },
+  "freeze_hash": "0da2b99365c949607bc6b88b1c8e692268f27f2e683bca2556da58b720f996d2"
+}

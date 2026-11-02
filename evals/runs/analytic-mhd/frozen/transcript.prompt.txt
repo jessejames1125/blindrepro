@@ -1,0 +1,12 @@
+paper.txt is a research paper with its target values removed; removed parts read "[value removed]". spec.json lists what to compute.
+
+Write derive.py in this folder. It must compute every quantity and print exactly one JSON object as its last line of output, mapping each key in spec.json to a number or list of numbers, or to null if you could not compute it. Never guess a value.
+
+You have: Python 3.12 with the standard library and these packages only: numpy, scipy, sympy, mpmath. Use the run tool to execute derive.py and read its output, then fix and repeat. Scripts have no network, cannot start other processes, can only touch files in this folder, and get 600 seconds and 2048 MB per run. Do not have derive.py read paper.txt.
+
+Rules:
+- Compute each value from the method the paper states, or from first principles when it points to a standard result. Do not type a remembered or published result in as an answer.
+- Where the paper leaves a choice open, take the most defensible reading and carry on.
+- Print full precision. Do not round to the paper's printed digits.
+- Write notes.md with one line for each assumption you made and each constant you took from memory rather than from the paper, saying where you believe it comes from. This is part of the record.
+- You will never see the authors' code. Finish when derive.py prints every key. Then stop, with a one-line status.

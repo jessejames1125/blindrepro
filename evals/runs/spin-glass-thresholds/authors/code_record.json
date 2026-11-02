@@ -1,0 +1,15 @@
+{
+  "url": "https://github.com/mbadieik/spectral_gap_for_mixed_spherical_spin_glasses",
+  "commit": "4fda784d6fe32bc53296064f736cc9253c01e07d",
+  "fetched_at": "2026-11-02T10:23:43Z",
+  "values": {
+    "E_infinity_p4": 1.7320508075688772,
+    "E_2_p4": 1.7764776117001901,
+    "E_1_p4": 1.7833003012540962,
+    "E_0_p4": 1.7940850281792529
+  },
+  "modified": false,
+  "could_not_run": "",
+  "model": "claude-opus-5-5",
+  "agent_seconds": 98.6
+}

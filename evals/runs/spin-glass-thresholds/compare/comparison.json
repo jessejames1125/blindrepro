@@ -1,0 +1,44 @@
+{
+  "status": "REPRODUCED",
+  "tolerance": 0.05,
+  "max_error": 2.166531415364258e-14,
+  "reason": "",
+  "rows": [
+    {
+      "key": "E_infinity_p4",
+      "derived": 1.7320508075688772,
+      "authors": 1.7320508075688772,
+      "paper": 1.73205,
+      "error": 0.0,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "E_2_p4",
+      "derived": 1.7764776117001904,
+      "authors": 1.7764776117001901,
+      "paper": 1.77648,
+      "error": 1.2499150198269146e-16,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "E_1_p4",
+      "derived": 1.7833003012540576,
+      "authors": 1.7833003012540962,
+      "paper": 1.7833,
+      "error": 2.166531415364258e-14,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "E_0_p4",
+      "derived": 1.7940850281792544,
+      "authors": 1.7940850281792529,
+      "paper": 1.79409,
+      "error": 8.663537179464845e-16,
+      "within": true,
+      "note": ""
+    }
+  ]
+}

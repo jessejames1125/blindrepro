@@ -1,0 +1,35 @@
+{
+  "claim": "Solving the first-order (Garren-Boozer) near-axis quasisymmetry equation (the Riccati-type ODE for sigma, eq. QA, with the periodicity condition fixing iota) for three prescribed magnetic axis shapes (a stellarator-symmetric quasi-axisymmetric axis, a quasi-helically symmetric axis, and a non-stellarator-symmetric quasi-axisymmetric axis), each in vacuum (I_2 = 0) with given eta_bar and sigma(0), gives specific values of the on-axis rotational transform and of the maximum elongation of the first-order elliptical flux-surface cross sections in the cylindrical R-z plane.",
+  "quantities": [
+    {
+      "key": "iota_qa_sec51",
+      "description": "On-axis rotational transform iota (the iota in eq. QA itself, not iota - N), from the periodic solution {iota, sigma(phi)} of eq. QA combined with d/dvarphi = |G0|/(l' B0) d/dphi, for magnetic axis R0(phi) = 1 + 0.045 cos(3 phi), z0(phi) = -0.045 sin(3 phi) (n_fp = 3), eta_bar = -0.9, sigma(0) = 0, I_2 = 0, B0 = 1, s_G = s_psi = +1, G0 = s_G B0 L/(2 pi) with L the axis length, curvature and torsion from the Frenet-Serret frame of the axis (torsion sign as in the paper, d b/dl = -tau n), N = number of poloidal rotations of the normal vector per toroidal transit of the axis. Converged in resolution (spectral collocation or equivalent).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "max_elongation_qa_sec51",
+      "description": "For the same configuration as iota_qa_sec51: compute X1s = B1s/(B0 kappa), X1c = B1c/(B0 kappa) with B1s = eta_bar B0 sin(N varphi), B1c = eta_bar B0 cos(N varphi), and Y1s, Y1c from eq. W_to_Y; convert to cylindrical first-order coefficients R1s, R1c, z1s, z1c at each phi via the transformation (R1, z1) = (l'/R0) [[-b_z, n_z],[b_R, -n_R]] (X1, Y1) applied separately to the sin(theta) and cos(theta) components (first-order method of section 4.1). At each phi the R-z cross section is the ellipse (R1c cos theta + R1s sin theta, z1c cos theta + z1s sin theta); its elongation is semi-major/semi-minor axis = (p + sqrt(p^2 - 4 q^2))/(2|q|) with p = R1s^2 + R1c^2 + z1s^2 + z1c^2, q = R1s z1c - R1c z1s. The quantity is the maximum of this elongation over all phi in [0, 2 pi) (independent of r).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "iota_qh_sec52",
+      "description": "On-axis rotational transform iota (not iota - N), defined and computed as in iota_qa_sec51 but for magnetic axis R0(phi) = 1 + 0.265 cos(4 phi), z0(phi) = -0.21 sin(4 phi) (n_fp = 4), eta_bar = -2.25, sigma(0) = 0, I_2 = 0, B0 = 1, s_G = s_psi = +1; N is nonzero (quasi-helical symmetry) and is the number of poloidal rotations of the axis normal vector per toroidal transit.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "max_elongation_qh_sec52",
+      "description": "Maximum over phi in [0, 2 pi) of the R-z-plane elongation of the first-order elliptical cross section, defined exactly as in max_elongation_qa_sec51 (first-order transformation of section 4.1), for the configuration of iota_qh_sec52.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "iota_asym_sec53",
+      "description": "On-axis rotational transform iota (not iota - N), defined and computed as in iota_qa_sec51 but for the non-stellarator-symmetric magnetic axis R0(phi) = 1 + 0.042 cos(3 phi), z0(phi) = -0.042 sin(3 phi) - 0.025 cos(3 phi) (n_fp = 3), eta_bar = -1.1, sigma(0) = -0.6, I_2 = 0, B0 = 1, s_G = s_psi = +1.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "max_elongation_asym_sec53",
+      "description": "Maximum over phi in [0, 2 pi) of the R-z-plane elongation of the first-order elliptical cross section, defined exactly as in max_elongation_qa_sec51 (first-order transformation of section 4.1), for the configuration of iota_asym_sec53.",
+      "units": "dimensionless"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+fam1 point (np.float64(1.0606601717798212), np.float64(0.0), np.float64(0.0)) psi= 0.015625 |B-dr/dzeta|= 2.1245532504991595e-13 res= 6.280369834735101e-16
+fam1 point (np.float64(0.7150152860440501), np.float64(0.6742287299137549), np.float64(0.25)) psi= 0.015625 |B-dr/dzeta|= 8.563422240957198e-11 res= 7.076646171787873e-16
+fam1 point (np.float64(0.30618621784789735), np.float64(0.8100925873009825), np.float64(0.3247595264191645)) psi= 0.015625 |B-dr/dzeta|= 7.663715331309825e-11 res= 4.1714917592537933e-16
+fam1 iota samples (ratio, poloidal turns, toroidal turns):
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(1.9999999999999998), np.float64(1.9999999999999998), np.float64(1.0))
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(2.0000000000000004), np.float64(2.0000000000000004), np.float64(1.0))
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(1.9999999999999991), np.float64(1.999999999999999), np.float64(0.9999999999999999))
+    (np.float64(2.000000000000001), np.float64(2.0000000000000004), np.float64(0.9999999999999999))
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(1.999999999999997), np.float64(1.9999999999999967), np.float64(0.9999999999999999))
+    (np.float64(2.0), np.float64(2.0), np.float64(1.0))
+    (np.float64(2.0000000000000018), np.float64(2.0000000000000018), np.float64(1.0))
+iota_uniform_family = 2.0 max dev of raw ratio: 3.1086244689504383e-15
+fam2 point (0.6976609209522097, 0.0, -0.0) psi= 0.004999999999999988 (target 0.005000000000000001 ) res= 0.0
+fam2 point (0.4843685359612161, 1.1111313507543616, -0.1001674211615598) psi= 0.005000000000000001 (target 0.005000000000000001 ) res= 1.981054078594269e-15
+fam2 point (0.3018964146073767, 1.3316997917918163, -1.2246467991473533e-17) psi= 0.005000000000000009 (target 0.005000000000000001 ) res= 1.8184997996137306e-15
+iota_sheared_axis = 2.286900125857014 quad err 5.6553824625727817e-14
+iota_edge (M=128, N=1e5): weighted 2.287771735487265 plain 2.287771658993456 fourier tail 8.318411861260191e-15
+iota_edge (M=64, N=5e4): weighted 2.2877717354872633 plain 2.287772034143935 fourier tail 5.1709077166987e-15
+direct ODE, N=400 half-transits: weighted 2.28777173548102 plain 2.28775947717704
+iota at k=1e-5: 2.2869001258655732 vs axis formula 2.286900125857014
+{"iota_uniform_family": 2.0, "iota_sheared_axis": 2.286900125857014, "iota_sheared_edge": 2.287771735487265, "force_residual_uniform_family": [6.280369834735101e-16, 7.076646171787873e-16, 4.1714917592537933e-16], "force_residual_sheared_family": [0.0, 1.981054078594269e-15, 1.8184997996137306e-15]}

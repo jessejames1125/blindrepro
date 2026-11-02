@@ -1,0 +1,9 @@
+{
+  "stated": {
+    "dt_min_triple_product_qfuel_1": null,
+    "dt_temperature_at_min_triple_product_qfuel_1": null,
+    "dt_min_triple_product_qfuel_inf": null,
+    "dt_temperature_at_min_triple_product_qfuel_inf": null
+  },
+  "model": "claude-opus-5-5"
+}

@@ -1,0 +1,4 @@
+- J(t) evaluated via the paper's antiderivative identity (eq. B-antiderivative), cross-checked against numerical quadrature of the definition (eq. Jgoe).
+- Pure-case Theta_k from eq. Theta-explicit with p=4; valid for u <= -E_infinity, and all roots lie beyond E_infinity (Theta_k(-E_inf) = (1/2)log3 - 1/2 > 0, strictly decreasing beyond).
+- E_0 taken as root of Theta_0 (k=0, coefficient 1 on I_1) as instructed by spec.json; this identification with the ground state is the Auffinger-Ben Arous-Cerny result for pure models (from spec/memory, not derived from the Parisi formula here).
+- Roots found with mpmath (40 digits) and reported as float64.

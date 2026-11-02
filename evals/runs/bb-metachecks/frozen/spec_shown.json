@@ -1,0 +1,100 @@
+{
+  "claim": "For the five standard two-block bivariate bicycle (BB) codes [[72,12,6]], [[90,8,10]], [[108,8,10]], Gross [[144,12,12]] and [[288,12,18]] (generators and periods as listed in the paper's standard-code table, ring R=F2[x,y]/(x^l-1,y^m-1), selected check matrix H=[L_{b*}|L_{a*}]), the encoded dimension k, the metacheck rank r_M=dim ker H^T and the syndrome distance d_S (minimum nonzero weight of im H) take specific values. The test also covers the exact minimum-weight metasyndrome coset-leader histogram (c_0,c_1,c_2) of the Gross code and the p^2 coefficient of the exact minimum-weight syndrome-repair failure curve of the [[72,12,6]] code.",
+  "quantities": [
+    {
+      "key": "k_72",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2 (N=lm=36). H=[L_{b*}|L_{a*}], where L_c is the N x N binary matrix of multiplication by c in R=F2[x,y]/(x^l-1,y^m-1) in the monomial basis 1,x,...,x^{l-1},y,xy,... (x index fastest), and c*(x,y)=c(x^-1,y^-1).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_90",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=15, m=3, a=x^9+y+y^2, b=1+x^2+x^7 (N=45), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_108",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=9, m=6, a=x^3+y+y^2, b=y^3+x+x^2 (N=54), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_144",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the Gross BB code with l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2 (N=72), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "k_288",
+      "description": "Encoded dimension k = 2N - 2 rank_F2(H) of the BB code with l=12, m=12, a=x^3+y^2+y^7, b=y^3+x+x^2 (N=144), with H defined as for k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_72",
+      "description": "Metacheck rank r_M = dim_F2 ker(H^T) = N - rank_F2(H) for the [[72,12,6]] code (l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2), H=[L_{b*}|L_{a*}] as in k_72.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_90",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the [[90,8,10]] code (l=15, m=3, a=x^9+y+y^2, b=1+x^2+x^7).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_108",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the [[108,8,10]] code (l=9, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_144",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the Gross [[144,12,12]] code (l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "r_M_288",
+      "description": "Metacheck rank r_M = N - rank_F2(H) for the [[288,12,18]] code (l=12, m=12, a=x^3+y^2+y^7, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_72",
+      "description": "Syndrome distance d_S = minimum Hamming weight of a nonzero vector in the valid-syndrome code S = im H (equivalently the ideal (a*,b*) of R) for the [[72,12,6]] code (l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_90",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the [[90,8,10]] code (l=15, m=3, a=x^9+y+y^2, b=1+x^2+x^7).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_108",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the [[108,8,10]] code (l=9, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_144",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the Gross [[144,12,12]] code (l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "d_S_288",
+      "description": "Syndrome distance d_S = minimum nonzero Hamming weight in S = im H for the [[288,12,18]] code (l=12, m=12, a=x^3+y^2+y^7, b=y^3+x+x^2).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gross_leader_c0",
+      "description": "For the Gross [[144,12,12]] code (l=12, m=6, a=x^3+y+y^2, b=y^3+x+x^2, N=72), with M any full-row-rank matrix whose row space is ker H^T: c_0 is the number of metasyndromes (elements of F2^{r_M}, equivalently cosets of S=im H in F2^N) whose minimum-weight coset leader has Hamming weight 0.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gross_leader_c1",
+      "description": "For the Gross code as in gross_leader_c0: c_1 is the number of metasyndromes whose minimum-weight coset leader (minimum Hamming weight of xi in F2^N with M xi equal to that metasyndrome) has weight exactly 1.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gross_leader_c2",
+      "description": "For the Gross code as in gross_leader_c0: c_2 is the number of metasyndromes whose minimum-weight coset leader has weight exactly 2.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "p2_coefficient_exact_repair_72",
+      "description": "For the [[72,12,6]] code (l=6, m=6, a=x^3+y+y^2, b=y^3+x+x^2, N=36), let c_w be its minimum-weight metasyndrome leader histogram (defined as in gross_leader_c0..c2, for all w). The exact minimum-weight repair failure probability under i.i.d. measurement flips of probability p is P(p) = 1 - sum_w c_w p^w (1-p)^(N-w). Report the coefficient of p^2 in the Taylor expansion of P(p) about p=0.",
+      "units": "dimensionless"
+    }
+  ]
+}

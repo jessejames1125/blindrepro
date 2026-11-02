@@ -1,0 +1,14 @@
+putvinski, ion
+cells executed in 263.2 s
+           reaction          Q_fuel                         LP_T_i                         LP_minimum                         TP_T_i                         TP_minimum
+0         T(d,n)4He np.float64(1.0) np.float64(25.982986512430983) np.float64(2.5068721515860955e+19) np.float64(13.606693841876535)  np.float64(4.648207793350803e+20)
+1         T(d,n)4He np.float64(inf) np.float64(25.982986512430983) np.float64(1.5528030687130344e+20) np.float64(14.250152192590539) np.float64(2.9450416590278843e+21)
+2             CAT-D np.float64(1.0) np.float64(106.34796933343458) np.float64(4.7815799391567806e+20)  np.float64(41.24373276307292) np.float64(2.9142797705166566e+22)
+3             CAT-D np.float64(inf) np.float64(106.34796933343458) np.float64(1.5254571123530672e+21)  np.float64(51.96278414683565) np.float64(1.0674187357529239e+23)
+4       3He(d,p)4He np.float64(1.0) np.float64(106.34796933343458)  np.float64(2.759607465427598e+20)  np.float64(62.51150729957279) np.float64(2.2234107176186234e+22)
+5       3He(d,p)4He np.float64(inf) np.float64(106.34796933343458)  np.float64(6.185463656059783e+20)  np.float64(66.99776348296692)  np.float64(5.178968566204086e+22)
+6  11B(p,4He)4He4He np.float64(1.0)                            NaN                                NaN                            NaN                                NaN
+7  11B(p,4He)4He4He np.float64(inf)                            NaN                                NaN                            NaN                                NaN
+[diagnostic, nonrelativistic brems] Q_fuel=1: min TP=np.float64(4.644767394618047e+20) at T=np.float64(13.606693841876535)
+[diagnostic, nonrelativistic brems] Q_fuel=inf: min TP=np.float64(2.931542107156749e+21) at T=np.float64(14.250152192590539)
+{"dt_min_triple_product_qfuel_1": 4.648207793350803e+20, "dt_temperature_at_min_triple_product_qfuel_1": 13.606693841876535, "dt_min_triple_product_qfuel_inf": 2.9450416590278843e+21, "dt_temperature_at_min_triple_product_qfuel_inf": 14.250152192590539}

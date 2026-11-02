@@ -1,0 +1,30 @@
+{
+  "url": "https://github.com/mohammad-rowshan/BB-Codes-Metachecks-Syndrome-Repair",
+  "commit": "b35ff72ad7d634fb922a5108d57b154497033d68",
+  "fetched_at": "2026-11-02T11:08:08Z",
+  "values": {
+    "k_72": 12,
+    "r_M_72": 6,
+    "d_S_72": 3,
+    "k_90": 8,
+    "r_M_90": 4,
+    "d_S_90": 2,
+    "k_108": 8,
+    "r_M_108": 4,
+    "d_S_108": 2,
+    "k_144": 12,
+    "r_M_144": 6,
+    "d_S_144": 2,
+    "k_288": 12,
+    "r_M_288": 6,
+    "d_S_288": 2,
+    "gross_leader_c0": 1,
+    "gross_leader_c1": 36,
+    "gross_leader_c2": 27,
+    "p2_coefficient_exact_repair_72": 603
+  },
+  "modified": false,
+  "could_not_run": "",
+  "model": "claude-opus-5-5",
+  "agent_seconds": 122.3
+}

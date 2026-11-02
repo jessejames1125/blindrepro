@@ -1,0 +1,11 @@
+# Notes
+
+- Entry point: `code/paley_wiener.py::comparison_figure()`, the authors' driver for `figures/paley_wiener.png`. It calls `lower_bounds.sampling_vs_lower_bound` with the authors' `SPECS`. I called it unchanged. The figure is written to `./figures/`. I did not call `points_figure()` because it is not needed for these quantities.
+- P-greedy value = `ne{N}_sampling_curve[m]` with m = N_eff. This is the authors' `PGreedy.pmax_[m]`, i.e. sqrt(max over grid of the clamped squared power) after m centers, in float64 on CPU (no CUDA).
+- Authors' settings: sel_grid = 8000 / 8000 / 10000, equidistant `torch.linspace(-1,1,N)`. This matches spec. m_max = 70 / 110 / 140 is a budget, not the reported m. The value at m = N_eff does not depend on it. Default tol_p = 1e-14 (on the squared power): N_eff=20 stopped at 40 centers, the others used the full budget. All of these are past m = N_eff.
+- Lower-bound value = `ne{N}_lower` at n = N_eff, from `PaleyWienerSincKernel.gelfand_lower_tails(n_cap)`. The default n_quad = max(200, int(8*N_eff)+50, n_cap+1) gives q = 210 / 370 / 690, which matches spec.
+- DIFFERENCE from spec: the authors do not compute sqrt(sum_{k>=n} theta_k) exactly. In `_discrete_covariance_lower_tails`, every eigenvalue is first shifted down by 32*q*eps*max(theta_max, c/pi) and clipped at 0. Only the n=0 entry is reset to the exact trace. I report the authors' shifted value. The shift is about 1.5e-11 to 1e-10 per eigenvalue, so it changes the tail only around the 8th significant digit.
+- The matrix is symmetrised, 0.5*(A+A^T), before `numpy.linalg.eigvalsh`. The weights are leggauss weights times 0.5, and the diagonal is sinc(0)*c/pi = c/pi, as in spec.
+- Observation (not a change): at n = N_eff the P-greedy grid maximum is still about sqrt(c/pi): 3.16226, 4.47205 and 6.32424, against 3.16228, 4.47214 and 6.32456. The lower bound at n = N_eff is only about 0.47 to 0.52, roughly 7 to 12 times smaller. So the claim that the two are "near sqrt(c/pi) and of comparable size" at n = N_eff does not hold for the lower bound. The authors' own printed median ratio over the "reliable" range is 2.12 / 1.69 / 1.55.
+- requirements.txt pins numpy 2.2.6, scipy 1.15.3, torch 2.6.0 and matplotlib 3.10.3. These satisfy the ranges in code/requirements.txt.
+- I made no edits under code/.

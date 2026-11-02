@@ -1,0 +1,13 @@
+SPECS used by authors: [(20, {'m_max': 70, 'sel_grid': 8000, 'n_cap': 34}), (40, {'m_max': 110, 'sel_grid': 8000, 'n_cap': 56}), (80, {'m_max': 140, 'sel_grid': 10000, 'n_cap': 95})]
+N_eff= 20  reliable n<=  30  median P-greedy/lower-bound ratio= 2.12
+N_eff= 40  reliable n<=  51  median P-greedy/lower-bound ratio= 1.69
+N_eff= 80  reliable n<=  92  median P-greedy/lower-bound ratio= 1.55
+figure saved -> <work>\figures\paley_wiener.png
+ne20: n_used=40 len(g_curve)=40
+ne20: sqrt(c/pi)=np.float64(3.1622776601683795)
+ne40: n_used=110 len(g_curve)=110
+ne40: sqrt(c/pi)=np.float64(4.47213595499958)
+ne80: n_used=140 len(g_curve)=140
+ne80: sqrt(c/pi)=np.float64(6.324555320336759)
+{"pgreedy_max_power_neff20_m20": "3.1622647058135134", "gelfand_lower_neff20_n20": "0.4688128170129016", "pgreedy_max_power_neff40_m40": "4.472054875036885", "gelfand_lower_neff40_n40": "0.4948547266067724", "pgreedy_max_power_neff80_m80": "6.324243275301261", "gelfand_lower_neff80_n80": "0.519462503986686"}
+{"pgreedy_max_power_neff20_m20": 3.1622647058135134, "gelfand_lower_neff20_n20": 0.4688128170129016, "pgreedy_max_power_neff40_m40": 4.472054875036885, "gelfand_lower_neff40_n40": 0.4948547266067724, "pgreedy_max_power_neff80_m80": 6.324243275301261, "gelfand_lower_neff80_n80": 0.519462503986686}

@@ -1,0 +1,8 @@
+[[72,12,6]]: k=12 r_M=6 d_S=3 hist=(1,36,27) (0.0s)
+[[90,8,10]]: k=8 r_M=4 d_S=2 hist=(1,9,6) (0.0s)
+[[108,8,10]]: k=8 r_M=4 d_S=2 hist=(1,9,6) (0.0s)
+Gross [[144,12,12]]: k=12 r_M=6 d_S=2 hist=(1,36,27) (0.0s)
+[[288,12,18]]: k=12 r_M=6 d_S=2 hist=(1,36,27) (44.9s)
+P_repair(0.01) [[72,12,6]] = 0.04842711803694644
+disagreements with manuscript (authors' check): []
+{"k_72": 12, "r_M_72": 6, "d_S_72": 3, "k_90": 8, "r_M_90": 4, "d_S_90": 2, "k_108": 8, "r_M_108": 4, "d_S_108": 2, "k_144": 12, "r_M_144": 6, "d_S_144": 2, "k_288": 12, "r_M_288": 6, "d_S_288": 2, "gross_leader_c0": 1, "gross_leader_c1": 36, "gross_leader_c2": 27, "p2_coefficient_exact_repair_72": 603}

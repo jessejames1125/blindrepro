@@ -1,0 +1,171 @@
+{
+  "tool": "blindrepro",
+  "paper": {
+    "ref": "arXiv:2609.01578",
+    "url": "https://arxiv.org/abs/2609.01578",
+    "title": "Greedy sampling designs via reduced basis methods: optimal recovery in the uniform norm",
+    "first_public": "2026-09-01",
+    "license": "http://creativecommons.org/licenses/by/4.0/",
+    "source_kind": "arxiv-latex",
+    "sha256": "34a29f9fcae1f32735bcced90501922300327738eae5ee36168c0dcbdacc0538"
+  },
+  "target": "The numerical experiment for the Paley-Wiener sinc kernel on [-1, 1]: the P-greedy maximum of the power function and the covariance-eigenvalue-tail lower bound, at the measurement budgets the paper's experiment uses",
+  "claim": "For the Paley-Wiener (band-limited sinc) kernel K_c(s,t) = sin(c(s-t))/(pi(s-t)) on D=[-1,1] with N_eff = 2c/pi in {20, 40, 80}, the P-greedy estimate of the linear sampling width (the maximum of the power function over the candidate grid after m greedy nodes) and the discrete Gauss-Legendre covariance-eigenvalue-tail lower bound on the Gelfand width are both approximately flat (near sqrt(c/pi)) up to n = N_eff and of comparable size, before decaying super-exponentially.",
+  "quantities": [
+    {
+      "key": "pgreedy_max_power_neff20_m20",
+      "description": "Kernel K_c(s,t)=sin(c(s-t))/(pi(s-t)) with K_c(x,x)=c/pi, c = 20*pi/2 = 10*pi (N_eff=2c/pi=20). Candidate grid X_sel = 8000 equidistant points on [-1,1] including both endpoints (numpy.linspace(-1,1,8000)). Run P-greedy (Algorithm 1, gamma=1 on the grid): start with Pow_0(x)^2 = c/pi; at step j pick x_j = argmax over X_sel of Pow_j(x) (first index on ties); Newton basis v_j(x) = (K(x,x_j) - sum_{l<j} v_l(x) v_l(x_j)) / Pow_j(x_j); update Pow_{j+1}(x)^2 = max(Pow_j(x)^2 - v_j(x)^2, 0). After m = 20 nodes, report max over X_sel of Pow_{P_20}(x) (the square root of the squared power), in float64.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "pgreedy_max_power_neff40_m40",
+      "description": "Same as pgreedy_max_power_neff20_m20 but c = 20*pi (N_eff=40), candidate grid of 8000 equidistant points on [-1,1] including endpoints, budget m = 40 nodes; report max over the grid of Pow_{P_40}(x).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "pgreedy_max_power_neff80_m80",
+      "description": "Same as pgreedy_max_power_neff20_m20 but c = 40*pi (N_eff=80), candidate grid of 10000 equidistant points on [-1,1] including endpoints, budget m = 80 nodes; report max over the grid of Pow_{P_80}(x).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gelfand_lower_neff20_n20",
+      "description": "Discrete spectral-tail lower bound underline c_{n,c}^{(q)} = sqrt( sum_{k=n}^{q-1} theta_k^{(q)} ), where theta_0>=...>=theta_{q-1} are the eigenvalues of A_q = ( sqrt(w_l) K_c(x_l,x_r) sqrt(w_r) )_{l,r=1..q}, with (x_l, w_l) the q-point Gauss-Legendre nodes on [-1,1] and weights normalized to sum to 1 (probability measure, i.e. standard weights divided by 2), and K_c(x,x)=c/pi on the diagonal. Here c = 10*pi (N_eff=20), q = 210, n = 20.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gelfand_lower_neff40_n40",
+      "description": "Same as gelfand_lower_neff20_n20 but c = 20*pi (N_eff=40), q = 370, n = 40.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gelfand_lower_neff80_n80",
+      "description": "Same as gelfand_lower_neff20_n20 but c = 40*pi (N_eff=80), q = 690, n = 80.",
+      "units": "dimensionless"
+    }
+  ],
+  "code": {
+    "url": "https://github.com/Zeppo1994/Gelfand-Numbers-and-P-Greedy",
+    "commit": "9d20e919fcaa2a145f3df5350bb509a762a0143f",
+    "fetched_at": "2026-11-02T11:38:40Z",
+    "modified": false,
+    "could_not_run": "",
+    "fetch_error": null
+  },
+  "comparison": {
+    "status": "REPRODUCED",
+    "tolerance": 0.05,
+    "max_error": 4.941697779175402e-09,
+    "reason": "",
+    "rows": [
+      {
+        "key": "pgreedy_max_power_neff20_m20",
+        "derived": 3.1622647058135134,
+        "authors": 3.1622647058135134,
+        "paper": null,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "gelfand_lower_neff20_n20",
+        "derived": 0.4688128171957017,
+        "authors": 0.4688128170129016,
+        "paper": null,
+        "error": 3.899213113421412e-10,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "pgreedy_max_power_neff40_m40",
+        "derived": 4.472054875036885,
+        "authors": 4.472054875036885,
+        "paper": null,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "gelfand_lower_neff40_n40",
+        "derived": 0.494854727278602,
+        "authors": 0.4948547266067724,
+        "paper": null,
+        "error": 1.3576300504922473e-09,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "pgreedy_max_power_neff80_m80",
+        "derived": 6.324243275301261,
+        "authors": 6.324243275301261,
+        "paper": null,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "gelfand_lower_neff80_n80",
+        "derived": 0.5194625065537127,
+        "authors": 0.519462503986686,
+        "paper": null,
+        "error": 4.941697779175402e-09,
+        "within": true,
+        "note": ""
+      }
+    ]
+  },
+  "explanation": "",
+  "blinding": {
+    "freeze_hash": "3f0d07b844d67a07f857b280c9266caafc208f128f7bfdd04da273f67e0b53b1",
+    "frozen_at": "2026-11-02T11:38:35Z",
+    "code_fetched_at": "2026-11-02T11:38:40Z",
+    "tools_offered": [
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read",
+      "Write",
+      "mcp__blindrepro__run"
+    ],
+    "refused_calls": 0,
+    "guard_blocked": 0,
+    "redaction": {
+      "strings_removed": 0,
+      "strings_not_found": [],
+      "code_links_removed": 1
+    },
+    "values_shown": false,
+    "leaks": [],
+    "literals": [],
+    "forbidden_imports": [],
+    "tampering": [],
+    "values_searched": 6,
+    "recall": {
+      "stated": 0,
+      "total": 6,
+      "matched": 0,
+      "values": {}
+    },
+    "cutoff": {
+      "cutoff": "2026-06",
+      "after_cutoff": true,
+      "statement": "2026-06 per the vendor. Paper first posted 2026-09-01, after that, so it should not be in training data."
+    }
+  },
+  "run": {
+    "model": "claude-opus-5-5",
+    "judge": "claude-cli",
+    "judge_version": "2.1.316",
+    "tool_version": "0.1.0",
+    "date": "2026-11-02",
+    "python": "3.12.13",
+    "packages": [
+      "mpmath==1.3.0",
+      "numpy==2.5.4",
+      "scipy==1.18.1",
+      "sympy==1.14.0"
+    ],
+    "agent_seconds": 51.1
+  },
+  "blind_notes": "- Kernel evaluated as (c/pi)*numpy.sinc(c(s-t)/pi), which is algebraically identical to sin(c(s-t))/(pi(s-t)) and gives c/pi on the diagonal (spec/paper eq. paleywiener).\n- P-greedy run exactly as in Algorithm 1 / spec, gamma=1 on grid; no early break (epsilon_pow not specified in spec; pivots stay well above float floor for m <= N_eff).\n- argmax taken on squared power (same maximizer as on Pow since sqrt is monotone), first index on ties (numpy.argmax).\n- Gauss-Legendre nodes/weights from numpy.polynomial.legendre.leggauss, weights divided by 2 (spec).\n- Eigenvalues of A_q via numpy.linalg.eigvalsh on the symmetrized matrix; tiny negative round-off eigenvalues clipped to 0 (they are >=0 exactly; effect negligible).\n- No constants taken from memory.\n",
+  "adapter_notes": "# Notes\n\n- Entry point: `code/paley_wiener.py::comparison_figure()`, the authors' driver for `figures/paley_wiener.png`. It calls `lower_bounds.sampling_vs_lower_bound` with the authors' `SPECS`. I called it unchanged. The figure is written to `./figures/`. I did not call `points_figure()` because it is not needed for these quantities.\n- P-greedy value = `ne{N}_sampling_curve[m]` with m = N_eff. This is the authors' `PGreedy.pmax_[m]`, i.e. sqrt(max over grid of the clamped squared power) after m centers, in float64 on CPU (no CUDA).\n- Authors' settings: sel_grid = 8000 / 8000 / 10000, equidistant `torch.linspace(-1,1,N)`. This matches spec. m_max = 70 / 110 / 140 is a budget, not the reported m. The value at m = N_eff does not depend on it. Default tol_p = 1e-14 (on the squared power): N_eff=20 stopped at 40 centers, the others used the full budget. All of these are past m = N_eff.\n- Lower-bound value = `ne{N}_lower` at n = N_eff, from `PaleyWienerSincKernel.gelfand_lower_tails(n_cap)`. The default n_quad = max(200, int(8*N_eff)+50, n_cap+1) gives q = 210 / 370 / 690, which matches spec.\n- DIFFERENCE from spec: the authors do not compute sqrt(sum_{k>=n} theta_k) exactly. In `_discrete_covariance_lower_tails`, every eigenvalue is first shifted down by 32*q*eps*max(theta_max, c/pi) and clipped at 0. Only the n=0 entry is reset to the exact trace. I report the authors' shifted value. The shift is about 1.5e-11 to 1e-10 per eigenvalue, so it changes the tail only around the 8th significant digit.\n- The matrix is symmetrised, 0.5*(A+A^T), before `numpy.linalg.eigvalsh`. The weights are leggauss weights times 0.5, and the diagonal is sinc(0)*c/pi = c/pi, as in spec.\n- Observation (not a change): at n = N_eff the P-greedy grid maximum is still about sqrt(c/pi): 3.16226, 4.47205 and 6.32424, against 3.16228, 4.47214 and 6.32456. The lower bound at n = N_eff is only about 0.47 to 0.52, roughly 7 to 12 times smaller. So the claim that the two are \"near sqrt(c/pi) and of comparable size\" at n = N_eff does not hold for the lower bound. The authors' own printed median ratio over the \"reliable\" range is 2.12 / 1.69 / 1.55.\n- requirements.txt pins numpy 2.2.6, scipy 1.15.3, torch 2.6.0 and matplotlib 3.10.3. These satisfy the ranges in code/requirements.txt.\n- I made no edits under code/.\n"
+}

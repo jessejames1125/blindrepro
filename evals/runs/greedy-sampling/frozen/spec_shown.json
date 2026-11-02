@@ -1,0 +1,35 @@
+{
+  "claim": "For the Paley-Wiener (band-limited sinc) kernel K_c(s,t) = sin(c(s-t))/(pi(s-t)) on D=[-1,1] with N_eff = 2c/pi in {20, 40, 80}, the P-greedy estimate of the linear sampling width (the maximum of the power function over the candidate grid after m greedy nodes) and the discrete Gauss-Legendre covariance-eigenvalue-tail lower bound on the Gelfand width are both approximately flat (near sqrt(c/pi)) up to n = N_eff and of comparable size, before decaying super-exponentially.",
+  "quantities": [
+    {
+      "key": "pgreedy_max_power_neff20_m20",
+      "description": "Kernel K_c(s,t)=sin(c(s-t))/(pi(s-t)) with K_c(x,x)=c/pi, c = 20*pi/2 = 10*pi (N_eff=2c/pi=20). Candidate grid X_sel = 8000 equidistant points on [-1,1] including both endpoints (numpy.linspace(-1,1,8000)). Run P-greedy (Algorithm 1, gamma=1 on the grid): start with Pow_0(x)^2 = c/pi; at step j pick x_j = argmax over X_sel of Pow_j(x) (first index on ties); Newton basis v_j(x) = (K(x,x_j) - sum_{l<j} v_l(x) v_l(x_j)) / Pow_j(x_j); update Pow_{j+1}(x)^2 = max(Pow_j(x)^2 - v_j(x)^2, 0). After m = 20 nodes, report max over X_sel of Pow_{P_20}(x) (the square root of the squared power), in float64.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "pgreedy_max_power_neff40_m40",
+      "description": "Same as pgreedy_max_power_neff20_m20 but c = 20*pi (N_eff=40), candidate grid of 8000 equidistant points on [-1,1] including endpoints, budget m = 40 nodes; report max over the grid of Pow_{P_40}(x).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "pgreedy_max_power_neff80_m80",
+      "description": "Same as pgreedy_max_power_neff20_m20 but c = 40*pi (N_eff=80), candidate grid of 10000 equidistant points on [-1,1] including endpoints, budget m = 80 nodes; report max over the grid of Pow_{P_80}(x).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gelfand_lower_neff20_n20",
+      "description": "Discrete spectral-tail lower bound underline c_{n,c}^{(q)} = sqrt( sum_{k=n}^{q-1} theta_k^{(q)} ), where theta_0>=...>=theta_{q-1} are the eigenvalues of A_q = ( sqrt(w_l) K_c(x_l,x_r) sqrt(w_r) )_{l,r=1..q}, with (x_l, w_l) the q-point Gauss-Legendre nodes on [-1,1] and weights normalized to sum to 1 (probability measure, i.e. standard weights divided by 2), and K_c(x,x)=c/pi on the diagonal. Here c = 10*pi (N_eff=20), q = 210, n = 20.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gelfand_lower_neff40_n40",
+      "description": "Same as gelfand_lower_neff20_n20 but c = 20*pi (N_eff=40), q = 370, n = 40.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "gelfand_lower_neff80_n80",
+      "description": "Same as gelfand_lower_neff20_n20 but c = 40*pi (N_eff=80), q = 690, n = 80.",
+      "units": "dimensionless"
+    }
+  ]
+}

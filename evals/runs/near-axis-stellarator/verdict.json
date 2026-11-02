@@ -1,0 +1,175 @@
+{
+  "tool": "blindrepro",
+  "paper": {
+    "ref": "arXiv:1809.10246",
+    "url": "https://arxiv.org/abs/1809.10246",
+    "title": "Direct construction of optimized stellarator shapes. II. Numerical quasisymmetric solutions",
+    "first_public": "2018-09-26",
+    "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "source_kind": "arxiv-latex",
+    "sha256": "36c415a275b610d6c11f33f53a395778ea9c3918169b5d13bd9de7015c2c52ae"
+  },
+  "target": "The rotational transform on axis and the related near-axis quantities the paper reports for the configurations of sections 5.1, 5.2 and 5.3",
+  "claim": "Solving the first-order (Garren-Boozer) near-axis quasisymmetry equation (the Riccati-type ODE for sigma, eq. QA, with the periodicity condition fixing iota) for three prescribed magnetic axis shapes (a stellarator-symmetric quasi-axisymmetric axis, a quasi-helically symmetric axis, and a non-stellarator-symmetric quasi-axisymmetric axis), each in vacuum (I_2 = 0) with given eta_bar and sigma(0), gives specific values of the on-axis rotational transform and of the maximum elongation of the first-order elliptical flux-surface cross sections in the cylindrical R-z plane.",
+  "quantities": [
+    {
+      "key": "iota_qa_sec51",
+      "description": "On-axis rotational transform iota (the iota in eq. QA itself, not iota - N), from the periodic solution {iota, sigma(phi)} of eq. QA combined with d/dvarphi = |G0|/(l' B0) d/dphi, for magnetic axis R0(phi) = 1 + 0.045 cos(3 phi), z0(phi) = -0.045 sin(3 phi) (n_fp = 3), eta_bar = -0.9, sigma(0) = 0, I_2 = 0, B0 = 1, s_G = s_psi = +1, G0 = s_G B0 L/(2 pi) with L the axis length, curvature and torsion from the Frenet-Serret frame of the axis (torsion sign as in the paper, d b/dl = -tau n), N = number of poloidal rotations of the normal vector per toroidal transit of the axis. Converged in resolution (spectral collocation or equivalent).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "max_elongation_qa_sec51",
+      "description": "For the same configuration as iota_qa_sec51: compute X1s = B1s/(B0 kappa), X1c = B1c/(B0 kappa) with B1s = eta_bar B0 sin(N varphi), B1c = eta_bar B0 cos(N varphi), and Y1s, Y1c from eq. W_to_Y; convert to cylindrical first-order coefficients R1s, R1c, z1s, z1c at each phi via the transformation (R1, z1) = (l'/R0) [[-b_z, n_z],[b_R, -n_R]] (X1, Y1) applied separately to the sin(theta) and cos(theta) components (first-order method of section 4.1). At each phi the R-z cross section is the ellipse (R1c cos theta + R1s sin theta, z1c cos theta + z1s sin theta); its elongation is semi-major/semi-minor axis = (p + sqrt(p^2 - 4 q^2))/(2|q|) with p = R1s^2 + R1c^2 + z1s^2 + z1c^2, q = R1s z1c - R1c z1s. The quantity is the maximum of this elongation over all phi in [0, 2 pi) (independent of r).",
+      "units": "dimensionless"
+    },
+    {
+      "key": "iota_qh_sec52",
+      "description": "On-axis rotational transform iota (not iota - N), defined and computed as in iota_qa_sec51 but for magnetic axis R0(phi) = 1 + 0.265 cos(4 phi), z0(phi) = -0.21 sin(4 phi) (n_fp = 4), eta_bar = -2.25, sigma(0) = 0, I_2 = 0, B0 = 1, s_G = s_psi = +1; N is nonzero (quasi-helical symmetry) and is the number of poloidal rotations of the axis normal vector per toroidal transit.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "max_elongation_qh_sec52",
+      "description": "Maximum over phi in [0, 2 pi) of the R-z-plane elongation of the first-order elliptical cross section, defined exactly as in max_elongation_qa_sec51 (first-order transformation of section 4.1), for the configuration of iota_qh_sec52.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "iota_asym_sec53",
+      "description": "On-axis rotational transform iota (not iota - N), defined and computed as in iota_qa_sec51 but for the non-stellarator-symmetric magnetic axis R0(phi) = 1 + 0.042 cos(3 phi), z0(phi) = -0.042 sin(3 phi) - 0.025 cos(3 phi) (n_fp = 3), eta_bar = -1.1, sigma(0) = -0.6, I_2 = 0, B0 = 1, s_G = s_psi = +1.",
+      "units": "dimensionless"
+    },
+    {
+      "key": "max_elongation_asym_sec53",
+      "description": "Maximum over phi in [0, 2 pi) of the R-z-plane elongation of the first-order elliptical cross section, defined exactly as in max_elongation_qa_sec51 (first-order transformation of section 4.1), for the configuration of iota_asym_sec53.",
+      "units": "dimensionless"
+    }
+  ],
+  "code": {
+    "url": "https://github.com/landreman/pyQSC",
+    "commit": "cd75359ea47548d5db7ccb458c100085c04ba1bc",
+    "fetched_at": "2026-11-02T10:28:29Z",
+    "modified": false,
+    "could_not_run": "",
+    "fetch_error": null
+  },
+  "comparison": {
+    "status": "DIVERGED",
+    "tolerance": 0.05,
+    "max_error": 0.18141774083546022,
+    "reason": "",
+    "rows": [
+      {
+        "key": "iota_qa_sec51",
+        "derived": 0.4183069102151771,
+        "authors": 0.41830691021517685,
+        "paper": 0.418,
+        "error": 5.308174440886279e-16,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "max_elongation_qa_sec51",
+        "derived": 2.3994516121821796,
+        "authors": 2.413737055374738,
+        "paper": 2.4,
+        "error": 0.005918392461493891,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "iota_qh_sec52",
+        "derived": 1.9310972553572885,
+        "authors": 1.9310972553572894,
+        "paper": 1.93,
+        "error": 4.599345875699024e-16,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "max_elongation_qh_sec52",
+        "derived": 2.522274113778937,
+        "authors": 3.0812714122991336,
+        "paper": 2.52,
+        "error": 0.18141774083546022,
+        "within": false,
+        "note": ""
+      },
+      {
+        "key": "iota_asym_sec53",
+        "derived": 0.3111813731235942,
+        "authors": 0.31118137312312505,
+        "paper": 0.311,
+        "error": 1.507560476217005e-12,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "max_elongation_asym_sec53",
+        "derived": 3.286583515069467,
+        "authors": 3.3047871229519408,
+        "paper": 3.29,
+        "error": 0.005508254300571664,
+        "within": true,
+        "note": ""
+      }
+    ]
+  },
+  "explanation": "Only `max_elongation_qh_sec52` is marked within=false. The blind side gives 2.522 and the authors' side gives 3.081.\n\n**First point of difference:** the two sides measure elongation in different planes.\n\n- **Blind side:** `derivation/derive.py` lines 137\u2013144 convert (X1, Y1) to (R1, z1) using the l'/R0 transform. They then take the elongation in the cylindrical R-z plane, which is what spec.json asks for.\n- **Authors' side:** `authors/code/qsc/calculate_r1.py` lines 129\u2013136 compute p and q directly from X1s, X1c, Y1s, Y1c. That is the elongation in the plane perpendicular to the axis. The comment at lines 129\u2013130 says (R,Z) could be used instead, but the code doesn't. `authors/adapter.py` line 27 reports this `max_elongation` as is, and `authors/notes.md` line 6 admits the mismatch.\n\nThe other inputs agree: the iota values match to about 1e-15, so the geometry, N and sigma match too. The QH axis has the largest shaping, which is likely why the two planes differ most there. In the other two cases the gap is under 1%.\n\n**My judgment:** this is a definition mismatch on the authors' side, introduced by the adapter. It is not an error on the blind side and not a paper ambiguity. The blind value (2.522) matches the paper's 2.52. pyQSC's number is correct for the quantity it defines. I read the code but did not run either side.",
+  "blinding": {
+    "freeze_hash": "ca70e018545baf3c0596b8b364ac124abafcca7825ef5a046917908493e4ea18",
+    "frozen_at": "2026-11-02T10:28:20Z",
+    "code_fetched_at": "2026-11-02T10:28:29Z",
+    "tools_offered": [
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read",
+      "Write",
+      "mcp__blindrepro__run"
+    ],
+    "refused_calls": 0,
+    "guard_blocked": 0,
+    "redaction": {
+      "strings_removed": 6,
+      "strings_not_found": [],
+      "code_links_removed": 0
+    },
+    "values_shown": false,
+    "leaks": [],
+    "literals": [],
+    "forbidden_imports": [],
+    "tampering": [],
+    "values_searched": 12,
+    "recall": {
+      "stated": 3,
+      "total": 6,
+      "matched": 3,
+      "values": {
+        "iota_qa_sec51": 0.4183,
+        "iota_qh_sec52": 1.931,
+        "iota_asym_sec53": 0.3112
+      }
+    },
+    "cutoff": {
+      "cutoff": "2026-06",
+      "after_cutoff": false,
+      "statement": "2026-06 per the vendor. Paper first posted 2018-09-26, before that, so it may be in training data."
+    }
+  },
+  "run": {
+    "model": "claude-opus-5-5",
+    "judge": "claude-cli",
+    "judge_version": "2.1.316",
+    "tool_version": "0.1.0",
+    "date": "2026-11-02",
+    "python": "3.12.13",
+    "packages": [
+      "mpmath==1.3.0",
+      "numpy==2.5.4",
+      "scipy==1.18.1",
+      "sympy==1.14.0"
+    ],
+    "agent_seconds": 101.5
+  },
+  "blind_notes": "- Signs s_G = s_psi = +1, B0 = 1, I2 = 0, as given in spec.json; G0 = s_G B0 L/(2 pi), with the axis length L from periodic trapezoid quadrature (spectrally accurate).\n- Curvature and torsion use the standard Frenet formulas kappa = |r' x r''|/|r'|^3 and tau = (r' x r'').r'''/|r' x r''|^2. This tau matches the paper's db/dl = -tau n convention. These are textbook results taken from memory.\n- The cylindrical-basis derivatives of the axis position use de_R/dphi = e_phi and de_phi/dphi = -e_R. This is standard vector calculus, taken from memory.\n- N is counted as the net winding of atan2(n_R, n_z) over one toroidal transit. That angle increases when n rotates toward b about t (t ~ +e_phi). The sign follows from det[[X1c,X1s],[Y1c,Y1s]] = s_G s_psi = +1, which makes theta increase from n toward b. I derived this myself; it matches my memory of pyQSC's helicity convention (iota_N = iota + helicity*nfp, i.e. N = -helicity*nfp).\n- The ODE is solved by Newton iteration on Fourier pseudo-spectral collocation (Np = 151, odd), with unknowns [iota-N, sigma_2..sigma_N], following section 3 of the paper. Re-running with Np = 201 changes iota by less than 4e-15.\n- The elongation uses theta shifted by N*varphi (X1c = etabar/kappa, X1s = 0, Y1s = kappa/etabar, Y1c = kappa*sigma/etabar). This is an exact rewriting of the paper's expressions. The R-z ellipse elongation does not change under a rotation of theta, so varphi(phi) is not needed.\n- The maximum over phi is taken over one field period, which is enough because of the field-period symmetry. It uses a 4000-point scan with trigonometric interpolation of sigma, then a bounded 1D refinement.\n",
+  "adapter_notes": "# Notes\n\n- Code used: pyQSC (`code/qsc`), `Qsc.from_paper(\"r1 section 5.1\" | \"r1 section 5.2\" | \"r1 section 5.3\")`. These are the authors' predefined Landreman\u2013Sengupta\u2013Plunk (2019) configurations. Their parameters match spec.json: axis coefficients, nfp, etabar, sigma0, I2=0, B0=1, sG=spsi=+1.\n- Resolution: I used the constructor default `nphi=61`, the authors' setting. The adapter also prints nphi = 31/101/151/201 as a check. At nphi=61, iota has converged to about 1e-12 or better. max_elongation at nphi=61 differs from nphi=201 by up to about 2e-6 (QH case: 3.0812714 vs 3.0812691), because it comes from `fourier_minimum` interpolation.\n- iota: I report `stel.iota`, which is iota itself and not iota - N. For section 5.2 the code finds helicity = -1, so `iotaN` = iota - 4 = -2.0689 and iota = 1.9311.\n- **Difference from spec (max_elongation):** spec.json asks for the elongation in the cylindrical R-z plane, using the first-order (X1,Y1)->(R1,z1) transform of section 4.1. pyQSC's `r1_diagnostics` (calculate_r1.py lines 129-136) computes the elongation from (X1s, X1c, Y1s, Y1c). That is the elongation in the plane perpendicular to the magnetic axis. A comment in the code notes that (R,Z) could be used instead, but the code uses (X,Y). The code has no function that gives the R-z-plane first-order elongation. I report the code's `max_elongation` (the maximum over phi via `fourier_minimum`) for the three max_elongation keys. These numbers are the perpendicular-plane elongation, not the R-z-plane quantity defined in spec.json. I did not write my own R-z version, because that would reimplement the method. The package's own test (tests/test_configurations.py) checks these same values (2.41373705531443, 3.08125973323805, 3.30480616121377) as the \"published examples\".\n- No files under code/ were edited.\n- Requirements pinned to the code's era (numpy 1.26.4, scipy 1.11.4 \u2014 that version still provides `scipy.io.netcdf`, imported in qsc.py \u2014 and matplotlib 3.8.2, imported by qsc/plot.py). The run's \"blocked file read\" messages come from matplotlib scanning the system fonts at import. They are harmless.\n"
+}

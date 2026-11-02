@@ -1,0 +1,16 @@
+{
+  "paper": "arxiv:2609.15157",
+  "target": "The theoretical threshold energies E_infinity, E_2, E_1 and E_0 for the pure spherical p-spin model at p = 4, from the paper's threshold equations",
+  "code": "https://github.com/mbadieik/spectral_gap_for_mixed_spherical_spin_glasses",
+  "commit": "4fda784d6fe32bc53296064f736cc9253c01e07d",
+  "tolerance": 0.05,
+  "seconds": 600,
+  "memory_mb": 2048,
+  "minutes": 30,
+  "allow_packages": [],
+  "show_values": false,
+  "skip_recall": false,
+  "stop_after_freeze": false,
+  "model_cutoff": "",
+  "spec": ""
+}

@@ -1,0 +1,3 @@
+A blind derivation and the authors' code disagree. derivation/ holds the blind side, authors/ holds the authors' code and the adapter that called it, comparison.json holds the numbers, and spec.json defines the quantities.
+
+Find the first concrete point where the two calculations differ for each quantity marked within=false: a formula, a constant, a unit, a parameter, a definition or a numerical choice. Name the file and line on each side. If you cannot find it, say so. Say whether the difference looks like a paper ambiguity, an error on the blind side, or an issue in the authors' code, and label that as your judgment. Reply in under 200 words. You cannot run anything. Do not claim more than you checked.

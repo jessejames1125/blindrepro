@@ -1,0 +1,6 @@
+- Kernel evaluated as (c/pi)*numpy.sinc(c(s-t)/pi), which is algebraically identical to sin(c(s-t))/(pi(s-t)) and gives c/pi on the diagonal (spec/paper eq. paleywiener).
+- P-greedy run exactly as in Algorithm 1 / spec, gamma=1 on grid; no early break (epsilon_pow not specified in spec; pivots stay well above float floor for m <= N_eff).
+- argmax taken on squared power (same maximizer as on Pow since sqrt is monotone), first index on ties (numpy.argmax).
+- Gauss-Legendre nodes/weights from numpy.polynomial.legendre.leggauss, weights divided by 2 (spec).
+- Eigenvalues of A_q via numpy.linalg.eigvalsh on the symmetrized matrix; tiny negative round-off eigenvalues clipped to 0 (they are >=0 exactly; effect negligible).
+- No constants taken from memory.

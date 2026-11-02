@@ -1,0 +1,15 @@
+code/ holds the public code released by the authors of a paper, at commit 4ae563bfc409db5fb4afb2f9930a3a4fafba4f0d. spec.json lists quantities the paper reports.
+
+Write adapter.py in this folder. Run from this folder, it must obtain each quantity by running the authors' code and print exactly one JSON object as its last line of output, mapping each key to a number or list of numbers, or to null if their code does not produce it.
+
+Write requirements.txt with the pip packages their code needs, one per line, pinned to versions from the code's era if it needs that. The run tool builds that environment and runs adapter.py. Scripts have no network, can only write in this folder, and get 600 seconds and 2048 MB per run.
+
+Rules:
+- Find the script, notebook cell or function the authors use to produce this published result, and report what it produces with their settings. Do not reimplement their method and do not change it. Add code/ to sys.path yourself if needed.
+- If their settings differ from a detail in spec.json, use theirs and write the difference in notes.md. That difference is a finding.
+- Do not edit anything under code/. If their code cannot run without an edit, make the smallest one and say why in notes.md. Every edit is recorded and reported.
+- If the repository stores precomputed outputs but the code that made them cannot run, do not read those outputs as if you had run the code. Treat it as a failure to run.
+- If you cannot get their code to run after honest attempts, write could_not_run.md: what you tried, the exact error and what is missing. Failing to run is a useful finding. Do not work around it by writing your own version.
+- Print full precision. Do not round to the paper's printed digits.
+- Write notes.md with one line per choice you made about settings.
+Finish, then stop with a one-line status.

@@ -1,0 +1,10 @@
+{
+  "stated": {
+    "iota_uniform_family": null,
+    "iota_sheared_axis": null,
+    "iota_sheared_edge": null,
+    "force_residual_uniform_family": null,
+    "force_residual_sheared_family": null
+  },
+  "model": "claude-opus-5-5"
+}

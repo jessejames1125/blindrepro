@@ -1,0 +1,62 @@
+{
+  "status": "DIVERGED",
+  "tolerance": 0.05,
+  "max_error": 0.18141774083546022,
+  "reason": "",
+  "rows": [
+    {
+      "key": "iota_qa_sec51",
+      "derived": 0.4183069102151771,
+      "authors": 0.41830691021517685,
+      "paper": 0.418,
+      "error": 5.308174440886279e-16,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "max_elongation_qa_sec51",
+      "derived": 2.3994516121821796,
+      "authors": 2.413737055374738,
+      "paper": 2.4,
+      "error": 0.005918392461493891,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "iota_qh_sec52",
+      "derived": 1.9310972553572885,
+      "authors": 1.9310972553572894,
+      "paper": 1.93,
+      "error": 4.599345875699024e-16,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "max_elongation_qh_sec52",
+      "derived": 2.522274113778937,
+      "authors": 3.0812714122991336,
+      "paper": 2.52,
+      "error": 0.18141774083546022,
+      "within": false,
+      "note": ""
+    },
+    {
+      "key": "iota_asym_sec53",
+      "derived": 0.3111813731235942,
+      "authors": 0.31118137312312505,
+      "paper": 0.311,
+      "error": 1.507560476217005e-12,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "max_elongation_asym_sec53",
+      "derived": 3.286583515069467,
+      "authors": 3.3047871229519408,
+      "paper": 3.29,
+      "error": 0.005508254300571664,
+      "within": true,
+      "note": ""
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+BUILD optimize rc 1
+
+<work>\code\src\optimize.cpp:6:10: fatal error: 'LBFGS.h' file not found
+    6 | #include <LBFGS.h>
+      |          ^~~~~~~~~
+1 error generated.
+
+BUILD evaluate rc 0
+BUILD evaluate_fullprec rc 0
+p=1 gammas=[0.5] betas=[0.3927] evaluate.cpp(8 digits)=0.30326533 full-precision=0.3032653298542708
+p=2 gammas=[0.3817, 0.6655] betas=[0.496, 0.269] evaluate.cpp(8 digits)=0.40754502 full-precision=0.4075450178436366
+p=3 gammas=[0.3297, 0.5688, 0.6406] betas=[0.55, 0.3675, 0.2109] evaluate.cpp(8 digits)=0.47261898 full-precision=0.47261897952283444
+p=4 gammas=[0.295, 0.5144, 0.5586, 0.6429] betas=[0.571, 0.4176, 0.3028, 0.1729] evaluate.cpp(8 digits)=0.51567882 full-precision=0.5156788202438393
+p=5 gammas=[0.2705, 0.4804, 0.5074, 0.5646, 0.6397] betas=[0.5899, 0.4492, 0.3559, 0.2643, 0.1486] evaluate.cpp(8 digits)=0.54764563 full-precision=0.5476456346823727
+p=6 gammas=[0.2528, 0.4531, 0.475, 0.5146, 0.565, 0.6392] betas=[0.6004, 0.467, 0.388, 0.3176, 0.2325, 0.1291] evaluate.cpp(8 digits)=0.57213721 full-precision=0.5721372072811373
+p=7 gammas=[0.2383, 0.4327, 0.4516, 0.483, 0.5147, 0.5686, 0.6393] betas=[0.6085, 0.4809, 0.409, 0.3534, 0.2857, 0.208, 0.1146] evaluate.cpp(8 digits)=0.59148111 full-precision=0.5914811068927609
+p=8 gammas=[0.2268, 0.4162, 0.4332, 0.4608, 0.4818, 0.5179, 0.5717, 0.6393] betas=[0.6151, 0.4906, 0.4244, 0.378, 0.3224, 0.2606, 0.1884, 0.103] evaluate.cpp(8 digits)=0.60726644 full-precision=0.6072664384738032
+{"nu_bar_p1": 0.3032653298542708, "nu_bar_p2": 0.4075450178436366, "nu_bar_p3": 0.47261897952283444, "nu_bar_p4": 0.5156788202438393, "nu_bar_p5": 0.5476456346823727, "nu_bar_p6": 0.5721372072811373, "nu_bar_p7": 0.5914811068927609, "nu_bar_p8": 0.6072664384738032}

@@ -1,0 +1,143 @@
+{
+  "tool": "blindrepro",
+  "paper": {
+    "ref": "arXiv:2609.15157",
+    "url": "https://arxiv.org/abs/2609.15157",
+    "title": "Spectral Gap Bounds for Langevin Dynamics in Mixed Spherical Spin Glasses",
+    "first_public": "2026-09-14",
+    "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "source_kind": "arxiv-latex",
+    "sha256": "64f47f0d2d69fb7c6b6ca4d1fe1736e2407f76a9a04824e261752873f6cd1246"
+  },
+  "target": "The theoretical threshold energies E_infinity, E_2, E_1 and E_0 for the pure spherical p-spin model at p = 4, from the paper's threshold equations",
+  "claim": "For the pure spherical p-spin model xi(x)=x^p at p=4, the landscape threshold energies E_infinity (where the typical Hessian shift reaches the edge of the semicircle), E_2 and E_1 (zeros of the annealed index-k complexity functions), and E_0 (the ground-state energy constant) follow from the paper's closed-form pure-case complexity functions by root finding.",
+  "quantities": [
+    {
+      "key": "E_infinity_p4",
+      "description": "E_infinity(xi) = 2*sqrt(xi''(1))/xi'(1) for xi(x)=x^4, i.e. 2*sqrt((p-1)/p) at p=4. Report the full-precision value.",
+      "units": "dimensionless (energy per spin)"
+    },
+    {
+      "key": "E_2_p4",
+      "description": "For p=4, let J(t) = (1/2) * integral from t to -2 of sqrt(x^2-4) dx for t <= -2 (J=0 for t>-2), and I_1(u) = J(u*sqrt(p/(p-1))). For u <= -E_infinity, Theta_k(u) = (1/2)log(p-1) - (p-2)/(4(p-1)) u^2 - (k+1) I_1(u). E_2 = sup{a>0 : Theta_2(-a) >= 0}, i.e. the root a > E_infinity of Theta_2(-a)=0 (k=2, so the coefficient of I_1 is 3). Report the full-precision value.",
+      "units": "dimensionless (energy per spin)"
+    },
+    {
+      "key": "E_1_p4",
+      "description": "Same setup as E_2_p4 with k=1 (coefficient of I_1 equal to 2): E_1 = sup{a>0 : Theta_1(-a) >= 0} for p=4, the root a > E_infinity of (1/2)log 3 - (1/6) a^2 - 2 J(-a*sqrt(4/3)) = 0. Report the full-precision value.",
+      "units": "dimensionless (energy per spin)"
+    },
+    {
+      "key": "E_0_p4",
+      "description": "Ground-state constant E_0 for the pure p=4 spherical spin glass, with (1/N) min H_N -> -E_0. For the pure model (Auffinger-Ben Arous-Cerny), this equals the root a > E_infinity of Theta_0(-a)=0, where Theta_0(u) = (1/2)log(p-1) - (p-2)/(4(p-1)) u^2 - I_1(u) (the paper's pure-case formula with k=0, coefficient of I_1 equal to 1), with I_1 and J as in E_2_p4. This agrees with the zero-temperature Crisanti-Sommers/Parisi formula. Report the full-precision value.",
+      "units": "dimensionless (energy per spin)"
+    }
+  ],
+  "code": {
+    "url": "https://github.com/mbadieik/spectral_gap_for_mixed_spherical_spin_glasses",
+    "commit": "4fda784d6fe32bc53296064f736cc9253c01e07d",
+    "fetched_at": "2026-11-02T10:23:43Z",
+    "modified": false,
+    "could_not_run": "",
+    "fetch_error": null
+  },
+  "comparison": {
+    "status": "REPRODUCED",
+    "tolerance": 0.05,
+    "max_error": 2.166531415364258e-14,
+    "reason": "",
+    "rows": [
+      {
+        "key": "E_infinity_p4",
+        "derived": 1.7320508075688772,
+        "authors": 1.7320508075688772,
+        "paper": 1.73205,
+        "error": 0.0,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "E_2_p4",
+        "derived": 1.7764776117001904,
+        "authors": 1.7764776117001901,
+        "paper": 1.77648,
+        "error": 1.2499150198269146e-16,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "E_1_p4",
+        "derived": 1.7833003012540576,
+        "authors": 1.7833003012540962,
+        "paper": 1.7833,
+        "error": 2.166531415364258e-14,
+        "within": true,
+        "note": ""
+      },
+      {
+        "key": "E_0_p4",
+        "derived": 1.7940850281792544,
+        "authors": 1.7940850281792529,
+        "paper": 1.79409,
+        "error": 8.663537179464845e-16,
+        "within": true,
+        "note": ""
+      }
+    ]
+  },
+  "explanation": "",
+  "blinding": {
+    "freeze_hash": "b8fb1683de9a34764c326fead91935a75dfb4527440a3eb8c431da2014174786",
+    "frozen_at": "2026-11-02T10:23:32Z",
+    "code_fetched_at": "2026-11-02T10:23:43Z",
+    "tools_offered": [
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read",
+      "Write",
+      "mcp__blindrepro__run"
+    ],
+    "refused_calls": 0,
+    "guard_blocked": 0,
+    "redaction": {
+      "strings_removed": 8,
+      "strings_not_found": [],
+      "code_links_removed": 2
+    },
+    "values_shown": false,
+    "leaks": [],
+    "literals": [],
+    "forbidden_imports": [],
+    "tampering": [],
+    "values_searched": 8,
+    "recall": {
+      "stated": 0,
+      "total": 4,
+      "matched": 0,
+      "values": {}
+    },
+    "cutoff": {
+      "cutoff": "2026-06",
+      "after_cutoff": true,
+      "statement": "2026-06 per the vendor. Paper first posted 2026-09-14, after that, so it should not be in training data."
+    }
+  },
+  "run": {
+    "model": "claude-opus-5-5",
+    "judge": "claude-cli",
+    "judge_version": "2.1.316",
+    "tool_version": "0.1.0",
+    "date": "2026-11-02",
+    "python": "3.12.13",
+    "packages": [
+      "mpmath==1.3.0",
+      "numpy==2.5.4",
+      "scipy==1.18.1",
+      "sympy==1.14.0"
+    ],
+    "agent_seconds": 44.4
+  },
+  "blind_notes": "- J(t) evaluated via the paper's antiderivative identity (eq. B-antiderivative), cross-checked against numerical quadrature of the definition (eq. Jgoe).\n- Pure-case Theta_k from eq. Theta-explicit with p=4; valid for u <= -E_infinity, and all roots lie beyond E_infinity (Theta_k(-E_inf) = (1/2)log3 - 1/2 > 0, strictly decreasing beyond).\n- E_0 taken as root of Theta_0 (k=0, coefficient 1 on I_1) as instructed by spec.json; this identification with the ground state is the Auffinger-Ben Arous-Cerny result for pure models (from spec/memory, not derived from the Parisi formula here).\n- Roots found with mpmath (40 digits) and reported as float64.\n",
+  "adapter_notes": "# Notes\n\n- Source of E_inf, E_0, E_1: `code/code/pspin_langevin.py::theory_thresholds(4)`, the function all of the authors' p=4 scripts import (pspin_p4.py, saddle_enumeration.py, phase_transitions.py).\n- Source of E_2: `code/code/saddle_enumeration.py::threshold_E2()` (module constant P=4). It is the same brentq root of Theta_2(-z)=0 that phase_transitions.mechanism_phase_figure computes inline. I used the module-level function so I would not have to run the figure code.\n- Authors' settings are kept unchanged: scipy `quad` for I_1, `brentq` with default tolerances, brackets [E_inf+1e-9, 2*E_inf] for E_0/E_1 and [E_inf+1e-9, E_0] for E_2.\n- Authors' I_1(z) = (2/E_inf^2) \u222b_{E_inf}^{z} sqrt(x^2-E_inf^2) dx. Substituting y = x*sqrt(p/(p-1)) shows it equals the spec's J(-z*sqrt(p/(p-1))). Theta_k matches the spec. No difference from spec.json.\n- E_0 is the authors' Theta_0 root (the ABC pure-case formula). It is not checked against a separate Crisanti-Sommers/Parisi computation, and the repo has no code for one.\n- No edits to code/. Importing the modules runs only the theory/style code at module level, not the simulations.\n- requirements.txt pins numpy 1.26.4, scipy 1.11.4 and matplotlib 3.8.4 (the repo has only lower bounds: numpy>=1.24, scipy>=1.10, matplotlib>=3.7). matplotlib is needed because the modules import it.\n- The sandbox blocked matplotlib's font-cache scan of C:\\Windows\\Fonts. This is harmless because nothing is plotted.\n- Output: E_inf=1.7320508075688772, E_2=1.7764776117001901, E_1=1.7833003012540962, E_0=1.7940850281792529. These match the README/saddle_summary.txt to the 5 printed digits.\n"
+}

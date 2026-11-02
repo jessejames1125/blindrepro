@@ -1,0 +1,16 @@
+{
+  "paper": "arxiv:2105.10954",
+  "target": "Table 3, the deuterium-tritium row only for magnetic confinement: the minimum triple product and the temperature where it occurs, at Q_fuel = 1 and Q_fuel = infinity, for the uniform-profile case",
+  "code": "https://github.com/swurzel/lawson-criterion-paper",
+  "commit": "4ae563bfc409db5fb4afb2f9930a3a4fafba4f0d",
+  "tolerance": 0.05,
+  "seconds": 600,
+  "memory_mb": 2048,
+  "minutes": 30,
+  "allow_packages": [],
+  "show_values": false,
+  "skip_recall": false,
+  "stop_after_freeze": false,
+  "model_cutoff": "",
+  "spec": ""
+}

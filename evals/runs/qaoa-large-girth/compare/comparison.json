@@ -1,0 +1,80 @@
+{
+  "status": "REPRODUCED",
+  "tolerance": 0.05,
+  "max_error": 4.464347319735937e-08,
+  "reason": "",
+  "rows": [
+    {
+      "key": "nu_bar_p1",
+      "derived": 0.30326532985631677,
+      "authors": 0.3032653298542708,
+      "paper": 0.3033,
+      "error": 6.746483358033803e-12,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "nu_bar_p2",
+      "derived": 0.4075450299961164,
+      "authors": 0.4075450178436366,
+      "paper": 0.4075,
+      "error": 2.9818742146677765e-08,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "nu_bar_p3",
+      "derived": 0.47261898322175666,
+      "authors": 0.47261897952283444,
+      "paper": 0.4726,
+      "error": 7.826436060197618e-09,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "nu_bar_p4",
+      "derived": 0.51567882638654,
+      "authors": 0.5156788202438393,
+      "paper": 0.5157,
+      "error": 1.1911873127811389e-08,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "nu_bar_p5",
+      "derived": 0.5476456452864975,
+      "authors": 0.5476456346823727,
+      "paper": 0.5476,
+      "error": 1.9363113898685882e-08,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "nu_bar_p6",
+      "derived": 0.5721372293163591,
+      "authors": 0.5721372072811373,
+      "paper": 0.5721,
+      "error": 3.8513876722161626e-08,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "nu_bar_p7",
+      "derived": 0.591481130546388,
+      "authors": 0.5914811068927609,
+      "paper": 0.5915,
+      "error": 3.9990503130843576e-08,
+      "within": true,
+      "note": ""
+    },
+    {
+      "key": "nu_bar_p8",
+      "derived": 0.6072664655842862,
+      "authors": 0.6072664384738032,
+      "paper": 0.6073,
+      "error": 4.464347319735937e-08,
+      "within": true,
+      "note": ""
+    }
+  ]
+}
