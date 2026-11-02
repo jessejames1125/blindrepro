@@ -16,9 +16,10 @@ The claim of a blind run is narrow: the numbers came from an agent that had the 
 | Memory check | With no paper and no tools, the model is asked for the values. | `probe/` |
 | Adapter | Only now is the code fetched. A second agent writes `adapter.py` to call it. It sees the quantity list and never the derivation or its values. Edits to the authors' code are recorded as a diff. | `authors/` |
 | Compare | Plain arithmetic in `compare.py`. | `compare/comparison.json` |
-| After the fact | Code searches the text the agent read for the target values (leak check) and searches `derive.py` for typed-in copies of them. Both are reported, neither changes the verdict. | `verdict.json`: `leaks`, `literals` |
+| After the fact | Code searches the text the agent read for the target values (leak check), searches `derive.py` for typed-in copies of them, and flags drafts that reach into the interpreter. All are reported, none changes the verdict. | `verdict.json`: `leaks`, `literals`, `tampering` |
+| Seal | When the run ends, the whole folder (the authors' side and the verdict too, the paper text excepted) is hashed again, tied to the freeze hash. | `seal.json` |
 
-`blindrepro verify <folder>` reruns all of this with no model and refuses a record whose hash does not match.
+`blindrepro verify <folder>` reruns all of this with no model and refuses a record whose hashes do not match. Anyone can rehash a folder they edited, so a hash proves something only when it matches one published earlier: pass that with `--expect <freeze hash>`. Verify runs the folder's scripts and installs the packages it lists, so run it only on records you trust or inside a container. Package lines must be plain names with versions; options, links and paths are refused.
 
 `evals/escape_test.py` asks a real agent under these settings to break out. Its last result is in `evals/escape-test.json`.
 
@@ -33,7 +34,7 @@ To get a clean test of the method, include papers posted after the cutoff, as `e
 
 **The hash does not prove when.** It proves the files have not changed since the freeze. It does not prove the freeze came before the comparison, or that the operator did not run ten times and keep the best. To prove order, run with `--stop-after-freeze`, publish the hash somewhere with a public timestamp, then finish the run. Publishing every attempt is the only answer to selection, and that is a matter of the operator's honesty.
 
-**The guard is not a security boundary.** It uses CPython audit hooks, plus blocks on foreign calls, links and native modules from the work folder. The first version let a real agent read both test secrets through `ctypes` and through hard links, which is why those blocks exist (see the changelog). Assume a determined attacker can find another way through compiled code. It catches accidents and ordinary model behavior, and each draft script is kept in the transcript for a reader to inspect. If you need more, run the whole tool in a container with no network after packages are installed.
+**The guard is not a security boundary.** It uses CPython audit hooks, plus blocks on foreign calls, links and native modules from the work folder. The first version let a real agent read both test secrets through `ctypes` and through hard links, which is why those blocks exist (see the changelog). A review then found that a plain Python script could rewrite the guard's own rules by walking the call stack; the rules now live where a script cannot reach them without the blocked `gc` functions. One gap stays open by design: a script can rewrite Python's own modules, such as `os.path`, which the guard uses to read paths. A derivation has no reason to do that, so the tool flags any draft that assigns to standard modules or touches frames, closures or code objects, and reports it in the verdict. Compiled code can also get around the guard. It catches accidents and ordinary model behavior, and each draft script is kept in the transcript for a reader to inspect. If you need more, run the whole tool in a container with no network after packages are installed.
 
 **The record of what the agent saw has gaps with the `claude` judge.** The `claude` command adds some context of its own, such as date, platform and the signed-in account's email, which is not in the transcript. With `--judge api`, the request bodies are the full record.
 
