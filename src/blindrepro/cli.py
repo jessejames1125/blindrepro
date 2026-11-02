@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import shutil
 import sys
@@ -15,6 +16,9 @@ from .judges import JudgeError, make_judge
 
 
 # The freeze hash of each bundled demo, so a demo folder changed and rehashed is refused too.
+DEMO_SEALS: dict[str, str] = {
+    "lawson": "00a5623131cce6489727c59aa811e6f7b5848b80542f6873ba1468f9d6bdd0ae",
+}
 DEMO_HASHES: dict[str, str] = {
     "lawson": "0da2b99365c949607bc6b88b1c8e692268f27f2e683bca2556da58b720f996d2",
 }
@@ -44,6 +48,10 @@ def _demo(args) -> int:
             print("That refusal is the demo: a changed file no longer matches its hash. Anyone can rehash a")
             print("folder, so compare the freeze hash with one published before the comparison (verify --expect).")
             return 0 if code == 2 else 1
+        sealed = json.loads((bundle / "seal.json").read_text(encoding="utf-8")).get("seal_hash", "")
+        if DEMO_SEALS.get(args.case) and sealed != DEMO_SEALS[args.case]:
+            print("REFUSED: this demo's seal does not match the one published in the package.")
+            return 2
         if args.full:
             print("Replaying a recorded blind run: no model, no key. The hashes, the derivation and the authors' code run for real.")
         else:
@@ -85,6 +93,7 @@ def _run(args) -> int:
     )
     print("Note: this runs the authors' code on your machine under the guard, which is not a security boundary. Use a container for code you do not trust.")
     judge = make_judge(args.judge, args.model, args.effort)
+    (out / "stopped.txt").unlink(missing_ok=True)
     try:
         verdict = pipeline.run_case(case, judge)
     except (RunStopped, InstallFailed, JudgeError) as stopped:

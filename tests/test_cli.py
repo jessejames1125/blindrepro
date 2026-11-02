@@ -58,6 +58,18 @@ def test_a_stopped_run_says_why_in_its_folder(tmp_path, capsys):
     assert "needs a dataset" in (out / "stopped.txt").read_text(encoding="utf-8")
 
 
+def test_a_finished_run_drops_an_old_stopped_note(tmp_path, capsys):
+    repo = make_authors_repo(tmp_path / "repo")
+    recording = write_recording(tmp_path / "recording", GOOD_DERIVE, GOOD_ADAPTER)
+    paper = tmp_path / "paper.txt"
+    paper.write_text(PAPER, encoding="utf-8")
+    out = tmp_path / "r"
+    out.mkdir()
+    (out / "stopped.txt").write_text("stopped earlier\n", encoding="utf-8")
+    assert cli.main(["run", str(paper), "--target", "a", "--code", str(repo), "--out", str(out), "--judge", f"recorded:{recording}"]) == 0
+    assert not (out / "stopped.txt").exists()
+
+
 @pytest.mark.parametrize("kind", ["install", "judge"])
 def test_a_failed_install_or_agent_stops_the_run_with_its_reason(tmp_path, capsys, monkeypatch, kind):
     from blindrepro import envs, judges, pipeline
@@ -88,6 +100,8 @@ def use_demo(monkeypatch, bundle):
     monkeypatch.setattr(cli, "_bundled", lambda name: bundle)
     frozen = json.loads((bundle / "frozen" / "freeze.json").read_text(encoding="utf-8"))
     monkeypatch.setitem(cli.DEMO_HASHES, "lawson", frozen["freeze_hash"])
+    sealed = json.loads((bundle / "seal.json").read_text(encoding="utf-8"))
+    monkeypatch.setitem(cli.DEMO_SEALS, "lawson", sealed["seal_hash"])
 
 
 def test_the_shipped_demo_matches_its_published_hash_and_seal():
@@ -97,7 +111,16 @@ def test_the_shipped_demo_matches_its_published_hash_and_seal():
     assert frozen["freeze_hash"] == cli.DEMO_HASHES["lawson"]
     assert check_freeze(bundle / "frozen") == []
     assert check_seal(bundle) == []
+    assert json.loads((bundle / "seal.json").read_text(encoding="utf-8"))["seal_hash"] == cli.DEMO_SEALS["lawson"]
     assert (bundle / "authors" / "vendor" / "LICENSE").exists()
+
+
+def test_a_demo_whose_seal_differs_from_the_published_one_is_refused(tmp_path, capsys, monkeypatch):
+    bundle = bundled_case(tmp_path)
+    use_demo(monkeypatch, bundle)
+    monkeypatch.setitem(cli.DEMO_SEALS, "lawson", "0" * 64)
+    assert cli.main(["demo", "lawson"]) == 2
+    assert "seal" in capsys.readouterr().out
 
 
 def test_a_demo_whose_hash_differs_from_the_published_one_is_refused(tmp_path, capsys, monkeypatch):
