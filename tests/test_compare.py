@@ -102,6 +102,18 @@ def test_literal_check_flags_the_target_rounded_to_fewer_digits():
     assert literal_check("x = 0.5721\n", {"nu": 0.572137}) == [{"key": "nu", "literal": 0.5721, "line": 1}]
 
 
+def test_literal_check_flags_more_digits_than_the_paper_printed():
+    assert literal_check("x = 0.30327\n", {"nu (paper)": 0.303})[0]["key"] == "nu (paper)"
+
+
+def test_literal_check_counts_whole_numbers_by_their_own_digits():
+    assert literal_check("n = 1234\n", {"n": 1234.3})[0]["literal"] == 1234
+
+
+def test_literal_check_skips_infinite_literals():
+    assert literal_check("x = 1e999\ny = 10 ** 400\nz = " + "9" * 400 + "\n", {"a": 1.0, "b": float("inf")}) == []
+
+
 def test_literal_check_survives_a_syntax_error():
     assert literal_check("def (", {"a": 1.0}) == []
 

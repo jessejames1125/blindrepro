@@ -205,6 +205,25 @@ def rounds_to(number: float, digits: int, value: float) -> bool:
     return abs(abs(number) - abs(value)) <= unit / 2 * (1 + 1e-9)
 
 
+def digits_of(number: float) -> int:
+    """Significant digits of a number as Python would print it; 1234.0 and 12000 count as 4 and 2."""
+    number = abs(number)
+    # Floats hold whole numbers exactly only up to about 1e15; past that, use their printed form.
+    if number.is_integer() and number < 1e15:
+        return len(str(int(number)).rstrip("0")) or 1
+    return significant_digits(repr(number))
+
+
+def matches(number: float, digits: int, value: float) -> bool:
+    """True when number and value agree at the coarser of their two precisions, but never below 3 digits.
+
+    A copy printed with more digits than the target is caught, and so is the target rounded.
+    """
+    if not (math.isfinite(number) and math.isfinite(value)):
+        return False
+    return rounds_to(number, min(digits, max(3, digits_of(value))), value)
+
+
 def literal_check(source: str, values: dict[str, float | None]) -> list[dict]:
     """Numbers typed into the derivation that are a target value, rounded. A flag for a human, not a verdict."""
     try:
@@ -214,13 +233,18 @@ def literal_check(source: str, values: dict[str, float | None]) -> list[dict]:
     hits = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) and not isinstance(node.value, bool):
-            number = float(node.value)
-            digits = significant_digits(repr(abs(number)))
+            try:
+                number = float(node.value)
+            except OverflowError:
+                continue
+            if not math.isfinite(number):
+                continue
+            digits = digits_of(number)
             # Small integers and short numbers like 0.5 round from too many values to mean anything.
             if (abs(number) < 1000 and number.is_integer()) or digits < 3:
                 continue
             # A minus sign is its own node, so the size is compared.
             for key, value in values.items():
-                if value and rounds_to(number, digits, value):
+                if value and matches(number, digits, value):
                     hits.append({"key": key, "literal": node.value, "line": node.lineno})
     return hits

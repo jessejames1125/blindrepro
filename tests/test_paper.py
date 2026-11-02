@@ -77,6 +77,10 @@ def test_leak_check_finds_the_target_rounded_to_fewer_digits():
     assert leak_check("about 0.303 at depth one", {"nu": 0.30327})[0]["printed"] == "0.303"
 
 
+def test_leak_check_flags_a_number_printed_with_more_digits_than_the_target():
+    assert leak_check("the table gives 0.3033 here", {"nu (paper)": 0.303})[0]["printed"] == "0.3033"
+
+
 def test_leak_check_ignores_low_precision_coincidences():
     assert leak_check("Section 3 and figure 12", {"count": 12.0}) == []
 

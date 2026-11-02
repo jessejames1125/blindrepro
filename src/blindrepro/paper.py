@@ -15,7 +15,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 
-from .compare import rounds_to, significant_digits
+from .compare import matches, significant_digits
 from .envs import ensure_env
 
 ARXIV_ID = re.compile(r"(?:arxiv[:/]|arxiv\.org/(?:abs|pdf|e-print)/)?(\d{4}\.\d{4,5}(?:v\d+)?)(?:\.pdf)?$", re.I)
@@ -214,7 +214,7 @@ def numbers_in(text: str) -> list[tuple[float, str, int]]:
 def leak_check(text: str, values: dict[str, float]) -> list[dict]:
     """Which target values still appear in what the agent could read, to three or more digits.
 
-    A number counts when the target, rounded to the digits it was printed with, gives that number.
+    A number counts when it and the target agree at the coarser of their two precisions (3 digits at least).
     Signs are ignored, because a minus sign in text takes many forms.
     """
     hits = []
@@ -223,7 +223,7 @@ def leak_check(text: str, values: dict[str, float]) -> list[dict]:
         if not isinstance(value, (int, float)) or value == 0:
             continue
         for number, printed, offset in numbers:
-            if rounds_to(number, significant_digits(printed), value):
+            if matches(number, significant_digits(printed), value):
                 start = max(0, offset - 50)
                 hits.append({"key": key, "value": value, "printed": printed, "context": " ".join(text[start:offset + 40].split())})
                 break
