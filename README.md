@@ -15,7 +15,7 @@ uvx blindrepro demo lawson --tamper
 
 Until the package is on PyPI, clone the repository and use `uvx --from . blindrepro demo lawson`. Needs [uv](https://docs.astral.sh/uv/). From a fresh clone with empty caches, the first demo took 44 seconds on a Windows laptop, most of it building the derivation's numpy and scipy environment.
 
-The demo replays a recorded blind run of the Lawson criterion paper. No model is called. It checks every hash against the one published in the package, reruns the frozen derivation, and computes the error again from the authors' values in the sealed record. `--full` reruns the authors' code too, which takes about 5 more minutes. `--tamper` adds one line to the frozen derivation and shows the check refusing it.
+The demo replays a recorded blind run of the Lawson criterion paper. No model is called. It checks every hash against the one published in the package, reruns the frozen derivation, and computes the error again from the authors' values in the sealed record. `--full` reruns the authors' code too, which took 1.5 to 5 more minutes in our runs. `--tamper` adds one line to the frozen derivation and shows the check refusing it.
 
 ## What you get
 

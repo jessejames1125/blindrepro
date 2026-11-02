@@ -51,7 +51,7 @@ def _demo(args) -> int:
         code = verify(bundle, skip_authors=not args.full, say=print, warn=False, expect=DEMO_HASHES.get(args.case, ""))
     print()
     if not args.full:
-        print("Add --full to rerun the authors' code too (the Lawson case takes about 5 minutes).")
+        print("Add --full to rerun the authors' code too (1.5 to 5 more minutes for the Lawson case).")
     print("Next: blindrepro demo lawson --tamper   |   blindrepro doctor   |   blindrepro run <paper> --target \"...\" --code <repo>")
     return code
 
