@@ -179,6 +179,13 @@ def test_authors_mode_is_not_strict(tmp_path):
     assert "ALLOWED" in result.stdout
 
 
+def test_system_facts_are_read_before_the_guard_starts(tmp_path):
+    """A busy Windows system query makes platform fall back to starting a process, which the guard logs."""
+    result = run(tmp_path, "import platform\nprint(platform._uname_cache is not None)\nprint(platform.machine() != '')\n")
+    assert result.stdout.split() == ["True", "True"]
+    assert result.blocked == []
+
+
 def test_real_numeric_packages_work_under_the_strict_guard(tmp_path):
     """Builds the actual environment, so this needs the network once."""
     from blindrepro.envs import BLIND_PACKAGES, ensure_env

@@ -151,6 +151,11 @@ def install(policy):
                 block("low-level access", f"native module {filename}")
 
     if strict:
+        # When a Windows system query is busy, platform falls back to starting a process.
+        # Ask now and it keeps the answer, so numeric packages never hit that path.
+        import platform
+
+        platform.uname()
         _close_side_doors()
         # Numeric packages import ctypes, whose own setup makes foreign calls. Let it finish
         # first; after this point the hook refuses any new foreign call.
