@@ -5,6 +5,7 @@ from __future__ import annotations
 import ast
 import json
 import math
+import re
 from dataclasses import dataclass, field
 
 REPRODUCED = "REPRODUCED"
@@ -191,8 +192,21 @@ def tamper_check(source: str) -> list[str]:
     return sorted(found)
 
 
-def literal_check(source: str, values: dict[str, float | None], rel: float = 0.001) -> list[dict]:
-    """Numbers typed into the derivation that match a target value. A flag for a human, not a verdict."""
+def significant_digits(printed: str) -> int:
+    mantissa = re.match(r"[\d,]+(?:\.\d+)?", printed).group(0)
+    return len(mantissa.replace(",", "").replace(".", "").lstrip("0"))
+
+
+def rounds_to(number: float, digits: int, value: float) -> bool:
+    """True when value, rounded to `digits` significant digits, gives number. Signs are ignored."""
+    if number == 0 or digits <= 0:
+        return number == value
+    unit = 10.0 ** (math.floor(math.log10(abs(number))) - digits + 1)
+    return abs(abs(number) - abs(value)) <= unit / 2 * (1 + 1e-9)
+
+
+def literal_check(source: str, values: dict[str, float | None]) -> list[dict]:
+    """Numbers typed into the derivation that are a target value, rounded. A flag for a human, not a verdict."""
     try:
         tree = ast.parse(source)
     except SyntaxError:
@@ -201,10 +215,12 @@ def literal_check(source: str, values: dict[str, float | None], rel: float = 0.0
     for node in ast.walk(tree):
         if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) and not isinstance(node.value, bool):
             number = float(node.value)
-            if abs(number) < 1000 and float(number).is_integer():
+            digits = significant_digits(repr(abs(number)))
+            # Small integers and short numbers like 0.5 round from too many values to mean anything.
+            if (abs(number) < 1000 and number.is_integer()) or digits < 3:
                 continue
             # A minus sign is its own node, so the size is compared.
             for key, value in values.items():
-                if value and abs(abs(number) - abs(value)) <= rel * abs(value):
+                if value and rounds_to(number, digits, value):
                     hits.append({"key": key, "literal": node.value, "line": node.lineno})
     return hits

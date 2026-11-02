@@ -90,6 +90,18 @@ def test_literal_check_ignores_small_integers_and_computed_values():
     assert literal_check(source, {"three": 3.0, "tau": 6.283185}) == []
 
 
+def test_literal_check_ignores_a_nearby_warm_start():
+    assert literal_check("start = [0.5717, 0.6393]\n", {"nu": 0.572137}) == []
+
+
+def test_literal_check_ignores_short_numbers_like_a_half():
+    assert literal_check("gamma = 0.5\nbeta = 0.55\n", {"nu": 0.4726, "nu5": 0.5476}) == []
+
+
+def test_literal_check_flags_the_target_rounded_to_fewer_digits():
+    assert literal_check("x = 0.5721\n", {"nu": 0.572137}) == [{"key": "nu", "literal": 0.5721, "line": 1}]
+
+
 def test_literal_check_survives_a_syntax_error():
     assert literal_check("def (", {"a": 1.0}) == []
 

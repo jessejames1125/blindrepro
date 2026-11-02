@@ -68,6 +68,15 @@ def test_leak_check_finds_thousands_separators_and_negative_values():
     assert leak_check("the energy is −0.7639 per spin", {"e": -0.7639})[0]["key"] == "e"
 
 
+def test_leak_check_ignores_a_nearby_number_the_target_does_not_round_to():
+    # Optimal angles printed next to the targets in a QAOA paper sat within 0.5% of them.
+    assert leak_check("angles 0.3028 and 0.5710", {"nu": 0.30327, "nu6": 0.57214}) == []
+
+
+def test_leak_check_finds_the_target_rounded_to_fewer_digits():
+    assert leak_check("about 0.303 at depth one", {"nu": 0.30327})[0]["printed"] == "0.303"
+
+
 def test_leak_check_ignores_low_precision_coincidences():
     assert leak_check("Section 3 and figure 12", {"count": 12.0}) == []
 
