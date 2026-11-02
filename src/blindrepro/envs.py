@@ -64,11 +64,16 @@ def _install(env: Path, args: list[str]) -> None:
     clean = install_env()
     uv = shutil.which("uv")
     if uv:
-        subprocess.run([uv, "venv", "--quiet", "--python", PYTHON_VERSION, str(env)], check=True, env=clean)
+        # This step can download a Python, so it gets the same clock as the install.
+        _step([uv, "venv", "--quiet", "--python", PYTHON_VERSION, str(env)], clean)
         command = [uv, "pip", "install", "--quiet", "--python", str(python_in(env)), "--", *args]
     else:
-        subprocess.run([sys.executable, "-m", "venv", str(env)], check=True, env=clean)
+        _step([sys.executable, "-m", "venv", str(env)], clean)
         command = [str(python_in(env)), "-m", "pip", "install", "--quiet", "--", *args]
+    _step(command, clean)
+
+
+def _step(command: list[str], clean: dict[str, str]) -> None:
     from .sandbox import run_tree
 
     result = run_tree(command, env=clean, seconds=INSTALL_SECONDS)

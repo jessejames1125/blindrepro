@@ -16,7 +16,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .sandbox import run_tree
+from .sandbox import IN_GROUP, run_tree
 from .toolserver import run_tool
 
 SYSTEM_PROMPT = (
@@ -122,7 +122,8 @@ class ClaudeCli:
                         "blindrepro": {
                             "command": sys.executable,
                             "args": ["-m", "blindrepro.toolserver", str(config_path)],
-                            "env": {"PYTHONPATH": str(Path(__file__).resolve().parents[1])},
+                            # IN_GROUP keeps the server's scripts in the session's process group.
+                            "env": {"PYTHONPATH": str(Path(__file__).resolve().parents[1]), IN_GROUP: "1"},
                         }
                     }
                 }

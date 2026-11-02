@@ -61,6 +61,21 @@ def test_a_file_still_held_by_a_dying_child_does_not_crash_the_run(monkeypatch):
     assert seen and all(options.get("ignore_cleanup_errors") for options in seen)
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows ends nested jobs with the outer one")
+def test_a_stopped_command_takes_nested_guarded_runs_with_it(tmp_path):
+    # The claude judge starts a tool server, which starts guarded scripts and installs of its own.
+    marker = tmp_path / "nested-still-alive.txt"
+    child = f"import time, pathlib; time.sleep(4); pathlib.Path({str(marker)!r}).write_text('alive')"
+    middle = (
+        "import sys; from blindrepro import sandbox; "
+        f"sandbox.run_tree([sys.executable, '-c', {child!r}], env=None, seconds=60)"
+    )
+    result = sandbox.run_tree([sys.executable, "-c", middle], env=None, seconds=1)
+    assert result.timed_out
+    time.sleep(6)
+    assert not marker.exists()
+
+
 def test_a_stopped_command_takes_its_child_processes_with_it(tmp_path):
     marker = tmp_path / "child-still-alive.txt"
     child = f"import time, pathlib; time.sleep(4); pathlib.Path({str(marker)!r}).write_text('alive')"

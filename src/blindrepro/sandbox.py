@@ -16,6 +16,7 @@ GUARD = Path(__file__).with_name("guard.py")
 DEFAULT_SECONDS = 600
 DEFAULT_MEMORY_MB = 4096
 OUTPUT_LIMIT = 2_000_000
+IN_GROUP = "BLINDREPRO_IN_GROUP"
 KEEP_ENV = ("SYSTEMROOT", "WINDIR", "PATH", "LANG", "LC_ALL", "TZ", "PATHEXT", "NUMBER_OF_PROCESSORS")
 
 
@@ -163,7 +164,7 @@ def run_guarded(
                 stdout=out_file,
                 stderr=err_file,
                 preexec_fn=None if os.name == "nt" else _posix_limit(memory_mb),
-                start_new_session=os.name != "nt",
+                start_new_session=_new_session(),
             )
             job = _windows_job(process, memory_mb) if os.name == "nt" else None
             timed_out = False
@@ -171,12 +172,12 @@ def run_guarded(
                 process.wait(timeout=seconds)
             except subprocess.TimeoutExpired:
                 timed_out = True
+            finally:
+                # Also on Ctrl+C or an error, so nothing the command started is left running.
                 _stop(process)
-            if job is not None:
-                # Closing the job ends every process the script started.
-                ctypes.WinDLL("kernel32").CloseHandle(ctypes.c_void_p(job))
-            elif not timed_out:
-                _stop(process)
+                if job is not None:
+                    # Closing the job ends every process the script started.
+                    ctypes.WinDLL("kernel32").CloseHandle(ctypes.c_void_p(job))
         out, err = _tail(out_path), _tail(err_path)
         blocked = []
         if log_path.exists():
@@ -196,12 +197,15 @@ def run_tree(
 ) -> RunResult:
     """Run a command with a clock. When the clock runs out, everything it started stops too."""
     start = time.monotonic()
+    child_env = dict(os.environ if env is None else env)
+    if os.name != "nt":
+        child_env[IN_GROUP] = "1"
     with tempfile.TemporaryDirectory(prefix="blindrepro-run-", ignore_cleanup_errors=True) as scratch:
         in_path, out_path, err_path = (Path(scratch) / name for name in ("stdin.txt", "stdout.txt", "stderr.txt"))
         in_path.write_text(input_text, encoding="utf-8")
         with in_path.open("rb") as in_file, out_path.open("wb") as out_file, err_path.open("wb") as err_file:
             process = subprocess.Popen(
-                command, cwd=cwd, env=env, stdin=in_file, stdout=out_file, stderr=err_file, start_new_session=os.name != "nt"
+                command, cwd=cwd, env=child_env, stdin=in_file, stdout=out_file, stderr=err_file, start_new_session=_new_session()
             )
             job = _windows_job(process, None) if os.name == "nt" else None
             timed_out = False
@@ -209,13 +213,23 @@ def run_tree(
                 process.wait(timeout=seconds)
             except subprocess.TimeoutExpired:
                 timed_out = True
+            finally:
+                # Also on Ctrl+C or an error, so nothing the command started is left running.
                 _stop(process)
-            if job is not None:
-                ctypes.WinDLL("kernel32").CloseHandle(ctypes.c_void_p(job))
-            elif not timed_out:
-                _stop(process)
-        out, err = _tail(out_path, output_limit), _tail(err_path, output_limit)
+                if job is not None:
+                    ctypes.WinDLL("kernel32").CloseHandle(ctypes.c_void_p(job))
+        out, err = _tail(out_path, output_limit), _tail(err_path)
     return RunResult(process.returncode, out, err, time.monotonic() - start, timed_out)
+
+
+def _new_session() -> bool:
+    """On Linux and Mac, start a process group to stop as one, unless run_tree is above us.
+
+    The claude judge runs under run_tree, and its tool server starts scripts and installs. In
+    their own groups they would outlive a stopped session, so they stay in the outer group.
+    Windows needs none of this: closing a job also ends the jobs nested inside it.
+    """
+    return os.name != "nt" and not os.environ.get(IN_GROUP)
 
 
 def _stop(process: subprocess.Popen) -> None:
