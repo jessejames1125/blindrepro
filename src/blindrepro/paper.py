@@ -192,7 +192,7 @@ def redact(text: str, strings: list[str]) -> tuple[str, dict]:
 
 
 NUMBER = re.compile(
-    r"(?<![\w.])(\d+(?:\.\d+)?)"
+    r"(?<![\w.])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)"
     r"(?:\s*(?:\\times|\\cdot|×|x)\s*10\s*\^?\s*\{?\s*([+-−]?\d+)\s*\}?|[eE]([+-]?\d+))?"
 )
 
@@ -203,7 +203,7 @@ def numbers_in(text: str) -> list[tuple[float, str, int]]:
     for match in NUMBER.finditer(text):
         exponent = match.group(2) or match.group(3) or "0"
         try:
-            value = float(match.group(1)) * 10 ** int(exponent.replace("−", "-"))
+            value = float(match.group(1).replace(",", "")) * 10 ** int(exponent.replace("−", "-"))
         except (ValueError, OverflowError):
             continue
         found.append((value, match.group(0), match.start()))
@@ -211,19 +211,22 @@ def numbers_in(text: str) -> list[tuple[float, str, int]]:
 
 
 def significant_digits(printed: str) -> int:
-    mantissa = re.match(r"\d+(?:\.\d+)?", printed).group(0)
-    return len(mantissa.replace(".", "").lstrip("0"))
+    mantissa = re.match(r"[\d,]+(?:\.\d+)?", printed).group(0)
+    return len(mantissa.replace(",", "").replace(".", "").lstrip("0"))
 
 
 def leak_check(text: str, values: dict[str, float], rel: float = 0.005) -> list[dict]:
-    """Which target values still appear in what the agent could read, to three or more digits."""
+    """Which target values still appear in what the agent could read, to three or more digits.
+
+    Signs are ignored, because a minus sign in text takes many forms.
+    """
     hits = []
     numbers = [n for n in numbers_in(text) if significant_digits(n[1]) >= 3]
     for key, value in values.items():
         if not isinstance(value, (int, float)) or value == 0:
             continue
         for number, printed, offset in numbers:
-            if abs(number - value) <= rel * abs(value):
+            if abs(number - abs(value)) <= rel * abs(value):
                 start = max(0, offset - 50)
                 hits.append({"key": key, "value": value, "printed": printed, "context": " ".join(text[start:offset + 40].split())})
                 break

@@ -1,6 +1,6 @@
 import math
 
-from blindrepro.compare import compare, flatten, import_check, literal_check, parse_result_line
+from blindrepro.compare import compare, flatten, import_check, literal_check, parse_result_line, tamper_check
 
 
 def test_reproduced_when_all_values_are_within_the_limit():
@@ -97,6 +97,25 @@ def test_literal_check_survives_a_syntax_error():
 def test_import_check_finds_low_level_modules():
     source = "import numpy\nimport ctypes\nfrom urllib.request import urlopen\nx = __import__('socket')\n"
     assert import_check(source) == ["ctypes", "socket", "urllib"]
+
+
+def test_literal_check_finds_a_negative_answer():
+    assert literal_check("x = -0.31415\n", {"energy": -0.31415}) == [{"key": "energy", "literal": 0.31415, "line": 1}]
+
+
+def test_tamper_check_finds_reaching_into_the_interpreter():
+    source = (
+        "import os, sys\n"
+        "frame = sys._getframe(1)\n"
+        "frame.f_globals['x'] = 1\n"
+        "os.path.normcase = str\n"
+        "setattr(os, 'fspath', str)\n"
+    )
+    assert tamper_check(source) == ["_getframe", "assigns os.path.normcase", "f_globals", "setattr"]
+
+
+def test_tamper_check_is_quiet_for_numeric_code():
+    assert tamper_check("import numpy as np\nx = np.zeros(3)\nx[0] = 1\nresult = {'a': 1}\n") == []
 
 
 def test_import_check_is_quiet_for_numeric_code():

@@ -158,6 +158,39 @@ def import_check(source: str) -> list[str]:
     return sorted(found)
 
 
+INTERNALS = {
+    "_getframe", "f_globals", "f_locals", "f_back", "f_builtins", "__closure__", "cell_contents",
+    "__code__", "__globals__", "__builtins__", "addaudithook", "settrace", "setprofile",
+}
+PATCHED_MODULES = {"os", "sys", "io", "builtins", "ntpath", "posixpath", "genericpath", "nt", "posix", "pathlib", "stat"}
+
+
+def tamper_check(source: str) -> list[str]:
+    """Code that reaches into the interpreter or rewrites standard modules, which the guard
+    cannot fully stop. A derivation has no reason to do either, so a reader should look."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return []
+    found = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Attribute) and node.attr in INTERNALS:
+            found.add(node.attr)
+        elif isinstance(node, ast.Name) and node.id in ("setattr", "delattr", "__builtins__"):
+            found.add(node.id)
+        targets = []
+        if isinstance(node, (ast.Assign, ast.AugAssign, ast.AnnAssign, ast.Delete)):
+            targets = node.targets if isinstance(node, (ast.Assign, ast.Delete)) else [node.target]
+        for target in targets:
+            parts, root = [], target
+            while isinstance(root, ast.Attribute):
+                parts.insert(0, root.attr)
+                root = root.value
+            if parts and isinstance(root, ast.Name) and root.id in PATCHED_MODULES:
+                found.add("assigns " + ".".join([root.id, *parts]))
+    return sorted(found)
+
+
 def literal_check(source: str, values: dict[str, float | None], rel: float = 0.001) -> list[dict]:
     """Numbers typed into the derivation that match a target value. A flag for a human, not a verdict."""
     try:
@@ -170,7 +203,8 @@ def literal_check(source: str, values: dict[str, float | None], rel: float = 0.0
             number = float(node.value)
             if abs(number) < 1000 and float(number).is_integer():
                 continue
+            # A minus sign is its own node, so the size is compared.
             for key, value in values.items():
-                if value and abs(number - value) <= rel * abs(value):
+                if value and abs(abs(number) - abs(value)) <= rel * abs(value):
                     hits.append({"key": key, "literal": node.value, "line": node.lineno})
     return hits

@@ -63,6 +63,11 @@ def test_leak_check_is_clean_when_the_value_is_gone():
     assert leak_check(f"minimum of {REMOVED} keV", {"tp": 2.945e21}) == []
 
 
+def test_leak_check_finds_thousands_separators_and_negative_values():
+    assert leak_check("a total of 12,345.6 events", {"n": 12345.6})[0]["printed"] == "12,345.6"
+    assert leak_check("the energy is −0.7639 per spin", {"e": -0.7639})[0]["key"] == "e"
+
+
 def test_leak_check_ignores_low_precision_coincidences():
     assert leak_check("Section 3 and figure 12", {"count": 12.0}) == []
 
