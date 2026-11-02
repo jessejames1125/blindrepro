@@ -136,7 +136,7 @@ def run_guarded(
 ) -> RunResult:
     workspace = workspace.resolve()
     (workspace / ".tmp").mkdir(exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="blindrepro-guard-") as scratch:
+    with tempfile.TemporaryDirectory(prefix="blindrepro-guard-", ignore_cleanup_errors=True) as scratch:
         log_path = Path(scratch) / "blocked.jsonl"
         policy_path = Path(scratch) / "policy.json"
         policy_path.write_text(
@@ -196,7 +196,7 @@ def run_tree(
 ) -> RunResult:
     """Run a command with a clock. When the clock runs out, everything it started stops too."""
     start = time.monotonic()
-    with tempfile.TemporaryDirectory(prefix="blindrepro-run-") as scratch:
+    with tempfile.TemporaryDirectory(prefix="blindrepro-run-", ignore_cleanup_errors=True) as scratch:
         in_path, out_path, err_path = (Path(scratch) / name for name in ("stdin.txt", "stdout.txt", "stderr.txt"))
         in_path.write_text(input_text, encoding="utf-8")
         with in_path.open("rb") as in_file, out_path.open("wb") as out_file, err_path.open("wb") as err_file:

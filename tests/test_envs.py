@@ -47,6 +47,20 @@ def test_the_run_tool_reports_a_failed_install_to_the_agent(tmp_path, monkeypatc
     assert "15 minutes" in result.stderr
 
 
+def test_a_file_still_held_by_a_dying_child_does_not_crash_the_run(monkeypatch):
+    # On Windows a stopped job's processes exit a moment later, so their output files can still be open.
+    real = sandbox.tempfile.TemporaryDirectory
+    seen = []
+
+    def recording(*args, **options):
+        seen.append(options)
+        return real(*args, **options)
+
+    monkeypatch.setattr(sandbox.tempfile, "TemporaryDirectory", recording)
+    sandbox.run_tree([sys.executable, "-c", "print(1)"], env=None, seconds=30)
+    assert seen and all(options.get("ignore_cleanup_errors") for options in seen)
+
+
 def test_a_stopped_command_takes_its_child_processes_with_it(tmp_path):
     marker = tmp_path / "child-still-alive.txt"
     child = f"import time, pathlib; time.sleep(4); pathlib.Path({str(marker)!r}).write_text('alive')"
